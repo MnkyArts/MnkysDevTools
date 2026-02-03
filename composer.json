@@ -1,0 +1,47 @@
+{
+    "name": "mnkys/devtools",
+    "description": "Storefront DevTools - Vue DevTools-like component picker for Shopware 6 Twig templates",
+    "type": "shopware-platform-plugin",
+    "version": "1.0.0",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "MNKYS",
+            "homepage": "https://mnkys.com"
+        }
+    ],
+    "keywords": [
+        "shopware",
+        "shopware6",
+        "devtools",
+        "twig",
+        "component-picker",
+        "developer-tools",
+        "debugging"
+    ],
+    "require": {
+        "shopware/core": "~6.6.0 || ~6.7.0",
+        "shopware/storefront": "~6.6.0 || ~6.7.0"
+    },
+    "extra": {
+        "shopware-plugin-class": "MnkysDevTools\\MnkysDevTools",
+        "label": {
+            "de-DE": "Storefront DevTools",
+            "en-GB": "Storefront DevTools"
+        },
+        "description": {
+            "de-DE": "Vue DevTools-ähnlicher Component Picker für Shopware 6 Twig Templates. Inspizieren Sie Twig-Blöcke, zeigen Sie Template-Pfade an und öffnen Sie Dateien direkt in Ihrem Editor.",
+            "en-GB": "Vue DevTools-like component picker for Shopware 6 Twig templates. Inspect Twig blocks, view template paths, and open files directly in your editor."
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "MnkysDevTools\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MnkysDevTools\\Tests\\": "tests/"
+        }
+    }
+}

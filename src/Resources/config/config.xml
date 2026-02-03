@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/trunk/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <!-- ================================== -->
+    <!-- DevTools Settings                  -->
+    <!-- ================================== -->
+
+    <card>
+        <title>DevTools Settings</title>
+        <title lang="de-DE">DevTools Einstellungen</title>
+
+        <input-field type="bool">
+            <name>enabled</name>
+            <label>Enable Component Picker</label>
+            <label lang="de-DE">Component Picker aktivieren</label>
+            <helpText>Enable the Twig block inspector in the storefront. Only works in development mode (APP_ENV=dev).</helpText>
+            <helpText lang="de-DE">Aktiviert den Twig-Block-Inspektor in der Storefront. Funktioniert nur im Entwicklungsmodus (APP_ENV=dev).</helpText>
+            <defaultValue>false</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Editor Configuration</title>
+        <title lang="de-DE">Editor-Konfiguration</title>
+
+        <input-field type="single-select">
+            <name>editor</name>
+            <label>Preferred Editor</label>
+            <label lang="de-DE">Bevorzugter Editor</label>
+            <helpText>Select your IDE. Clicking on a Twig block in the picker will open the template file in this editor.</helpText>
+            <helpText lang="de-DE">Wählen Sie Ihre IDE. Beim Klicken auf einen Twig-Block im Picker wird die Template-Datei in diesem Editor geöffnet.</helpText>
+            <defaultValue>vscode</defaultValue>
+            <options>
+                <option>
+                    <id>vscode</id>
+                    <name>Visual Studio Code</name>
+                </option>
+                <option>
+                    <id>phpstorm</id>
+                    <name>PhpStorm</name>
+                </option>
+                <option>
+                    <id>sublime</id>
+                    <name>Sublime Text</name>
+                </option>
+                <option>
+                    <id>idea</id>
+                    <name>IntelliJ IDEA</name>
+                </option>
+                <option>
+                    <id>atom</id>
+                    <name>Atom</name>
+                </option>
+            </options>
+        </input-field>
+
+        <input-field type="bool">
+            <name>execOpen</name>
+            <label>Open files via shell command</label>
+            <label lang="de-DE">Dateien per Shell-Befehl öffnen</label>
+            <helpText>Execute shell command to open files directly in your editor. Works best for local development environments.</helpText>
+            <helpText lang="de-DE">Führt einen Shell-Befehl aus, um Dateien direkt in Ihrem Editor zu öffnen. Funktioniert am besten in lokalen Entwicklungsumgebungen.</helpText>
+            <defaultValue>true</defaultValue>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Advanced Settings</title>
+        <title lang="de-DE">Erweiterte Einstellungen</title>
+
+        <input-field type="int">
+            <name>maxVariableDepth</name>
+            <label>Variable Inspection Depth</label>
+            <label lang="de-DE">Variablen-Inspektionstiefe</label>
+            <helpText>Maximum depth for serializing context variables. Higher values show more detail but may impact performance.</helpText>
+            <helpText lang="de-DE">Maximale Tiefe für die Serialisierung von Kontext-Variablen. Höhere Werte zeigen mehr Details, können aber die Leistung beeinträchtigen.</helpText>
+            <defaultValue>3</defaultValue>
+        </input-field>
+    </card>
+
+</config>

@@ -1,0 +1,23 @@
+{
+  "base": "/bundles/mnkysdevtools/administration/",
+  "entryPoints": {
+    "mnkys-dev-tools": {
+      "css": [],
+      "dynamic": [],
+      "js": [
+        "/bundles/mnkysdevtools/administration/assets/mnkys-dev-tools-CWb0pwGj.js"
+      ],
+      "legacy": false,
+      "preload": []
+    }
+  },
+  "legacy": false,
+  "metadatas": {},
+  "version": [
+    "7.1.0",
+    7,
+    1,
+    0
+  ],
+  "viteServer": null
+}

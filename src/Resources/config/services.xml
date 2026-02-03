@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- ================================== -->
+        <!-- DevTools Core Services             -->
+        <!-- ================================== -->
+        
+        <!-- Configuration Service -->
+        <service id="MnkysDevTools\Service\DevToolsConfigService">
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument>%kernel.environment%</argument>
+        </service>
+
+        <!-- Editor Service -->
+        <service id="MnkysDevTools\Service\EditorService">
+            <argument type="service" id="kernel"/>
+            <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
+        </service>
+
+        <!-- ================================== -->
+        <!-- Twig Extension                     -->
+        <!-- ================================== -->
+        
+        <service id="MnkysDevTools\Twig\TwigInspectorExtension">
+            <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
+            <tag name="twig.extension"/>
+        </service>
+
+        <!-- ================================== -->
+        <!-- Subscribers                        -->
+        <!-- ================================== -->
+        
+        <service id="MnkysDevTools\Subscriber\DevToolsSubscriber">
+            <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
+            <tag name="kernel.event_subscriber"/>
+        </service>
+
+        <!-- ================================== -->
+        <!-- Controllers                        -->
+        <!-- ================================== -->
+        
+        <service id="MnkysDevTools\Storefront\Controller\OpenEditorController" public="true">
+            <argument type="service" id="MnkysDevTools\Service\EditorService"/>
+            <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <tag name="controller.service_arguments"/>
+        </service>
+
+        <!-- ================================== -->
+        <!-- Legacy/Example Services (Optional) -->
+        <!-- ================================== -->
+
+        <service id="MnkysDevTools\Service\CustomFieldsInstaller">
+            <argument type="service" id="custom_field_set.repository"/>
+            <argument type="service" id="custom_field_set_relation.repository"/>
+        </service>
+
+    </services>
+</container>

@@ -1,0 +1,49 @@
+{
+    "mnkys-devtools": {
+        "general": {
+            "title": "Storefront DevTools",
+            "description": "Component Picker für Shopware 6 Storefront"
+        },
+        "settings": {
+            "saveButton": "Speichern",
+            "successTitle": "Erfolg",
+            "successMessage": "Einstellungen erfolgreich gespeichert. Laden Sie die Storefront neu, um die Änderungen anzuwenden.",
+            "errorTitle": "Fehler",
+            
+            "enableCard": {
+                "title": "DevTools Status",
+                "enableLabel": "Component Picker aktivieren",
+                "enableHelp": "Wenn aktiviert, erscheint ein DevTools-Button in der Storefront. Klicken Sie darauf oder drücken Sie Strg+Umschalt+C, um den Component Picker zu aktivieren.",
+                "enabledInfo": "DevTools ist aktiviert. Besuchen Sie die Storefront und klicken Sie auf den DevTools-Button unten links.",
+                "devModeWarning": "DevTools funktioniert nur im Entwicklungsmodus (APP_ENV=dev). Es wird in der Produktion automatisch deaktiviert."
+            },
+            
+            "editorCard": {
+                "title": "Editor-Einstellungen",
+                "editorLabel": "Bevorzugter Editor",
+                "editorHelp": "Wählen Sie Ihre IDE. Wenn Sie auf ein Element im Picker klicken, wird die Template-Datei in diesem Editor geöffnet.",
+                "execOpenLabel": "Dateien per Befehl öffnen",
+                "execOpenHelp": "Shell-Befehl ausführen, um Dateien direkt zu öffnen. Funktioniert am besten bei lokaler Entwicklung."
+            },
+            
+            "advancedCard": {
+                "title": "Erweiterte Einstellungen",
+                "depthLabel": "Variablen-Inspektionstiefe",
+                "depthHelp": "Wie tief Kontext-Variablen serialisiert werden. Höhere Werte zeigen mehr Details, können aber die Leistung beeinträchtigen."
+            },
+            
+            "usageCard": {
+                "title": "Anleitung",
+                "howToUse": "Erste Schritte",
+                "step1": "Aktivieren Sie DevTools oben und speichern Sie",
+                "step2": "Besuchen Sie Ihre Storefront",
+                "step3": "Klicken Sie auf den 'DevTools'-Button unten links (oder drücken Sie Strg+Umschalt+C)",
+                "step4": "Fahren Sie über Elemente, um Twig-Block-Info zu sehen, klicken Sie, um im Editor zu öffnen",
+                "shortcuts": "Tastenkürzel",
+                "shortcutToggle": "Component Picker umschalten",
+                "shortcutClose": "Component Picker schließen",
+                "shortcutOpen": "Template im Editor öffnen"
+            }
+        }
+    }
+}

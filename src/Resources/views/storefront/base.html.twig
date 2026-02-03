@@ -1,0 +1,26 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+{#
+    MnkysDevTools: Inject the collected block data as JSON for the inspector
+    This is placed at the end of the body so all blocks have been registered
+#}
+{% block base_body %}
+    {{ parent() }}
+    {% if devtools_enabled is defined and devtools_enabled %}
+        {{ devtools_render_block_data() }}
+    {% endif %}
+{% endblock %}
+
+{#
+    MnkysDevTools: Override base_body_inner to inject devtools data attributes
+    We inject a script that adds data attributes to the body element
+#}
+{% block base_body_inner %}
+    {% if devtools_enabled is defined and devtools_enabled %}
+    <script>
+        document.body.dataset.devtoolsEnabled = 'true';
+        document.body.dataset.devtoolsEditor = '{{ devtools_editor|default('vscode')|e('js') }}';
+    </script>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}

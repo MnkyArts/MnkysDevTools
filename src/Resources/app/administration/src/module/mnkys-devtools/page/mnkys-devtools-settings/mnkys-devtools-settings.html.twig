@@ -1,0 +1,95 @@
+<sw-page class="mnkys-devtools-settings">
+    <template #smart-bar-header>
+        <h2>{{ $tc('mnkys-devtools.general.title') }}</h2>
+    </template>
+
+    <template #smart-bar-actions>
+        <sw-button-process
+            :isLoading="isLoading"
+            :processSuccess="isSaveSuccessful"
+            variant="primary"
+            @process-finish="isSaveSuccessful = false"
+            @click="saveConfig">
+            {{ $tc('mnkys-devtools.settings.saveButton') }}
+        </sw-button-process>
+    </template>
+
+    <template #content>
+        <sw-card-view>
+            <!-- Main Enable/Disable Card -->
+            <sw-card :title="$tc('mnkys-devtools.settings.enableCard.title')" :isLoading="isLoading">
+                <sw-container columns="1fr" gap="16px">
+                    <sw-switch-field
+                        v-model:value="config.enabled"
+                        :label="$tc('mnkys-devtools.settings.enableCard.enableLabel')"
+                        :helpText="$tc('mnkys-devtools.settings.enableCard.enableHelp')"
+                        bordered>
+                    </sw-switch-field>
+
+                    <sw-alert v-if="config.enabled" variant="info">
+                        {{ $tc('mnkys-devtools.settings.enableCard.enabledInfo') }}
+                    </sw-alert>
+
+                    <sw-alert variant="warning">
+                        {{ $tc('mnkys-devtools.settings.enableCard.devModeWarning') }}
+                    </sw-alert>
+                </sw-container>
+            </sw-card>
+
+            <!-- Editor Settings Card -->
+            <sw-card :title="$tc('mnkys-devtools.settings.editorCard.title')" :isLoading="isLoading">
+                <sw-container columns="1fr 1fr" gap="16px">
+                    <sw-single-select
+                        v-model:value="config.editor"
+                        :label="$tc('mnkys-devtools.settings.editorCard.editorLabel')"
+                        :helpText="$tc('mnkys-devtools.settings.editorCard.editorHelp')"
+                        :options="editorOptions"
+                        labelProperty="label"
+                        valueProperty="value">
+                    </sw-single-select>
+
+                    <sw-switch-field
+                        v-model:value="config.execOpen"
+                        :label="$tc('mnkys-devtools.settings.editorCard.execOpenLabel')"
+                        :helpText="$tc('mnkys-devtools.settings.editorCard.execOpenHelp')"
+                        bordered>
+                    </sw-switch-field>
+                </sw-container>
+            </sw-card>
+
+            <!-- Advanced Settings Card -->
+            <sw-card :title="$tc('mnkys-devtools.settings.advancedCard.title')" :isLoading="isLoading">
+                <sw-container columns="1fr" gap="16px">
+                    <sw-single-select
+                        v-model:value="config.maxVariableDepth"
+                        :label="$tc('mnkys-devtools.settings.advancedCard.depthLabel')"
+                        :helpText="$tc('mnkys-devtools.settings.advancedCard.depthHelp')"
+                        :options="depthOptions"
+                        labelProperty="label"
+                        valueProperty="value">
+                    </sw-single-select>
+                </sw-container>
+            </sw-card>
+
+            <!-- Usage Instructions Card -->
+            <sw-card :title="$tc('mnkys-devtools.settings.usageCard.title')">
+                <div class="mnkys-devtools-usage">
+                    <h4>{{ $tc('mnkys-devtools.settings.usageCard.howToUse') }}</h4>
+                    <ol>
+                        <li>{{ $tc('mnkys-devtools.settings.usageCard.step1') }}</li>
+                        <li>{{ $tc('mnkys-devtools.settings.usageCard.step2') }}</li>
+                        <li>{{ $tc('mnkys-devtools.settings.usageCard.step3') }}</li>
+                        <li>{{ $tc('mnkys-devtools.settings.usageCard.step4') }}</li>
+                    </ol>
+
+                    <h4>{{ $tc('mnkys-devtools.settings.usageCard.shortcuts') }}</h4>
+                    <ul>
+                        <li><code>Ctrl+Shift+C</code> - {{ $tc('mnkys-devtools.settings.usageCard.shortcutToggle') }}</li>
+                        <li><code>Esc</code> - {{ $tc('mnkys-devtools.settings.usageCard.shortcutClose') }}</li>
+                        <li><code>Click</code> - {{ $tc('mnkys-devtools.settings.usageCard.shortcutOpen') }}</li>
+                    </ul>
+                </div>
+            </sw-card>
+        </sw-card-view>
+    </template>
+</sw-page>
