@@ -12,15 +12,17 @@
 {% endblock %}
 
 {#
-    MnkysDevTools: Override base_body_inner to inject devtools data attributes
-    We inject a script that adds data attributes to the body element
+    MnkysDevTools: Add data attributes directly to the body tag
+    This ensures the attributes are present when the JS plugin initializes
 #}
-{% block base_body_inner %}
-    {% if devtools_enabled is defined and devtools_enabled %}
-    <script>
-        document.body.dataset.devtoolsEnabled = 'true';
-        document.body.dataset.devtoolsEditor = '{{ devtools_editor|default('vscode')|e('js') }}';
-    </script>
-    {% endif %}
+{% block base_body_classes %}
     {{ parent() }}
+{% endblock %}
+
+{% block base_body_attributes %}
+    {{ parent() }}
+    {% if devtools_enabled is defined and devtools_enabled %}
+        data-devtools-enabled="true"
+        data-devtools-editor="{{ devtools_editor|default('vscode')|e('html_attr') }}"
+    {% endif %}
 {% endblock %}

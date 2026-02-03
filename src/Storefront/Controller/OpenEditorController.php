@@ -4,6 +4,7 @@ namespace MnkysDevTools\Storefront\Controller;
 
 use MnkysDevTools\Service\DevToolsConfigService;
 use MnkysDevTools\Service\EditorService;
+use MnkysDevTools\Service\TemplateInspectorService;
 use Shopware\Storefront\Controller\StorefrontController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +16,8 @@ class OpenEditorController extends StorefrontController
 {
     public function __construct(
         private readonly EditorService $editorService,
-        private readonly DevToolsConfigService $config
+        private readonly DevToolsConfigService $config,
+        private readonly TemplateInspectorService $templateInspector
     ) {}
 
     /**
@@ -100,6 +102,75 @@ class OpenEditorController extends StorefrontController
                 ? 'File opened in editor' 
                 : 'Use the editor URL to open the file manually'
         ]);
+    }
+
+    /**
+     * Get detailed information about a specific block
+     * Used by the inspector panel to show hierarchy, source, etc.
+     */
+    #[Route(
+        path: '/devtools/block-info',
+        name: 'frontend.devtools.block-info',
+        methods: ['GET'],
+        defaults: ['XmlHttpRequest' => true]
+    )]
+    public function getBlockInfo(Request $request): JsonResponse
+    {
+        // Security: Only allow in dev mode
+        if (!$this->config->isDevEnvironment()) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'DevTools is only available in development mode'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        // Check if DevTools is enabled
+        if (!$this->config->isEnabled()) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'DevTools is not enabled'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $template = $request->query->get('template');
+        $block = $request->query->get('block');
+        $line = (int) $request->query->get('line', 1);
+
+        if (!$template || !$block) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Missing required parameters: template and block'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $blockInfo = $this->templateInspector->getBlockInfo($template, $block, $line);
+            
+            if (isset($blockInfo['error'])) {
+                return new JsonResponse([
+                    'success' => false,
+                    'error' => $blockInfo['error']
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            // Add editor URL for convenience
+            if (isset($blockInfo['absolutePath'])) {
+                $blockInfo['editorUrl'] = $this->editorService->getEditorUrl(
+                    $blockInfo['absolutePath'],
+                    $blockInfo['line']
+                );
+            }
+
+            return new JsonResponse([
+                'success' => true,
+                'data' => $blockInfo
+            ]);
+        } catch (\Throwable $e) {
+            return new JsonResponse([
+                'success' => false,
+                'error' => 'Failed to get block info: ' . $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

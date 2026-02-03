@@ -21,6 +21,13 @@
             <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
         </service>
 
+        <!-- Template Inspector Service -->
+        <service id="MnkysDevTools\Service\TemplateInspectorService">
+            <argument type="service" id="kernel"/>
+            <argument type="service" id="MnkysDevTools\Service\EditorService"/>
+            <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
+        </service>
+
         <!-- ================================== -->
         <!-- Twig Extension                     -->
         <!-- ================================== -->
@@ -46,19 +53,11 @@
         <service id="MnkysDevTools\Storefront\Controller\OpenEditorController" public="true">
             <argument type="service" id="MnkysDevTools\Service\EditorService"/>
             <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
+            <argument type="service" id="MnkysDevTools\Service\TemplateInspectorService"/>
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>
             <tag name="controller.service_arguments"/>
-        </service>
-
-        <!-- ================================== -->
-        <!-- Legacy/Example Services (Optional) -->
-        <!-- ================================== -->
-
-        <service id="MnkysDevTools\Service\CustomFieldsInstaller">
-            <argument type="service" id="custom_field_set.repository"/>
-            <argument type="service" id="custom_field_set_relation.repository"/>
         </service>
 
     </services>

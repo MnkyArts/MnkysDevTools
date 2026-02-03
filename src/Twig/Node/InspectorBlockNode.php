@@ -39,6 +39,8 @@ class InspectorBlockNode extends BlockNode
             ->indent()
             ->write("\$macros = \$this->macros;\n")
             ->write("\$__devtools_blockData = " . var_export($blockData, true) . ";\n")
+            // Capture context variable keys for the inspector
+            ->write("\$__devtools_contextKeys = array_keys(\$context);\n")
             ->write("ob_start();\n")
             ->write("foreach ((function() use (\$context, \$blocks, \$macros) {\n")
             ->indent()
@@ -51,7 +53,8 @@ class InspectorBlockNode extends BlockNode
             ->outdent()
             ->write("})() as \$__devtools_chunk) { echo \$__devtools_chunk; }\n")
             ->write("\$__devtools_output = ob_get_clean();\n")
-            ->write("yield \$this->extensions['MnkysDevTools\\\\Twig\\\\TwigInspectorExtension']->injectBlockAttribute(\$__devtools_output, \$__devtools_blockData);\n")
+            // Pass context to the extension for analysis
+            ->write("yield \$this->extensions['MnkysDevTools\\\\Twig\\\\TwigInspectorExtension']->injectBlockAttribute(\$__devtools_output, \$__devtools_blockData, \$context);\n")
             ->outdent()
             ->write("}\n");
     }
