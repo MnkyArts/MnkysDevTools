@@ -67,12 +67,12 @@ class TemplateInspectorService
             
             $source = file_get_contents($currentPath);
             $parentTemplate = $this->getParentTemplate($source);
-            $blocks = $this->extractAllBlocks($source);
+            $blocksData = $this->extractAllBlocks($source);
             
             $hierarchy[] = [
                 'template' => $currentTemplate,
                 'absolutePath' => $currentPath,
-                'blocks' => array_keys($blocks),
+                'blocks' => array_keys($blocksData['flat']),
                 'isRoot' => $parentTemplate === null,
             ];
             
@@ -175,24 +175,55 @@ class TemplateInspectorService
     }
 
     /**
-     * Extract all block definitions from a template
+     * Extract all block definitions from a template with nesting structure
      */
     public function extractAllBlocks(string $source): array
     {
         $blocks = [];
         $lines = explode("\n", $source);
+        $stack = []; // Track parent blocks
+        $blockTree = []; // Root level blocks
         
         foreach ($lines as $index => $line) {
+            $lineNum = $index + 1;
+            
+            // Check for block start
             if (preg_match('/\{%\s*block\s+(\w+)\s*%\}/', $line, $matches)) {
                 $blockName = $matches[1];
-                $blocks[$blockName] = [
+                $depth = count($stack);
+                $parentName = !empty($stack) ? end($stack) : null;
+                
+                $blockData = [
                     'name' => $blockName,
-                    'line' => $index + 1,
+                    'line' => $lineNum,
+                    'depth' => $depth,
+                    'parent' => $parentName,
+                    'children' => [],
                 ];
+                
+                $blocks[$blockName] = $blockData;
+                
+                // Add to parent's children or root
+                if ($parentName !== null && isset($blocks[$parentName])) {
+                    $blocks[$parentName]['children'][] = $blockName;
+                } else {
+                    $blockTree[] = $blockName;
+                }
+                
+                // Push to stack
+                $stack[] = $blockName;
+            }
+            
+            // Check for block end
+            if (preg_match('/\{%\s*endblock\s*%\}/', $line)) {
+                array_pop($stack);
             }
         }
         
-        return $blocks;
+        return [
+            'flat' => $blocks,
+            'tree' => $blockTree,
+        ];
     }
 
     /**

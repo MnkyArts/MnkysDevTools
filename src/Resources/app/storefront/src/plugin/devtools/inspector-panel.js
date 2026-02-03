@@ -370,24 +370,52 @@ export class DetailPanel {
         
         const hierarchy = this.blockInfo.hierarchy;
         const currentTemplate = this.currentBlock.template;
+        const totalItems = hierarchy.length;
         
         return `
-            <div class="hierarchy-tree">
-                ${hierarchy.map((item, index) => {
-                    const isCurrent = item.template === currentTemplate;
-                    const indent = '└─'.repeat(index);
-                    const blockCount = item.blocks ? item.blocks.length : 0;
-                    
-                    return `
-                        <div class="hierarchy-item ${isCurrent ? 'current' : ''} ${!isCurrent ? 'clickable' : ''}"
-                             data-template="${escapeHtml(item.template)}"
-                             data-line="1">
-                            <span class="hierarchy-indent">${indent}</span>
-                            <span class="hierarchy-template">${escapeHtml(shortenPath(item.template))}</span>
-                            <span class="hierarchy-blocks">${blockCount} blocks</span>
-                        </div>
-                    `;
-                }).join('')}
+            <div class="hierarchy-section">
+                <div class="hierarchy-label">Template Inheritance Chain</div>
+                <div class="hierarchy-tree">
+                    ${hierarchy.map((item, index) => {
+                        const isCurrent = item.template === currentTemplate;
+                        const isRoot = item.isRoot || index === 0;
+                        const isLast = index === totalItems - 1;
+                        const blockCount = item.blocks ? item.blocks.length : 0;
+                        
+                        // Build tree connector lines
+                        let connector = '';
+                        if (index > 0) {
+                            // Vertical lines for all ancestors
+                            for (let i = 0; i < index - 1; i++) {
+                                connector += '<span class="tree-line">│</span>';
+                            }
+                            // Final connector
+                            connector += isLast 
+                                ? '<span class="tree-line">└</span><span class="tree-branch">─</span>'
+                                : '<span class="tree-line">├</span><span class="tree-branch">─</span>';
+                        }
+                        
+                        // Icon for root vs child
+                        const icon = isRoot 
+                            ? '<span class="hierarchy-icon root" title="Base template">◆</span>' 
+                            : '<span class="hierarchy-icon child" title="Extends parent">◇</span>';
+                        
+                        return `
+                            <div class="hierarchy-item ${isCurrent ? 'current' : ''} ${!isCurrent ? 'clickable' : ''}"
+                                 data-template="${escapeHtml(item.template)}"
+                                 data-line="1"
+                                 data-depth="${index}">
+                                <div class="hierarchy-tree-line">${connector}</div>
+                                <div class="hierarchy-content">
+                                    ${icon}
+                                    <span class="hierarchy-template" title="${escapeHtml(item.template)}">${escapeHtml(shortenPath(item.template))}</span>
+                                    <span class="hierarchy-blocks">${blockCount}</span>
+                                </div>
+                                ${isCurrent ? '<span class="hierarchy-current-badge">current</span>' : ''}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
             </div>
             
             ${this.blockInfo.blocks ? this.renderBlockList() : ''}
@@ -395,31 +423,77 @@ export class DetailPanel {
     }
 
     /**
-     * Render the list of blocks in current template
+     * Render the list of blocks in current template as a tree
      */
     renderBlockList() {
-        const blocks = this.blockInfo.blocks;
-        const blockNames = Object.keys(blocks);
+        const blocksData = this.blockInfo.blocks;
         
-        if (blockNames.length === 0) return '';
+        // Handle both old format (flat object) and new format (with flat and tree)
+        const flatBlocks = blocksData.flat || blocksData;
+        const treeRoots = blocksData.tree || Object.keys(flatBlocks);
+        
+        if (!flatBlocks || Object.keys(flatBlocks).length === 0) return '';
+        
+        const currentBlockName = this.currentBlock.block;
+        
+        // Recursive function to render a block and its children
+        const renderBlockNode = (blockName, depth, isLast, parentLines) => {
+            const block = flatBlocks[blockName];
+            if (!block) return '';
+            
+            const isCurrent = blockName === currentBlockName;
+            const children = block.children || [];
+            const hasChildren = children.length > 0;
+            
+            // Build tree connector
+            let connector = '';
+            for (let i = 0; i < parentLines.length; i++) {
+                connector += parentLines[i] ? '<span class="tree-line">│</span>' : '<span class="tree-line"> </span>';
+            }
+            if (depth > 0) {
+                connector += isLast 
+                    ? '<span class="tree-line">└</span><span class="tree-branch">─</span>'
+                    : '<span class="tree-line">├</span><span class="tree-branch">─</span>';
+            }
+            
+            let html = `
+                <div class="block-entry ${isCurrent ? 'current' : ''}" 
+                     data-block="${escapeHtml(blockName)}" 
+                     data-line="${block.line}"
+                     data-depth="${depth}">
+                    <div class="block-tree-line">${connector}</div>
+                    <span class="block-icon">{%</span>
+                    <span class="block-entry-name">${escapeHtml(blockName)}</span>
+                    <span class="block-line">:${block.line}</span>
+                    ${isCurrent ? '<span class="block-current-badge">●</span>' : ''}
+                </div>
+            `;
+            
+            // Render children
+            if (hasChildren) {
+                const newParentLines = [...parentLines, !isLast];
+                children.forEach((childName, index) => {
+                    const childIsLast = index === children.length - 1;
+                    html += renderBlockNode(childName, depth + 1, childIsLast, newParentLines);
+                });
+            }
+            
+            return html;
+        };
+        
+        // Render tree starting from roots
+        let blocksHtml = '';
+        treeRoots.forEach((rootName, index) => {
+            const isLast = index === treeRoots.length - 1;
+            blocksHtml += renderBlockNode(rootName, 0, isLast, []);
+        });
         
         return `
-            <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #333;">
-                <div style="color: #888; font-size: 10px; margin-bottom: 8px;">
-                    Blocks in this template:
+            <div class="hierarchy-section blocks-section">
+                <div class="hierarchy-label">Blocks in Current Template</div>
+                <div class="blocks-tree">
+                    ${blocksHtml}
                 </div>
-                ${blockNames.map(name => {
-                    const isCurrent = name === this.currentBlock.block;
-                    return `
-                        <div class="hierarchy-item ${isCurrent ? 'current' : ''}"
-                             style="padding: 4px 8px; font-size: 11px;">
-                            <span style="color: ${isCurrent ? '#42b883' : '#9cdcfe'}">
-                                ${escapeHtml(name)}
-                            </span>
-                            <span class="hierarchy-blocks">:${blocks[name].line}</span>
-                        </div>
-                    `;
-                }).join('')}
             </div>
         `;
     }
@@ -444,17 +518,19 @@ export class DetailPanel {
         
         return `
             <div class="source-container">
-                ${lines.map(line => {
-                    const isBlockLine = line.isBlockLine;
-                    const isStart = line.isStartLine;
-                    
-                    return `
-                        <div class="source-line ${isBlockLine ? 'highlight' : ''} ${isStart ? 'block-start' : ''}">
-                            <span class="line-number">${line.number}</span>
-                            <span class="line-content">${highlightTwigSyntax(escapeHtml(line.content))}</span>
-                        </div>
-                    `;
-                }).join('')}
+                <div class="source-code">
+                    ${lines.map(line => {
+                        const isBlockLine = line.isBlockLine;
+                        const isStart = line.isStartLine;
+                        
+                        return `
+                            <div class="source-line ${isBlockLine ? 'highlight' : ''} ${isStart ? 'block-start' : ''}">
+                                <span class="line-number">${line.number}</span>
+                                <span class="line-content">${highlightTwigSyntax(escapeHtml(line.content))}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
             </div>
         `;
     }

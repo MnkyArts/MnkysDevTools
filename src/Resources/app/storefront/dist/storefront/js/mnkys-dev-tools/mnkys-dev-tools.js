@@ -1,8 +1,8 @@
-(()=>{"use strict";var e={156:e=>{var t=function(e){var t;return!!e&&"object"==typeof e&&"[object RegExp]"!==(t=Object.prototype.toString.call(e))&&"[object Date]"!==t&&e.$$typeof!==o},o="function"==typeof Symbol&&Symbol.for?Symbol.for("react.element"):60103;function n(e,t){return!1!==t.clone&&t.isMergeableObject(e)?a(Array.isArray(e)?[]:{},e,t):e}function i(e,t,o){return e.concat(t).map(function(e){return n(e,o)})}function s(e){return Object.keys(e).concat(Object.getOwnPropertySymbols?Object.getOwnPropertySymbols(e).filter(function(t){return Object.propertyIsEnumerable.call(e,t)}):[])}function r(e,t){try{return t in e}catch(e){return!1}}function a(e,o,l){(l=l||{}).arrayMerge=l.arrayMerge||i,l.isMergeableObject=l.isMergeableObject||t,l.cloneUnlessOtherwiseSpecified=n;var c,d,p=Array.isArray(o);return p!==Array.isArray(e)?n(o,l):p?l.arrayMerge(e,o,l):(d={},(c=l).isMergeableObject(e)&&s(e).forEach(function(t){d[t]=n(e[t],c)}),s(o).forEach(function(t){(!r(e,t)||Object.hasOwnProperty.call(e,t)&&Object.propertyIsEnumerable.call(e,t))&&(r(e,t)&&c.isMergeableObject(o[t])?d[t]=(function(e,t){if(!t.customMerge)return a;var o=t.customMerge(e);return"function"==typeof o?o:a})(t,c)(e[t],o[t],c):d[t]=n(o[t],c))}),d)}a.all=function(e,t){if(!Array.isArray(e))throw Error("first argument should be an array");return e.reduce(function(e,o){return a(e,o,t)},{})},e.exports=a}},t={};function o(n){var i=t[n];if(void 0!==i)return i.exports;var s=t[n]={exports:{}};return e[n](s,s.exports,o),s.exports}o.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return o.d(t,{a:t}),t},o.d=(e,t)=>{for(var n in t)o.o(t,n)&&!o.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},o.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t);var n=o(156),i=o.n(n);class s{static ucFirst(e){return e.charAt(0).toUpperCase()+e.slice(1)}static lcFirst(e){return e.charAt(0).toLowerCase()+e.slice(1)}static toDashCase(e){return e.replace(/([A-Z])/g,"-$1").replace(/^-/,"").toLowerCase()}static toLowerCamelCase(e,t){let o=s.toUpperCamelCase(e,t);return s.lcFirst(o)}static toUpperCamelCase(e,t){return t?e.split(t).map(e=>s.ucFirst(e.toLowerCase())).join(""):s.ucFirst(e.toLowerCase())}static parsePrimitive(e){try{return/^\d+(.|,)\d+$/.test(e)&&(e=e.replace(",",".")),JSON.parse(e)}catch(t){return e.toString()}}}class r{constructor(e=document){this._el=e,e.$emitter=this,this._listeners=[]}publish(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},o=arguments.length>2&&void 0!==arguments[2]&&arguments[2],n=new CustomEvent(e,{detail:t,cancelable:o});return this.el.dispatchEvent(n),n}subscribe(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},n=this,i=e.split("."),s=o.scope?t.bind(o.scope):t;if(o.once&&!0===o.once){let t=s;s=function(o){n.unsubscribe(e),t(o)}}return this.el.addEventListener(i[0],s),this.listeners.push({splitEventName:i,opts:o,cb:s}),!0}unsubscribe(e){let t=e.split(".");return this.listeners=this.listeners.reduce((e,o)=>([...o.splitEventName].sort().toString()===t.sort().toString()?this.el.removeEventListener(o.splitEventName[0],o.cb):e.push(o),e),[]),!0}reset(){return this.listeners.forEach(e=>{this.el.removeEventListener(e.splitEventName[0],e.cb)}),this.listeners=[],!0}get el(){return this._el}set el(e){this._el=e}get listeners(){return this._listeners}set listeners(e){this._listeners=e}}class a{constructor(e,t={},o=!1){if(!(e instanceof Node)){console.warn(`There is no valid element given while trying to create a plugin instance for "${o}".`);return}this.el=e,this.$emitter=new r(this.el),this._pluginName=this._getPluginName(o),this.options=this._mergeOptions(t),this._initialized=!1,this._registerInstance(),this._init()}init(){console.warn(`The "init" method for the plugin "${this._pluginName}" is not defined. The plugin will not be initialized.`)}update(){}_init(){this._initialized||(this.init(),this._initialized=!0)}_update(){this._initialized&&this.update()}_mergeOptions(e){let t=[this.constructor.options,this.options,e];return t.push(this._getConfigFromDataAttribute()),t.push(this._getOptionsFromDataAttribute()),i().all(t.filter(e=>e instanceof Object&&!(e instanceof Array)).map(e=>e||{}))}_getConfigFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-config`);return o?window.PluginConfigManager.get(this._pluginName,o):e}_getOptionsFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-options`);if(o)try{return JSON.parse(o)}catch(e){console.error(`The data attribute "data-${t}-options" could not be parsed to json: ${e.message}`)}return e}_registerInstance(){window.PluginManager.getPluginInstancesFromElement(this.el).set(this._pluginName,this),window.PluginManager.getPlugin(this._pluginName,!1).get("instances").push(this)}_getPluginName(e){return e||(e=this.constructor.name),e}}let l={accent:"#00D9FF",accentHover:"#00B8D9",accentMuted:"rgba(0, 217, 255, 0.15)",error:"#FF5252",bgDeep:"#0D1117",bg:"#161B22",bgElevated:"#21262D",bgHover:"#30363D",bgGlass:"rgba(22, 27, 34, 0.85)",text:"#F0F6FC",textSecondary:"#8B949E",textMuted:"#6E7681",border:"#30363D",borderHover:"#8B949E",borderAccent:"rgba(0, 217, 255, 0.4)",overlay:"rgba(0, 217, 255, 0.12)",overlayBorder:"#00D9FF",syntax:{keyword:"#FF79C6",string:"#A5D6FF",variable:"#79C0FF",number:"#A5D6A7",comment:"#6E7681",tag:"#7EE787",attribute:"#D2A8FF"}},c={mono:'"JetBrains Mono", "Fira Code", "SF Mono", "Consolas", monospace',system:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'},d={overlay:0x7ffffff8,tooltip:0x7ffffff9,panel:0x7ffffffa,detailPanel:0x7ffffffb,notification:0x80000002,toggle:0x7fffffee},p={xs:"4px",sm:"8px",md:"12px",lg:"16px",xl:"20px",xxl:"24px"},h={sm:"6px",md:"10px",lg:"14px",full:"9999px"},u={sm:"0 2px 8px rgba(0, 0, 0, 0.3)",md:"0 4px 16px rgba(0, 0, 0, 0.4)",lg:"0 8px 32px rgba(0, 0, 0, 0.5)",glow:"0 0 20px rgba(0, 217, 255, 0.3)",glowStrong:"0 0 30px rgba(0, 217, 255, 0.4)"};function b(e){return"string"!=typeof e?e:e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function m(e){return e.replace(/^@Storefront\//,"").replace(/^@(\w+)\//,"$1/").replace(/^storefront\//,"")}function g(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"success",o=document.createElement("div");o.className=`devtools-notification ${t}`,o.textContent=e,document.body.appendChild(o),requestAnimationFrame(()=>o.style.opacity="1"),setTimeout(()=>{o.style.opacity="0",setTimeout(()=>o.remove(),200)},2500)}function v(e){if(e.closest(["__mnkys-devtools-overlay__","__mnkys-devtools-tooltip__","__mnkys-devtools-panel__","__mnkys-devtools-detail__","__mnkys-devtools-toggle__"].map(e=>`#${e}`).join(", ")))return null;for(;e&&e!==document.body&&e!==document.documentElement;){if(e.dataset&&e.dataset.twigBlock)return e;e=e.parentElement}return null}function y(e){try{return JSON.parse(e.dataset.twigBlock)}catch(e){return console.warn("DevTools: Failed to parse twig data",e),null}}class f{constructor(e={}){this.options={overlayColor:"rgba(66, 184, 131, 0.15)",overlayBorderColor:"#1699F7",overlayBorderWidth:"2px",transitionDuration:"0.12s",...e},this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-overlay__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}highlight(e){if(!this.element||!e)return;let t=e.getBoundingClientRect(),o=parseInt(this.options.overlayBorderWidth,10);Object.assign(this.element.style,{display:"block",left:`${t.left-o}px`,top:`${t.top-o}px`,width:`${t.width+2*o}px`,height:`${t.height+2*o}px`})}isVisible(){return this.element&&"none"!==this.element.style.display}}class _{constructor(){this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-tooltip__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}update(e,t){let o=y(e);if(!o)return;let n=e.tagName.toLowerCase(),i=e.id?`#${e.id}`:"",s=e.className&&"string"==typeof e.className?"."+e.className.trim().split(/\s+/).slice(0,2).join("."):"";this.element.innerHTML=`
+(()=>{"use strict";var e={156:e=>{var t=function(e){var t;return!!e&&"object"==typeof e&&"[object RegExp]"!==(t=Object.prototype.toString.call(e))&&"[object Date]"!==t&&e.$$typeof!==o},o="function"==typeof Symbol&&Symbol.for?Symbol.for("react.element"):60103;function n(e,t){return!1!==t.clone&&t.isMergeableObject(e)?a(Array.isArray(e)?[]:{},e,t):e}function i(e,t,o){return e.concat(t).map(function(e){return n(e,o)})}function s(e){return Object.keys(e).concat(Object.getOwnPropertySymbols?Object.getOwnPropertySymbols(e).filter(function(t){return Object.propertyIsEnumerable.call(e,t)}):[])}function r(e,t){try{return t in e}catch(e){return!1}}function a(e,o,l){(l=l||{}).arrayMerge=l.arrayMerge||i,l.isMergeableObject=l.isMergeableObject||t,l.cloneUnlessOtherwiseSpecified=n;var c,d,p=Array.isArray(o);return p!==Array.isArray(e)?n(o,l):p?l.arrayMerge(e,o,l):(d={},(c=l).isMergeableObject(e)&&s(e).forEach(function(t){d[t]=n(e[t],c)}),s(o).forEach(function(t){(!r(e,t)||Object.hasOwnProperty.call(e,t)&&Object.propertyIsEnumerable.call(e,t))&&(r(e,t)&&c.isMergeableObject(o[t])?d[t]=(function(e,t){if(!t.customMerge)return a;var o=t.customMerge(e);return"function"==typeof o?o:a})(t,c)(e[t],o[t],c):d[t]=n(o[t],c))}),d)}a.all=function(e,t){if(!Array.isArray(e))throw Error("first argument should be an array");return e.reduce(function(e,o){return a(e,o,t)},{})},e.exports=a}},t={};function o(n){var i=t[n];if(void 0!==i)return i.exports;var s=t[n]={exports:{}};return e[n](s,s.exports,o),s.exports}o.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return o.d(t,{a:t}),t},o.d=(e,t)=>{for(var n in t)o.o(t,n)&&!o.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},o.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t);var n=o(156),i=o.n(n);class s{static ucFirst(e){return e.charAt(0).toUpperCase()+e.slice(1)}static lcFirst(e){return e.charAt(0).toLowerCase()+e.slice(1)}static toDashCase(e){return e.replace(/([A-Z])/g,"-$1").replace(/^-/,"").toLowerCase()}static toLowerCamelCase(e,t){let o=s.toUpperCamelCase(e,t);return s.lcFirst(o)}static toUpperCamelCase(e,t){return t?e.split(t).map(e=>s.ucFirst(e.toLowerCase())).join(""):s.ucFirst(e.toLowerCase())}static parsePrimitive(e){try{return/^\d+(.|,)\d+$/.test(e)&&(e=e.replace(",",".")),JSON.parse(e)}catch(t){return e.toString()}}}class r{constructor(e=document){this._el=e,e.$emitter=this,this._listeners=[]}publish(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},o=arguments.length>2&&void 0!==arguments[2]&&arguments[2],n=new CustomEvent(e,{detail:t,cancelable:o});return this.el.dispatchEvent(n),n}subscribe(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},n=this,i=e.split("."),s=o.scope?t.bind(o.scope):t;if(o.once&&!0===o.once){let t=s;s=function(o){n.unsubscribe(e),t(o)}}return this.el.addEventListener(i[0],s),this.listeners.push({splitEventName:i,opts:o,cb:s}),!0}unsubscribe(e){let t=e.split(".");return this.listeners=this.listeners.reduce((e,o)=>([...o.splitEventName].sort().toString()===t.sort().toString()?this.el.removeEventListener(o.splitEventName[0],o.cb):e.push(o),e),[]),!0}reset(){return this.listeners.forEach(e=>{this.el.removeEventListener(e.splitEventName[0],e.cb)}),this.listeners=[],!0}get el(){return this._el}set el(e){this._el=e}get listeners(){return this._listeners}set listeners(e){this._listeners=e}}class a{constructor(e,t={},o=!1){if(!(e instanceof Node)){console.warn(`There is no valid element given while trying to create a plugin instance for "${o}".`);return}this.el=e,this.$emitter=new r(this.el),this._pluginName=this._getPluginName(o),this.options=this._mergeOptions(t),this._initialized=!1,this._registerInstance(),this._init()}init(){console.warn(`The "init" method for the plugin "${this._pluginName}" is not defined. The plugin will not be initialized.`)}update(){}_init(){this._initialized||(this.init(),this._initialized=!0)}_update(){this._initialized&&this.update()}_mergeOptions(e){let t=[this.constructor.options,this.options,e];return t.push(this._getConfigFromDataAttribute()),t.push(this._getOptionsFromDataAttribute()),i().all(t.filter(e=>e instanceof Object&&!(e instanceof Array)).map(e=>e||{}))}_getConfigFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-config`);return o?window.PluginConfigManager.get(this._pluginName,o):e}_getOptionsFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-options`);if(o)try{return JSON.parse(o)}catch(e){console.error(`The data attribute "data-${t}-options" could not be parsed to json: ${e.message}`)}return e}_registerInstance(){window.PluginManager.getPluginInstancesFromElement(this.el).set(this._pluginName,this),window.PluginManager.getPlugin(this._pluginName,!1).get("instances").push(this)}_getPluginName(e){return e||(e=this.constructor.name),e}}let l={accent:"#00D9FF",accentHover:"#00B8D9",accentMuted:"rgba(0, 217, 255, 0.15)",error:"#FF5252",bgDeep:"#0D1117",bg:"#161B22",bgElevated:"#21262D",bgHover:"#30363D",bgGlass:"rgba(22, 27, 34, 0.85)",text:"#F0F6FC",textSecondary:"#8B949E",textMuted:"#6E7681",border:"#30363D",borderHover:"#8B949E",borderAccent:"rgba(0, 217, 255, 0.4)",overlay:"rgba(0, 217, 255, 0.12)",overlayBorder:"#00D9FF",syntax:{keyword:"#FF79C6",string:"#A5D6FF",variable:"#79C0FF",number:"#A5D6A7",comment:"#6E7681",tag:"#7EE787",attribute:"#D2A8FF"}},c={mono:'"JetBrains Mono", "Fira Code", "SF Mono", "Consolas", monospace',system:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'},d={overlay:0x7ffffff8,tooltip:0x7ffffff9,panel:0x7ffffffa,detailPanel:0x7ffffffb,notification:0x80000002},p={xs:"4px",sm:"8px",md:"12px",lg:"16px",xl:"20px",xxl:"24px"},h={sm:"6px",md:"10px",lg:"14px",full:"9999px"},b={sm:"0 2px 8px rgba(0, 0, 0, 0.3)",lg:"0 8px 32px rgba(0, 0, 0, 0.5)",glow:"0 0 20px rgba(0, 217, 255, 0.3)"};function u(e){return"string"!=typeof e?e:e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function m(e){return e.replace(/^@Storefront\//,"").replace(/^@(\w+)\//,"$1/").replace(/^storefront\//,"")}function g(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"success",o=document.createElement("div");o.className=`devtools-notification ${t}`,o.textContent=e,document.body.appendChild(o),requestAnimationFrame(()=>o.style.opacity="1"),setTimeout(()=>{o.style.opacity="0",setTimeout(()=>o.remove(),200)},2500)}function v(e){if(e.closest(["__mnkys-devtools-overlay__","__mnkys-devtools-tooltip__","__mnkys-devtools-panel__","__mnkys-devtools-detail__","__mnkys-devtools-toggle__"].map(e=>`#${e}`).join(", ")))return null;for(;e&&e!==document.body&&e!==document.documentElement;){if(e.dataset&&e.dataset.twigBlock)return e;e=e.parentElement}return null}function y(e){try{return JSON.parse(e.dataset.twigBlock)}catch(e){return console.warn("DevTools: Failed to parse twig data",e),null}}class f{constructor(e={}){this.options={overlayColor:"rgba(66, 184, 131, 0.15)",overlayBorderColor:"#1699F7",overlayBorderWidth:"2px",transitionDuration:"0.12s",...e},this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-overlay__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}highlight(e){if(!this.element||!e)return;let t=e.getBoundingClientRect(),o=parseInt(this.options.overlayBorderWidth,10);Object.assign(this.element.style,{display:"block",left:`${t.left-o}px`,top:`${t.top-o}px`,width:`${t.width+2*o}px`,height:`${t.height+2*o}px`})}isVisible(){return this.element&&"none"!==this.element.style.display}}class _{constructor(){this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-tooltip__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}update(e,t){let o=y(e);if(!o)return;let n=e.tagName.toLowerCase(),i=e.id?`#${e.id}`:"",s=e.className&&"string"==typeof e.className?"."+e.className.trim().split(/\s+/).slice(0,2).join("."):"";this.element.innerHTML=`
             <div class="element-tag">&lt;${n}${i}${s}&gt;</div>
-            <div class="block-name">${b(o.block)}</div>
-            <div class="template-path">${b(o.template)}:${o.line}</div>
-        `,this.show(),this.position(t)}position(e){if(!this.element||"none"===this.element.style.display)return;let t=this.element.getBoundingClientRect(),o=window.innerWidth,n=window.innerHeight,i=e.clientX+15,s=e.clientY+15;i+t.width>o-15&&(i=e.clientX-t.width-15),s+t.height>n-15&&(s=e.clientY-t.height-15),i=Math.max(15,i),s=Math.max(15,s),this.element.style.left=`${i}px`,this.element.style.top=`${s}px`}isVisible(){return this.element&&"none"!==this.element.style.display}}class ${constructor(e={}){this.options={onToggle:null,...e},this.element=null,this.isActive=!1}create(){this.element||document.getElementById("__mnkys-devtools-toggle__")||(this.element=document.createElement("button"),this.element.id="__mnkys-devtools-toggle__",this.element.innerHTML=`
+            <div class="block-name">${u(o.block)}</div>
+            <div class="template-path">${u(o.template)}:${o.line}</div>
+        `,this.show(),this.position(t)}position(e){if(!this.element||"none"===this.element.style.display)return;let t=this.element.getBoundingClientRect(),o=window.innerWidth,n=window.innerHeight,i=e.clientX+15,s=e.clientY+15;i+t.width>o-15&&(i=e.clientX-t.width-15),s+t.height>n-15&&(s=e.clientY-t.height-15),i=Math.max(15,i),s=Math.max(15,s),this.element.style.left=`${i}px`,this.element.style.top=`${s}px`}isVisible(){return this.element&&"none"!==this.element.style.display}}class x{constructor(e={}){this.options={onToggle:null,...e},this.element=null,this.isActive=!1}create(){this.element||document.getElementById("__mnkys-devtools-toggle__")||(this._injectStyles(),this.element=document.createElement("button"),this.element.id="__mnkys-devtools-toggle__",this.element.innerHTML=`
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"/>
                 <path d="M21 21l-4.35-4.35"/>
@@ -14,7 +14,88 @@
                 `:o.innerHTML=`
                     <circle cx="11" cy="11" r="8"/>
                     <path d="M21 21l-4.35-4.35"/>
-                `)}exists(){return!!this.element}}let x=new class{constructor(){this._request=null,this._errorHandlingInternal=!1}get(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"application/json",n=this._createPreparedRequest("GET",e,o);return this._sendRequest(n,null,t)}post(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("POST",e,n);return this._sendRequest(i,t,o)}delete(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("DELETE",e,n);return this._sendRequest(i,t,o)}patch(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("PATCH",e,n);return this._sendRequest(i,t,o)}abort(){if(this._request)return this._request.abort()}setErrorHandlingInternal(e){this._errorHandlingInternal=e}_registerOnLoaded(e,t){t&&(!0===this._errorHandlingInternal?(e.addEventListener("load",()=>{t(e.responseText,e)}),e.addEventListener("abort",()=>{console.warn(`the request to ${e.responseURL} was aborted`)}),e.addEventListener("error",()=>{console.warn(`the request to ${e.responseURL} failed with status ${e.status}`)}),e.addEventListener("timeout",()=>{console.warn(`the request to ${e.responseURL} timed out`)})):e.addEventListener("loadend",()=>{t(e.responseText,e)}))}_sendRequest(e,t,o){return this._registerOnLoaded(e,o),e.send(t),e}_getContentType(e,t){return e instanceof FormData&&(t=!1),t}_createPreparedRequest(e,t,o){return this._request=new XMLHttpRequest,this._request.open(e,t),this._request.setRequestHeader("X-Requested-With","XMLHttpRequest"),o&&this._request.setRequestHeader("Content-type",o),this._request}},k={openEditor:"/devtools/open-editor",blockInfo:"/devtools/block-info"};function w(e,t){return new Promise((o,n)=>{let i=`${k.openEditor}?file=${encodeURIComponent(e)}&line=${t}`;x.get(i,e=>{try{let t=JSON.parse(e);o(t)}catch(e){n(Error("Failed to parse response"))}},"application/json",!0)})}function T(){let e=document.getElementById("devtools-block-data");if(!e)return[];try{return(JSON.parse(e.textContent)||[]).sort((e,t)=>{let o=e.template.localeCompare(t.template);return 0!==o?o:e.block.localeCompare(t.block)})}catch(e){return console.warn("DevTools: Failed to parse block data",e),[]}}class E{constructor(e={}){this.options={onBlockSelect:null,...e},this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm=""}create(){this.element||(this.blocks=T(),this.filteredBlocks=[...this.blocks],this.element=document.createElement("div"),this.element.id="__mnkys-devtools-panel__",this.element.innerHTML=this._buildHTML(),document.body.appendChild(this.element),this._attachEvents())}destroy(){this.element?.remove(),this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm=""}reload(){this.blocks=T(),this.filteredBlocks=[...this.blocks],this._updateList()}getBlocks(){return this.blocks}hasBlocks(){return this.blocks.length>0}_buildHTML(){return`
+                `)}exists(){return!!this.element}_injectStyles(){if(document.getElementById("__mnkys-devtools-toggle-styles__"))return;let e=document.createElement("style");e.id="__mnkys-devtools-toggle-styles__",e.textContent=`
+            #__mnkys-devtools-toggle__ {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                z-index: 2147483630;
+                
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 16px;
+                
+                background: rgba(22, 27, 34, 0.85);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                
+                color: #00D9FF;
+                border: 1px solid rgba(0, 217, 255, 0.4);
+                border-radius: 9999px;
+                
+                cursor: pointer;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+                
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 217, 255, 0.3);
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                transform: translateY(0);
+            }
+
+            #__mnkys-devtools-toggle__:hover {
+                background: #00D9FF;
+                color: #0D1117;
+                border-color: #00D9FF;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 217, 255, 0.4);
+            }
+
+            #__mnkys-devtools-toggle__:active {
+                transform: translateY(0) scale(0.98);
+            }
+
+            #__mnkys-devtools-toggle__.active {
+                background: #00D9FF;
+                color: #0D1117;
+                border-color: #00D9FF;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 217, 255, 0.4);
+            }
+
+            #__mnkys-devtools-toggle__ svg {
+                transition: transform 0.2s ease;
+            }
+
+            #__mnkys-devtools-toggle__:hover svg {
+                transform: scale(1.1);
+            }
+
+            #__mnkys-devtools-toggle__.active svg {
+                transform: rotate(0deg);
+            }
+
+            #__mnkys-devtools-toggle__:focus {
+                outline: none;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 3px rgba(0, 217, 255, 0.3);
+            }
+
+            #__mnkys-devtools-toggle__:focus-visible {
+                outline: 2px solid #00D9FF;
+                outline-offset: 2px;
+            }
+
+            /* Respect reduced motion preference */
+            @media (prefers-reduced-motion: reduce) {
+                #__mnkys-devtools-toggle__ {
+                    transition: none;
+                }
+                #__mnkys-devtools-toggle__ svg {
+                    transition: none;
+                }
+            }
+        `,document.head.appendChild(e)}}let k=new class{constructor(){this._request=null,this._errorHandlingInternal=!1}get(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"application/json",n=this._createPreparedRequest("GET",e,o);return this._sendRequest(n,null,t)}post(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("POST",e,n);return this._sendRequest(i,t,o)}delete(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("DELETE",e,n);return this._sendRequest(i,t,o)}patch(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("PATCH",e,n);return this._sendRequest(i,t,o)}abort(){if(this._request)return this._request.abort()}setErrorHandlingInternal(e){this._errorHandlingInternal=e}_registerOnLoaded(e,t){t&&(!0===this._errorHandlingInternal?(e.addEventListener("load",()=>{t(e.responseText,e)}),e.addEventListener("abort",()=>{console.warn(`the request to ${e.responseURL} was aborted`)}),e.addEventListener("error",()=>{console.warn(`the request to ${e.responseURL} failed with status ${e.status}`)}),e.addEventListener("timeout",()=>{console.warn(`the request to ${e.responseURL} timed out`)})):e.addEventListener("loadend",()=>{t(e.responseText,e)}))}_sendRequest(e,t,o){return this._registerOnLoaded(e,o),e.send(t),e}_getContentType(e,t){return e instanceof FormData&&(t=!1),t}_createPreparedRequest(e,t,o){return this._request=new XMLHttpRequest,this._request.open(e,t),this._request.setRequestHeader("X-Requested-With","XMLHttpRequest"),o&&this._request.setRequestHeader("Content-type",o),this._request}},$={openEditor:"/devtools/open-editor",blockInfo:"/devtools/block-info"};function w(e,t){return new Promise((o,n)=>{let i=`${$.openEditor}?file=${encodeURIComponent(e)}&line=${t}`;k.get(i,e=>{try{let t=JSON.parse(e);o(t)}catch(e){n(Error("Failed to parse response"))}},"application/json",!0)})}function T(){let e=document.getElementById("devtools-block-data");if(!e)return[];try{return(JSON.parse(e.textContent)||[]).sort((e,t)=>{let o=e.template.localeCompare(t.template);return 0!==o?o:e.block.localeCompare(t.block)})}catch(e){return console.warn("DevTools: Failed to parse block data",e),[]}}class E{constructor(e={}){this.options={onBlockSelect:null,...e},this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm=""}create(){this.element||(this.blocks=T(),this.filteredBlocks=[...this.blocks],this.element=document.createElement("div"),this.element.id="__mnkys-devtools-panel__",this.element.innerHTML=this._buildHTML(),document.body.appendChild(this.element),this._attachEvents())}destroy(){this.element?.remove(),this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm=""}reload(){this.blocks=T(),this.filteredBlocks=[...this.blocks],this._updateList()}getBlocks(){return this.blocks}hasBlocks(){return this.blocks.length>0}_buildHTML(){return`
             <div class="panel-header">
                 <div class="panel-title">Twig Blocks</div>
                 <input type="text" class="panel-search" placeholder="Search blocks..." />
@@ -28,19 +109,19 @@
             </div>
         `}_buildListHTML(){return 0===this.filteredBlocks.length?'<div class="panel-empty">No blocks found</div>':this.filteredBlocks.map(e=>`
             <div class="block-item" 
-                 data-template="${b(e.template)}" 
-                 data-block="${b(e.block)}"
+                 data-template="${u(e.template)}" 
+                 data-block="${u(e.block)}"
                  data-line="${e.line}"
-                 data-block-id="${b(e.blockId||"")}">
+                 data-block-id="${u(e.blockId||"")}">
                 <div class="block-item-name">${this._highlightMatch(e.block)}</div>
                 <div class="block-item-path">${this._highlightMatch(m(e.template))}:${e.line}</div>
             </div>
-        `).join("")}_highlightMatch(e){if(!this.searchTerm)return b(e);let t=b(e),o=RegExp(`(${this.searchTerm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");return t.replace(o,'<span class="highlight">$1</span>')}_attachEvents(){let e=this.element.querySelector(".panel-search");e?.addEventListener("input",e=>{this.searchTerm=e.target.value.toLowerCase(),this._filterBlocks(),this._updateList()}),this.element.addEventListener("click",e=>{let t=e.target.closest(".block-item");if(t){let e={block:t.dataset.block,template:t.dataset.template,line:parseInt(t.dataset.line,10),blockId:t.dataset.blockId};this.options.onBlockSelect?.(e)}})}_filterBlocks(){if(!this.searchTerm){this.filteredBlocks=[...this.blocks];return}this.filteredBlocks=this.blocks.filter(e=>e.block.toLowerCase().includes(this.searchTerm)||e.template.toLowerCase().includes(this.searchTerm))}_updateList(){let e=this.element?.querySelector(".panel-list");e&&(e.innerHTML=this._buildListHTML());let t=this.element?.querySelector(".panel-stats");t&&(t.textContent=this.searchTerm?`${this.filteredBlocks.length} of ${this.blocks.length} blocks`:`${this.blocks.length} blocks`)}}class C{constructor(e={}){this.options={onClose:null,onOpenEditor:null,...e},this.element=null,this.currentBlock=null,this.contextData={},this.blockInfo=null,this.activeTab="context",this.isLoading=!1}create(){this.element||(this.contextData=function(){let e=document.getElementById("devtools-context-data");if(!e)return{};try{return JSON.parse(e.textContent)||{}}catch(e){return console.warn("DevTools: Failed to parse context data",e),{}}}(),this.element=document.createElement("div"),this.element.id="__mnkys-devtools-detail__",this.element.style.display="none",document.body.appendChild(this.element))}async show(e,t){this.element||this.create(),this.currentBlock=e,this.blockInfo=null,this.activeTab="context";let o=t.tagName.toLowerCase(),n=t.id?`#${t.id}`:"",i=t.className&&"string"==typeof t.className?"."+t.className.trim().split(/\s+/).slice(0,2).join("."):"";this.elementInfo=`<${o}${n}${i}>`,this.render(),this.element.style.display="flex",this.fetchBlockInfo()}hide(){this.element&&(this.element.style.display="none"),this.currentBlock=null,this.blockInfo=null}destroy(){this.element?.remove(),this.element=null}async fetchBlockInfo(){if(this.currentBlock){this.isLoading=!0,this.updateTabContent();try{var e,t,o;let n=await (e=this.currentBlock.template,t=this.currentBlock.block,o=this.currentBlock.line,new Promise((n,i)=>{let s=new URLSearchParams({template:e,block:t,line:String(o)}),r=`${k.blockInfo}?${s}`;x.get(r,e=>{try{let t=JSON.parse(e);n(t)}catch(e){i(Error("Failed to parse response"))}},"application/json",!0)}));n.success&&n.data&&(this.blockInfo=n.data)}catch(e){console.warn("DevTools: Failed to fetch block info",e)}finally{this.isLoading=!1,this.updateTabContent()}}}render(){if(!this.element||!this.currentBlock)return;let{block:e,template:t,line:o,blockId:n}=this.currentBlock;this.element.innerHTML=`
+        `).join("")}_highlightMatch(e){if(!this.searchTerm)return u(e);let t=u(e),o=RegExp(`(${this.searchTerm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");return t.replace(o,'<span class="highlight">$1</span>')}_attachEvents(){let e=this.element.querySelector(".panel-search");e?.addEventListener("input",e=>{this.searchTerm=e.target.value.toLowerCase(),this._filterBlocks(),this._updateList()}),this.element.addEventListener("click",e=>{let t=e.target.closest(".block-item");if(t){let e={block:t.dataset.block,template:t.dataset.template,line:parseInt(t.dataset.line,10),blockId:t.dataset.blockId};this.options.onBlockSelect?.(e)}})}_filterBlocks(){if(!this.searchTerm){this.filteredBlocks=[...this.blocks];return}this.filteredBlocks=this.blocks.filter(e=>e.block.toLowerCase().includes(this.searchTerm)||e.template.toLowerCase().includes(this.searchTerm))}_updateList(){let e=this.element?.querySelector(".panel-list");e&&(e.innerHTML=this._buildListHTML());let t=this.element?.querySelector(".panel-stats");t&&(t.textContent=this.searchTerm?`${this.filteredBlocks.length} of ${this.blocks.length} blocks`:`${this.blocks.length} blocks`)}}class C{constructor(e={}){this.options={onClose:null,onOpenEditor:null,...e},this.element=null,this.currentBlock=null,this.contextData={},this.blockInfo=null,this.activeTab="context",this.isLoading=!1}create(){this.element||(this.contextData=function(){let e=document.getElementById("devtools-context-data");if(!e)return{};try{return JSON.parse(e.textContent)||{}}catch(e){return console.warn("DevTools: Failed to parse context data",e),{}}}(),this.element=document.createElement("div"),this.element.id="__mnkys-devtools-detail__",this.element.style.display="none",document.body.appendChild(this.element))}async show(e,t){this.element||this.create(),this.currentBlock=e,this.blockInfo=null,this.activeTab="context";let o=t.tagName.toLowerCase(),n=t.id?`#${t.id}`:"",i=t.className&&"string"==typeof t.className?"."+t.className.trim().split(/\s+/).slice(0,2).join("."):"";this.elementInfo=`<${o}${n}${i}>`,this.render(),this.element.style.display="flex",this.fetchBlockInfo()}hide(){this.element&&(this.element.style.display="none"),this.currentBlock=null,this.blockInfo=null}destroy(){this.element?.remove(),this.element=null}async fetchBlockInfo(){if(this.currentBlock){this.isLoading=!0,this.updateTabContent();try{var e,t,o;let n=await (e=this.currentBlock.template,t=this.currentBlock.block,o=this.currentBlock.line,new Promise((n,i)=>{let s=new URLSearchParams({template:e,block:t,line:String(o)}),r=`${$.blockInfo}?${s}`;k.get(r,e=>{try{let t=JSON.parse(e);n(t)}catch(e){i(Error("Failed to parse response"))}},"application/json",!0)}));n.success&&n.data&&(this.blockInfo=n.data)}catch(e){console.warn("DevTools: Failed to fetch block info",e)}finally{this.isLoading=!1,this.updateTabContent()}}}render(){if(!this.element||!this.currentBlock)return;let{block:e,template:t,line:o,blockId:n}=this.currentBlock;this.element.innerHTML=`
             <div class="detail-header">
-                <div class="element-info">${b(this.elementInfo)}</div>
-                <div class="block-title">{% block ${b(e)} %}</div>
+                <div class="element-info">${u(this.elementInfo)}</div>
+                <div class="block-title">{% block ${u(e)} %}</div>
                 <div class="template-info">
-                    ${b(m(t))}
+                    ${u(m(t))}
                     <span class="line-num">:${o}</span>
                 </div>
             </div>
@@ -85,9 +166,9 @@
             <li class="var-item" data-depth="${o}">
                 <div class="var-row">
                     <span class="var-toggle ${n?"expandable":""}"></span>
-                    <span class="var-name">${b(e)}</span>
-                    <span class="var-type">${b(this.getTypeLabel(t))}</span>
-                    ${s?`<span class="var-value ${i}">${b(s)}</span>`:""}
+                    <span class="var-name">${u(e)}</span>
+                    <span class="var-type">${u(this.getTypeLabel(t))}</span>
+                    ${s?`<span class="var-value ${i}">${u(s)}</span>`:""}
                 </div>
                 ${n?`<ul class="var-children">${this.renderVariableChildren(t)}</ul>`:""}
             </li>
@@ -95,49 +176,62 @@
                     <li class="var-item">
                         <div class="var-row">
                             <span class="var-toggle"></span>
-                            <span class="var-name">${b(o)}</span>
+                            <span class="var-name">${u(o)}</span>
                             <span class="var-type">key</span>
                         </div>
                     </li>
-                `);return t.join("")}getTypeClass(e){switch(e){case"string":return"string";case"int":case"float":return"number";case"bool":return"bool";case"null":return"null";case"object":return"object";default:return""}}getTypeLabel(e){if(!e)return"unknown";let t=e.type;return e.class&&(t=e.class),void 0!==e.count&&(t+=`(${e.count})`),void 0!==e.length&&"string"===e.type&&(t+=`[${e.length}]`),t}getDisplayValue(e){return e?void 0!==e.value?"bool"===e.type?e.value?"true":"false":"string"===e.type?`"${e.value}"`:String(e.value):e.preview?`"${e.preview}"`:e.name?e.name:e.id?`id: ${e.id}`:"":""}renderHierarchyTab(){if(this.isLoading)return'<div class="source-loading"><span class="devtools-loading"></span> Loading hierarchy...</div>';if(!this.blockInfo||!this.blockInfo.hierarchy)return'<div class="source-loading">Hierarchy information not available</div>';let e=this.blockInfo.hierarchy,t=this.currentBlock.template;return`
-            <div class="hierarchy-tree">
-                ${e.map((e,o)=>{let n=e.template===t,i="└─".repeat(o),s=e.blocks?e.blocks.length:0;return`
-                        <div class="hierarchy-item ${n?"current":""} ${n?"":"clickable"}"
-                             data-template="${b(e.template)}"
-                             data-line="1">
-                            <span class="hierarchy-indent">${i}</span>
-                            <span class="hierarchy-template">${b(m(e.template))}</span>
-                            <span class="hierarchy-blocks">${s} blocks</span>
-                        </div>
-                    `}).join("")}
+                `);return t.join("")}getTypeClass(e){switch(e){case"string":return"string";case"int":case"float":return"number";case"bool":return"bool";case"null":return"null";case"object":return"object";default:return""}}getTypeLabel(e){if(!e)return"unknown";let t=e.type;return e.class&&(t=e.class),void 0!==e.count&&(t+=`(${e.count})`),void 0!==e.length&&"string"===e.type&&(t+=`[${e.length}]`),t}getDisplayValue(e){return e?void 0!==e.value?"bool"===e.type?e.value?"true":"false":"string"===e.type?`"${e.value}"`:String(e.value):e.preview?`"${e.preview}"`:e.name?e.name:e.id?`id: ${e.id}`:"":""}renderHierarchyTab(){if(this.isLoading)return'<div class="source-loading"><span class="devtools-loading"></span> Loading hierarchy...</div>';if(!this.blockInfo||!this.blockInfo.hierarchy)return'<div class="source-loading">Hierarchy information not available</div>';let e=this.blockInfo.hierarchy,t=this.currentBlock.template,o=e.length;return`
+            <div class="hierarchy-section">
+                <div class="hierarchy-label">Template Inheritance Chain</div>
+                <div class="hierarchy-tree">
+                    ${e.map((e,n)=>{let i=e.template===t,s=e.isRoot||0===n,r=e.blocks?e.blocks.length:0,a="";if(n>0){for(let e=0;e<n-1;e++)a+='<span class="tree-line">│</span>';a+=n===o-1?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>'}return`
+                            <div class="hierarchy-item ${i?"current":""} ${i?"":"clickable"}"
+                                 data-template="${u(e.template)}"
+                                 data-line="1"
+                                 data-depth="${n}">
+                                <div class="hierarchy-tree-line">${a}</div>
+                                <div class="hierarchy-content">
+                                    ${s?'<span class="hierarchy-icon root" title="Base template">◆</span>':'<span class="hierarchy-icon child" title="Extends parent">◇</span>'}
+                                    <span class="hierarchy-template" title="${u(e.template)}">${u(m(e.template))}</span>
+                                    <span class="hierarchy-blocks">${r}</span>
+                                </div>
+                                ${i?'<span class="hierarchy-current-badge">current</span>':""}
+                            </div>
+                        `}).join("")}
+                </div>
             </div>
             
             ${this.blockInfo.blocks?this.renderBlockList():""}
-        `}renderBlockList(){let e=this.blockInfo.blocks,t=Object.keys(e);return 0===t.length?"":`
-            <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #333;">
-                <div style="color: #888; font-size: 10px; margin-bottom: 8px;">
-                    Blocks in this template:
+        `}renderBlockList(){let e=this.blockInfo.blocks,t=e.flat||e,o=e.tree||Object.keys(t);if(!t||0===Object.keys(t).length)return"";let n=this.currentBlock.block,i=(e,o,s,r)=>{let a=t[e];if(!a)return"";let l=e===n,c=a.children||[],d=c.length>0,p="";for(let e=0;e<r.length;e++)p+=r[e]?'<span class="tree-line">│</span>':'<span class="tree-line"> </span>';o>0&&(p+=s?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>');let h=`
+                <div class="block-entry ${l?"current":""}" 
+                     data-block="${u(e)}" 
+                     data-line="${a.line}"
+                     data-depth="${o}">
+                    <div class="block-tree-line">${p}</div>
+                    <span class="block-icon">{%</span>
+                    <span class="block-entry-name">${u(e)}</span>
+                    <span class="block-line">:${a.line}</span>
+                    ${l?'<span class="block-current-badge">●</span>':""}
                 </div>
-                ${t.map(t=>{let o=t===this.currentBlock.block;return`
-                        <div class="hierarchy-item ${o?"current":""}"
-                             style="padding: 4px 8px; font-size: 11px;">
-                            <span style="color: ${o?"#42b883":"#9cdcfe"}">
-                                ${b(t)}
-                            </span>
-                            <span class="hierarchy-blocks">:${e[t].line}</span>
-                        </div>
-                    `}).join("")}
+            `;if(d){let e=[...r,!s];c.forEach((t,n)=>{let s=n===c.length-1;h+=i(t,o+1,s,e)})}return h},s="";return o.forEach((e,t)=>{let n=t===o.length-1;s+=i(e,0,n,[])}),`
+            <div class="hierarchy-section blocks-section">
+                <div class="hierarchy-label">Blocks in Current Template</div>
+                <div class="blocks-tree">
+                    ${s}
+                </div>
             </div>
         `}renderSourceTab(){if(this.isLoading)return'<div class="source-loading"><span class="devtools-loading"></span> Loading source...</div>';if(!this.blockInfo||!this.blockInfo.source)return'<div class="source-loading">Source code not available</div>';let{lines:e,blockStart:t,blockEnd:o}=this.blockInfo.source;return e&&0!==e.length?`
             <div class="source-container">
-                ${e.map(e=>{let t=e.isBlockLine,o=e.isStartLine;return`
-                        <div class="source-line ${t?"highlight":""} ${o?"block-start":""}">
-                            <span class="line-number">${e.number}</span>
-                            <span class="line-content">${b(e.content).replace(/(\{#.*?#\})/g,'<span class="twig-comment">$1</span>').replace(/(\{%\s*)(\w+)(.*?)(%\})/g,'<span class="twig-tag">$1</span><span class="twig-name">$2</span>$3<span class="twig-tag">$4</span>').replace(/(\{\{)(.*?)(\}\})/g,'<span class="twig-tag">$1</span>$2<span class="twig-tag">$3</span>').replace(/(&quot;[^&]*&quot;|&#039;[^&]*&#039;)/g,'<span class="twig-string">$1</span>').replace(/(&lt;\/?)(\w+)((?:\s+[^&]*?)?)(&gt;)/g,'$1<span class="html-tag">$2</span>$3$4')}</span>
-                        </div>
-                    `}).join("")}
+                <div class="source-code">
+                    ${e.map(e=>{let t=e.isBlockLine,o=e.isStartLine;return`
+                            <div class="source-line ${t?"highlight":""} ${o?"block-start":""}">
+                                <span class="line-number">${e.number}</span>
+                                <span class="line-content">${u(e.content).replace(/(\{#.*?#\})/g,'<span class="twig-comment">$1</span>').replace(/(\{%\s*)(\w+)(.*?)(%\})/g,'<span class="twig-tag">$1</span><span class="twig-name">$2</span>$3<span class="twig-tag">$4</span>').replace(/(\{\{)(.*?)(\}\})/g,'<span class="twig-tag">$1</span>$2<span class="twig-tag">$3</span>').replace(/(&quot;[^&]*&quot;|&#039;[^&]*&#039;)/g,'<span class="twig-string">$1</span>').replace(/(&lt;\/?)(\w+)((?:\s+[^&]*?)?)(&gt;)/g,'$1<span class="html-tag">$2</span>$3$4')}</span>
+                            </div>
+                        `}).join("")}
+                </div>
             </div>
-        `:'<div class="source-loading">No source lines available</div>'}attachEvents(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.addEventListener("click",e=>{this.activeTab=e.target.dataset.tab,this.updateTabs()})}),this.element.querySelector('[data-action="close"]')?.addEventListener("click",()=>{this.hide(),this.options.onClose?.()}),this.element.querySelector('[data-action="open-editor"]')?.addEventListener("click",()=>{this.handleOpenEditor()}),this.element.querySelectorAll(".hierarchy-item.clickable").forEach(e=>{e.addEventListener("click",()=>{w(e.dataset.template,parseInt(e.dataset.line,10)||1)})}),this.attachTreeEvents())}attachTreeEvents(){this.element&&this.element.querySelectorAll(".var-row").forEach(e=>{e.addEventListener("click",t=>{let o=e.closest(".var-item");o&&e.querySelector(".var-toggle.expandable")&&o.classList.toggle("expanded")})})}updateTabs(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.classList.toggle("active",e.dataset.tab===this.activeTab)}),this.element.querySelectorAll(".tab-pane").forEach(e=>{e.classList.toggle("active",e.dataset.pane===this.activeTab)}))}async handleOpenEditor(){if(this.currentBlock)try{let e=await w(this.currentBlock.template,this.currentBlock.line);e.success?this.options.onOpenEditor?.(e):e.editorUrl?window.location.href=e.editorUrl:e.error&&console.warn("DevTools: Failed to open editor:",e.error)}catch(e){console.warn("DevTools: Failed to open editor",e)}}}class L extends a{static #e=this.options={overlayColor:"rgba(66, 184, 131, 0.15)",overlayBorderColor:"#1699F7",overlayBorderWidth:"2px",keyboardShortcut:!0,transitionDuration:"0.12s"};init(){this._enabled=!1,this._currentTarget=null,this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null,this._toggle=null,this._onMouseMove=this._onMouseMove.bind(this),this._onClick=this._onClick.bind(this),this._onKeyDown=this._onKeyDown.bind(this),this._initToggle(),this.options.keyboardShortcut&&document.addEventListener("keydown",this._onKeyDown)}_initToggle(){this._isDevToolsEnabled()?this._createToggle():setTimeout(()=>{!this._toggle?.exists()&&this._isDevToolsEnabled()&&this._createToggle()},100)}_createToggle(){this._toggle=new $({onToggle:()=>this.toggle()}),this._toggle.create()}_isDevToolsEnabled(){return!!("true"===document.body.dataset.devtoolsEnabled||document.getElementById("devtools-block-data"))}toggle(){this._enabled?this.disable():this.enable()}enable(){this._enabled||(this._enabled=!0,function(){if(document.getElementById("__mnkys-devtools-styles__"))return;let e=document.createElement("style");e.id="__mnkys-devtools-styles__",e.textContent=`
+        `:'<div class="source-loading">No source lines available</div>'}attachEvents(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.addEventListener("click",e=>{this.activeTab=e.target.dataset.tab,this.updateTabs()})}),this.element.querySelector('[data-action="close"]')?.addEventListener("click",()=>{this.hide(),this.options.onClose?.()}),this.element.querySelector('[data-action="open-editor"]')?.addEventListener("click",()=>{this.handleOpenEditor()}),this.element.querySelectorAll(".hierarchy-item.clickable").forEach(e=>{e.addEventListener("click",()=>{w(e.dataset.template,parseInt(e.dataset.line,10)||1)})}),this.attachTreeEvents())}attachTreeEvents(){this.element&&this.element.querySelectorAll(".var-row").forEach(e=>{e.addEventListener("click",t=>{let o=e.closest(".var-item");o&&e.querySelector(".var-toggle.expandable")&&o.classList.toggle("expanded")})})}updateTabs(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.classList.toggle("active",e.dataset.tab===this.activeTab)}),this.element.querySelectorAll(".tab-pane").forEach(e=>{e.classList.toggle("active",e.dataset.pane===this.activeTab)}))}async handleOpenEditor(){if(this.currentBlock)try{let e=await w(this.currentBlock.template,this.currentBlock.line);e.success?this.options.onOpenEditor?.(e):e.editorUrl?window.location.href=e.editorUrl:e.error&&console.warn("DevTools: Failed to open editor:",e.error)}catch(e){console.warn("DevTools: Failed to open editor",e)}}}class L extends a{static #e=this.options={overlayColor:"rgba(66, 184, 131, 0.15)",overlayBorderColor:"#1699F7",overlayBorderWidth:"2px",keyboardShortcut:!0,transitionDuration:"0.12s"};init(){this._enabled=!1,this._currentTarget=null,this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null,this._toggle=null,this._onMouseMove=this._onMouseMove.bind(this),this._onClick=this._onClick.bind(this),this._onKeyDown=this._onKeyDown.bind(this),this._initToggle(),this.options.keyboardShortcut&&document.addEventListener("keydown",this._onKeyDown)}_initToggle(){this._isDevToolsEnabled()?this._createToggle():setTimeout(()=>{!this._toggle?.exists()&&this._isDevToolsEnabled()&&this._createToggle()},100)}_createToggle(){this._toggle=new x({onToggle:()=>this.toggle()}),this._toggle.create()}_isDevToolsEnabled(){return!!("true"===document.body.dataset.devtoolsEnabled||document.getElementById("devtools-block-data"))}toggle(){this._enabled?this.disable():this.enable()}enable(){this._enabled||(this._enabled=!0,function(){if(document.getElementById("__mnkys-devtools-styles__"))return;let e=document.createElement("style");e.id="__mnkys-devtools-styles__",e.textContent=`
 /* ========================================
    DevTools Inspector - Modern UI
    ======================================== */
@@ -158,71 +252,6 @@
 
 .mnkys-devtools-active * {
     cursor: crosshair !important;
-}
-
-/* ========================================
-   Toggle Button - Floating Action
-   ======================================== */
-
-#__mnkys-devtools-toggle__ {
-    position: fixed;
-    bottom: ${p.xl};
-    left: ${p.xl};
-    z-index: ${d.toggle};
-    
-    display: flex;
-    align-items: center;
-    gap: ${p.sm};
-    padding: ${p.md} ${p.lg};
-    
-    background: ${l.bgGlass};
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    
-    color: ${l.accent};
-    border: 1px solid ${l.borderAccent};
-    border-radius: ${h.full};
-    
-    cursor: pointer;
-    font-family: ${c.system};
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    
-    box-shadow: ${u.md}, ${u.glow};
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: translateY(0);
-}
-
-#__mnkys-devtools-toggle__:hover {
-    background: ${l.accent};
-    color: ${l.bgDeep};
-    border-color: ${l.accent};
-    transform: translateY(-2px);
-    box-shadow: ${u.lg}, ${u.glowStrong};
-}
-
-#__mnkys-devtools-toggle__:active {
-    transform: translateY(0) scale(0.98);
-}
-
-#__mnkys-devtools-toggle__.active {
-    background: ${l.accent};
-    color: ${l.bgDeep};
-    border-color: ${l.accent};
-    box-shadow: ${u.lg}, ${u.glowStrong};
-}
-
-#__mnkys-devtools-toggle__ svg {
-    transition: transform 0.2s ease;
-}
-
-#__mnkys-devtools-toggle__:hover svg {
-    transform: scale(1.1);
-}
-
-#__mnkys-devtools-toggle__.active svg {
-    transform: rotate(45deg);
 }
 
 /* ========================================
@@ -268,7 +297,7 @@
     line-height: 1.5;
     
     border: 1px solid ${l.borderAccent};
-    box-shadow: ${u.lg}, ${u.glow};
+    box-shadow: ${b.lg}, ${b.glow};
     
     max-width: 420px;
     display: none;
@@ -350,7 +379,7 @@
     font-family: ${c.mono};
     
     border: 1px solid ${l.border};
-    box-shadow: ${u.lg};
+    box-shadow: ${b.lg};
     
     z-index: ${d.panel};
     display: flex;
@@ -528,7 +557,7 @@
     font-family: ${c.mono};
     
     border: 1px solid ${l.border};
-    box-shadow: ${u.lg};
+    box-shadow: ${b.lg};
     
     z-index: ${d.detailPanel};
     display: flex;
@@ -769,31 +798,87 @@
 }
 
 /* Hierarchy Tab */
+.hierarchy-section {
+    margin-bottom: ${p.lg};
+}
+
+.hierarchy-section.blocks-section {
+    margin-top: ${p.lg};
+    padding-top: ${p.lg};
+    border-top: 1px solid ${l.border};
+}
+
+.hierarchy-label {
+    color: ${l.textMuted};
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: ${p.md};
+    padding: 0 ${p.sm};
+}
+
 .hierarchy-tree {
-    padding: ${p.sm} 0;
+    padding: ${p.xs} 0;
 }
 
 .hierarchy-item {
-    padding: ${p.md} ${p.lg};
-    margin: ${p.xs} 0;
+    padding: ${p.sm} ${p.md};
+    margin: 2px 0;
     border-radius: ${h.sm};
     display: flex;
     align-items: center;
-    gap: ${p.md};
+    gap: ${p.sm};
     transition: all 0.15s ease;
+    position: relative;
 }
 
 .hierarchy-item.current {
     background: ${l.accentMuted};
     border-left: 3px solid ${l.accent};
-    padding-left: calc(${p.lg} - 3px);
+    margin-left: -3px;
 }
 
-.hierarchy-indent {
+.hierarchy-tree-line {
+    display: flex;
+    align-items: center;
     color: ${l.textMuted};
-    font-size: 11px;
     font-family: ${c.mono};
-    opacity: 0.5;
+    font-size: 12px;
+    opacity: 0.4;
+    flex-shrink: 0;
+}
+
+.tree-line {
+    display: inline-block;
+    width: 16px;
+    text-align: center;
+}
+
+.tree-branch {
+    display: inline-block;
+    width: 8px;
+}
+
+.hierarchy-content {
+    display: flex;
+    align-items: center;
+    gap: ${p.sm};
+    flex: 1;
+    min-width: 0;
+}
+
+.hierarchy-icon {
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+.hierarchy-icon.root {
+    color: ${l.accent};
+}
+
+.hierarchy-icon.child {
+    color: ${l.textMuted};
 }
 
 .hierarchy-template {
@@ -803,14 +888,37 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    min-width: 0;
+}
+
+.hierarchy-item.current .hierarchy-template {
+    color: ${l.accent};
+    font-weight: 500;
 }
 
 .hierarchy-blocks {
     color: ${l.textMuted};
     font-size: 10px;
-    padding: 2px 8px;
+    padding: 2px 6px;
     background: ${l.bgDeep};
     border-radius: ${h.full};
+    flex-shrink: 0;
+}
+
+.hierarchy-blocks::after {
+    content: ' blocks';
+}
+
+.hierarchy-current-badge {
+    font-size: 9px;
+    color: ${l.accent};
+    background: ${l.bgDeep};
+    padding: 2px 6px;
+    border-radius: ${h.full};
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
 }
 
 .hierarchy-item.clickable {
@@ -821,12 +929,122 @@
     background: ${l.bgHover};
 }
 
+.hierarchy-item.clickable:hover .hierarchy-template {
+    color: ${l.text};
+}
+
+/* Blocks List */
+.blocks-list,
+.blocks-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.block-entry {
+    display: flex;
+    align-items: center;
+    gap: ${p.sm};
+    padding: ${p.xs} ${p.md};
+    border-radius: ${h.sm};
+    transition: all 0.15s ease;
+    cursor: pointer;
+    min-height: 28px;
+}
+
+.block-entry:hover {
+    background: ${l.bgHover};
+}
+
+.block-entry.current {
+    background: ${l.accentMuted};
+}
+
+.block-tree-line {
+    display: flex;
+    align-items: center;
+    color: ${l.textMuted};
+    font-family: ${c.mono};
+    font-size: 12px;
+    opacity: 0.4;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.block-tree-line .tree-line {
+    display: inline-block;
+    width: 16px;
+    text-align: center;
+}
+
+.block-tree-line .tree-branch {
+    display: inline-block;
+    width: 8px;
+}
+
+.block-icon {
+    color: ${l.syntax.keyword};
+    font-size: 10px;
+    font-family: ${c.mono};
+    opacity: 0.7;
+    flex-shrink: 0;
+}
+
+.block-entry-name {
+    color: ${l.syntax.variable};
+    font-size: 12px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.block-entry.current .block-entry-name {
+    color: ${l.accent};
+    font-weight: 500;
+}
+
+.block-line {
+    color: ${l.textMuted};
+    font-size: 10px;
+}
+
+.block-current-badge {
+    color: ${l.accent};
+    font-size: 8px;
+}
+
 /* Source Tab */
 .source-container {
     background: ${l.bgDeep};
     border-radius: ${h.md};
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: visible;
     border: 1px solid ${l.border};
+}
+
+/* Custom scrollbar for source container */
+.source-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.source-container::-webkit-scrollbar-track {
+    background: ${l.bgDeep};
+}
+
+.source-container::-webkit-scrollbar-thumb {
+    background: ${l.border};
+    border-radius: ${h.full};
+}
+
+.source-container::-webkit-scrollbar-thumb:hover {
+    background: ${l.borderHover};
+}
+
+.source-code {
+    display: inline-block;
+    min-width: 100%;
 }
 
 .source-line {
@@ -846,25 +1064,28 @@
 
 .source-line.block-start {
     background: rgba(0, 217, 255, 0.15);
-    border-left: 3px solid ${l.accent};
+}
+
+.source-line.block-start .line-number {
+    box-shadow: inset 3px 0 0 ${l.accent};
 }
 
 .line-number {
+    flex-shrink: 0;
     width: 48px;
+    min-width: 48px;
     padding: 0 ${p.md};
     text-align: right;
     color: ${l.textMuted};
     background: rgba(0, 0, 0, 0.2);
-    flex-shrink: 0;
     user-select: none;
     font-size: 11px;
 }
 
 .line-content {
+    flex: 1;
     padding: 0 ${p.lg};
     white-space: pre;
-    overflow-x: auto;
-    flex: 1;
 }
 
 .source-loading {
@@ -924,7 +1145,7 @@
 .detail-btn-primary:hover {
     background: ${l.accentHover};
     transform: translateY(-1px);
-    box-shadow: ${u.sm}, 0 0 12px ${l.accentMuted};
+    box-shadow: ${b.sm}, 0 0 12px ${l.accentMuted};
 }
 
 .detail-btn-primary:active {
@@ -961,7 +1182,7 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     
-    box-shadow: ${u.lg};
+    box-shadow: ${b.lg};
     z-index: ${d.notification};
     
     opacity: 0;
