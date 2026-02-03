@@ -1,17 +1,17 @@
-(()=>{"use strict";var e={156:e=>{var t=function(e){var t;return!!e&&"object"==typeof e&&"[object RegExp]"!==(t=Object.prototype.toString.call(e))&&"[object Date]"!==t&&e.$$typeof!==n},n="function"==typeof Symbol&&Symbol.for?Symbol.for("react.element"):60103;function o(e,t){return!1!==t.clone&&t.isMergeableObject(e)?l(Array.isArray(e)?[]:{},e,t):e}function i(e,t,n){return e.concat(t).map(function(e){return o(e,n)})}function s(e){return Object.keys(e).concat(Object.getOwnPropertySymbols?Object.getOwnPropertySymbols(e).filter(function(t){return Object.propertyIsEnumerable.call(e,t)}):[])}function r(e,t){try{return t in e}catch(e){return!1}}function l(e,n,a){(a=a||{}).arrayMerge=a.arrayMerge||i,a.isMergeableObject=a.isMergeableObject||t,a.cloneUnlessOtherwiseSpecified=o;var c,d,p=Array.isArray(n);return p!==Array.isArray(e)?o(n,a):p?a.arrayMerge(e,n,a):(d={},(c=a).isMergeableObject(e)&&s(e).forEach(function(t){d[t]=o(e[t],c)}),s(n).forEach(function(t){(!r(e,t)||Object.hasOwnProperty.call(e,t)&&Object.propertyIsEnumerable.call(e,t))&&(r(e,t)&&c.isMergeableObject(n[t])?d[t]=(function(e,t){if(!t.customMerge)return l;var n=t.customMerge(e);return"function"==typeof n?n:l})(t,c)(e[t],n[t],c):d[t]=o(n[t],c))}),d)}l.all=function(e,t){if(!Array.isArray(e))throw Error("first argument should be an array");return e.reduce(function(e,n){return l(e,n,t)},{})},e.exports=l}},t={};function n(o){var i=t[o];if(void 0!==i)return i.exports;var s=t[o]={exports:{}};return e[o](s,s.exports,n),s.exports}n.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return n.d(t,{a:t}),t},n.d=(e,t)=>{for(var o in t)n.o(t,o)&&!n.o(e,o)&&Object.defineProperty(e,o,{enumerable:!0,get:t[o]})},n.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t);var o=n(156),i=n.n(o);class s{static ucFirst(e){return e.charAt(0).toUpperCase()+e.slice(1)}static lcFirst(e){return e.charAt(0).toLowerCase()+e.slice(1)}static toDashCase(e){return e.replace(/([A-Z])/g,"-$1").replace(/^-/,"").toLowerCase()}static toLowerCamelCase(e,t){let n=s.toUpperCamelCase(e,t);return s.lcFirst(n)}static toUpperCamelCase(e,t){return t?e.split(t).map(e=>s.ucFirst(e.toLowerCase())).join(""):s.ucFirst(e.toLowerCase())}static parsePrimitive(e){try{return/^\d+(.|,)\d+$/.test(e)&&(e=e.replace(",",".")),JSON.parse(e)}catch(t){return e.toString()}}}class r{constructor(e=document){this._el=e,e.$emitter=this,this._listeners=[]}publish(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n=arguments.length>2&&void 0!==arguments[2]&&arguments[2],o=new CustomEvent(e,{detail:t,cancelable:n});return this.el.dispatchEvent(o),o}subscribe(e,t){let n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},o=this,i=e.split("."),s=n.scope?t.bind(n.scope):t;if(n.once&&!0===n.once){let t=s;s=function(n){o.unsubscribe(e),t(n)}}return this.el.addEventListener(i[0],s),this.listeners.push({splitEventName:i,opts:n,cb:s}),!0}unsubscribe(e){let t=e.split(".");return this.listeners=this.listeners.reduce((e,n)=>([...n.splitEventName].sort().toString()===t.sort().toString()?this.el.removeEventListener(n.splitEventName[0],n.cb):e.push(n),e),[]),!0}reset(){return this.listeners.forEach(e=>{this.el.removeEventListener(e.splitEventName[0],e.cb)}),this.listeners=[],!0}get el(){return this._el}set el(e){this._el=e}get listeners(){return this._listeners}set listeners(e){this._listeners=e}}class l{constructor(e,t={},n=!1){if(!(e instanceof Node)){console.warn(`There is no valid element given while trying to create a plugin instance for "${n}".`);return}this.el=e,this.$emitter=new r(this.el),this._pluginName=this._getPluginName(n),this.options=this._mergeOptions(t),this._initialized=!1,this._registerInstance(),this._init()}init(){console.warn(`The "init" method for the plugin "${this._pluginName}" is not defined. The plugin will not be initialized.`)}update(){}_init(){this._initialized||(this.init(),this._initialized=!0)}_update(){this._initialized&&this.update()}_mergeOptions(e){let t=[this.constructor.options,this.options,e];return t.push(this._getConfigFromDataAttribute()),t.push(this._getOptionsFromDataAttribute()),i().all(t.filter(e=>e instanceof Object&&!(e instanceof Array)).map(e=>e||{}))}_getConfigFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),n=this.el.getAttribute(`data-${t}-config`);return n?window.PluginConfigManager.get(this._pluginName,n):e}_getOptionsFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),n=this.el.getAttribute(`data-${t}-options`);if(n)try{return JSON.parse(n)}catch(e){console.error(`The data attribute "data-${t}-options" could not be parsed to json: ${e.message}`)}return e}_registerInstance(){window.PluginManager.getPluginInstancesFromElement(this.el).set(this._pluginName,this),window.PluginManager.getPlugin(this._pluginName,!1).get("instances").push(this)}_getPluginName(e){return e||(e=this.constructor.name),e}}let a={accent:"#00D9FF",accentHover:"#00B8D9",accentMuted:"rgba(0, 217, 255, 0.15)",error:"#FF5252",bgDeep:"#0D1117",bg:"#161B22",bgElevated:"#21262D",bgHover:"#30363D",bgGlass:"rgba(22, 27, 34, 0.85)",text:"#F0F6FC",textSecondary:"#8B949E",textMuted:"#6E7681",border:"#30363D",borderHover:"#8B949E",borderAccent:"rgba(0, 217, 255, 0.4)",overlay:"rgba(0, 217, 255, 0.12)",overlayBorder:"#00D9FF",syntax:{keyword:"#FF79C6",string:"#A5D6FF",variable:"#79C0FF",number:"#A5D6A7",comment:"#6E7681",tag:"#7EE787",attribute:"#D2A8FF"}},c={mono:'"JetBrains Mono", "Fira Code", "SF Mono", "Consolas", monospace',system:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'},d={overlay:0x7ffffff8,tooltip:0x7ffffff9,panel:0x7ffffffa,detailPanel:0x7ffffffb,notification:0x80000002},p={xs:"4px",sm:"8px",md:"12px",lg:"16px",xl:"20px",xxl:"24px"},h={sm:"6px",md:"10px",lg:"14px",full:"9999px"},u={sm:"0 2px 8px rgba(0, 0, 0, 0.3)",lg:"0 8px 32px rgba(0, 0, 0, 0.5)",glow:"0 0 20px rgba(0, 217, 255, 0.3)",glowStrong:"0 0 30px rgba(0, 217, 255, 0.4)"},m=["__mnkys-devtools-overlay__","__mnkys-devtools-tooltip__","__mnkys-devtools-panel__","__mnkys-devtools-detail__","__mnkys-devtools-toggle__"];function b(e){return"string"!=typeof e?e:e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function g(e){return e.replace(/^@Storefront\//,"").replace(/^@(\w+)\//,"$1/").replace(/^storefront\//,"")}function v(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"success",n=document.createElement("div");n.className=`devtools-notification ${t}`,n.textContent=e,document.body.appendChild(n),requestAnimationFrame(()=>n.style.opacity="1"),setTimeout(()=>{n.style.opacity="0",setTimeout(()=>n.remove(),200)},2500)}function f(e){if(e.closest(m.map(e=>`#${e}`).join(", ")))return null;for(;e&&e!==document.body&&e!==document.documentElement;){if(e.dataset&&e.dataset.twigBlock)return e;e=e.parentElement}return null}function y(e){try{return JSON.parse(e.dataset.twigBlock)}catch(e){return console.warn("DevTools: Failed to parse twig data",e),null}}class x{constructor(){this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-overlay__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}highlight(e){if(!this.element||!e)return;let t=e.getBoundingClientRect();Object.assign(this.element.style,{display:"block",left:`${t.left-2}px`,top:`${t.top-2}px`,width:`${t.width+4}px`,height:`${t.height+4}px`})}isVisible(){return this.element&&"none"!==this.element.style.display}}class _{constructor(){this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-tooltip__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}update(e,t){let n=y(e);if(!n)return;let o=e.tagName.toLowerCase(),i=e.id?`#${e.id}`:"",s=e.className&&"string"==typeof e.className?"."+e.className.trim().split(/\s+/).slice(0,2).join("."):"";this.element.innerHTML=`
-            <div class="element-tag">&lt;${o}${i}${s}&gt;</div>
-            <div class="block-name">${b(n.block)}</div>
-            <div class="template-path">${b(n.template)}:${n.line}</div>
-        `,this.show(),this.position(t)}position(e){if(!this.element||"none"===this.element.style.display)return;let t=this.element.getBoundingClientRect(),n=window.innerWidth,o=window.innerHeight,i=e.clientX+15,s=e.clientY+15;i+t.width>n-15&&(i=e.clientX-t.width-15),s+t.height>o-15&&(s=e.clientY-t.height-15),i=Math.max(15,i),s=Math.max(15,s),this.element.style.left=`${i}px`,this.element.style.top=`${s}px`}isVisible(){return this.element&&"none"!==this.element.style.display}}class k{constructor(e={}){this.options={onToggle:null,...e},this.element=null,this.isActive=!1}create(){this.element||document.getElementById("__mnkys-devtools-toggle__")||(this._injectStyles(),this.element=document.createElement("button"),this.element.id="__mnkys-devtools-toggle__",this.element.innerHTML=`
+(()=>{"use strict";var e={156:e=>{var t=function(e){var t;return!!e&&"object"==typeof e&&"[object RegExp]"!==(t=Object.prototype.toString.call(e))&&"[object Date]"!==t&&e.$$typeof!==o},o="function"==typeof Symbol&&Symbol.for?Symbol.for("react.element"):60103;function n(e,t){return!1!==t.clone&&t.isMergeableObject(e)?r(Array.isArray(e)?[]:{},e,t):e}function i(e,t,o){return e.concat(t).map(function(e){return n(e,o)})}function s(e){return Object.keys(e).concat(Object.getOwnPropertySymbols?Object.getOwnPropertySymbols(e).filter(function(t){return Object.propertyIsEnumerable.call(e,t)}):[])}function l(e,t){try{return t in e}catch(e){return!1}}function r(e,o,a){(a=a||{}).arrayMerge=a.arrayMerge||i,a.isMergeableObject=a.isMergeableObject||t,a.cloneUnlessOtherwiseSpecified=n;var c,d,h=Array.isArray(o);return h!==Array.isArray(e)?n(o,a):h?a.arrayMerge(e,o,a):(d={},(c=a).isMergeableObject(e)&&s(e).forEach(function(t){d[t]=n(e[t],c)}),s(o).forEach(function(t){(!l(e,t)||Object.hasOwnProperty.call(e,t)&&Object.propertyIsEnumerable.call(e,t))&&(l(e,t)&&c.isMergeableObject(o[t])?d[t]=(function(e,t){if(!t.customMerge)return r;var o=t.customMerge(e);return"function"==typeof o?o:r})(t,c)(e[t],o[t],c):d[t]=n(o[t],c))}),d)}r.all=function(e,t){if(!Array.isArray(e))throw Error("first argument should be an array");return e.reduce(function(e,o){return r(e,o,t)},{})},e.exports=r}},t={};function o(n){var i=t[n];if(void 0!==i)return i.exports;var s=t[n]={exports:{}};return e[n](s,s.exports,o),s.exports}o.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return o.d(t,{a:t}),t},o.d=(e,t)=>{for(var n in t)o.o(t,n)&&!o.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},o.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t);var n=o(156),i=o.n(n);class s{static ucFirst(e){return e.charAt(0).toUpperCase()+e.slice(1)}static lcFirst(e){return e.charAt(0).toLowerCase()+e.slice(1)}static toDashCase(e){return e.replace(/([A-Z])/g,"-$1").replace(/^-/,"").toLowerCase()}static toLowerCamelCase(e,t){let o=s.toUpperCamelCase(e,t);return s.lcFirst(o)}static toUpperCamelCase(e,t){return t?e.split(t).map(e=>s.ucFirst(e.toLowerCase())).join(""):s.ucFirst(e.toLowerCase())}static parsePrimitive(e){try{return/^\d+(.|,)\d+$/.test(e)&&(e=e.replace(",",".")),JSON.parse(e)}catch(t){return e.toString()}}}class l{constructor(e=document){this._el=e,e.$emitter=this,this._listeners=[]}publish(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},o=arguments.length>2&&void 0!==arguments[2]&&arguments[2],n=new CustomEvent(e,{detail:t,cancelable:o});return this.el.dispatchEvent(n),n}subscribe(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},n=this,i=e.split("."),s=o.scope?t.bind(o.scope):t;if(o.once&&!0===o.once){let t=s;s=function(o){n.unsubscribe(e),t(o)}}return this.el.addEventListener(i[0],s),this.listeners.push({splitEventName:i,opts:o,cb:s}),!0}unsubscribe(e){let t=e.split(".");return this.listeners=this.listeners.reduce((e,o)=>([...o.splitEventName].sort().toString()===t.sort().toString()?this.el.removeEventListener(o.splitEventName[0],o.cb):e.push(o),e),[]),!0}reset(){return this.listeners.forEach(e=>{this.el.removeEventListener(e.splitEventName[0],e.cb)}),this.listeners=[],!0}get el(){return this._el}set el(e){this._el=e}get listeners(){return this._listeners}set listeners(e){this._listeners=e}}class r{constructor(e,t={},o=!1){if(!(e instanceof Node)){console.warn(`There is no valid element given while trying to create a plugin instance for "${o}".`);return}this.el=e,this.$emitter=new l(this.el),this._pluginName=this._getPluginName(o),this.options=this._mergeOptions(t),this._initialized=!1,this._registerInstance(),this._init()}init(){console.warn(`The "init" method for the plugin "${this._pluginName}" is not defined. The plugin will not be initialized.`)}update(){}_init(){this._initialized||(this.init(),this._initialized=!0)}_update(){this._initialized&&this.update()}_mergeOptions(e){let t=[this.constructor.options,this.options,e];return t.push(this._getConfigFromDataAttribute()),t.push(this._getOptionsFromDataAttribute()),i().all(t.filter(e=>e instanceof Object&&!(e instanceof Array)).map(e=>e||{}))}_getConfigFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-config`);return o?window.PluginConfigManager.get(this._pluginName,o):e}_getOptionsFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-options`);if(o)try{return JSON.parse(o)}catch(e){console.error(`The data attribute "data-${t}-options" could not be parsed to json: ${e.message}`)}return e}_registerInstance(){window.PluginManager.getPluginInstancesFromElement(this.el).set(this._pluginName,this),window.PluginManager.getPlugin(this._pluginName,!1).get("instances").push(this)}_getPluginName(e){return e||(e=this.constructor.name),e}}let a={accent:"#00D9FF",accentHover:"#00B8D9",accentMuted:"rgba(0, 217, 255, 0.15)",success:"#00E676",error:"#FF5252",bgDeep:"#0D1117",bg:"#161B22",bgElevated:"#21262D",bgHover:"#30363D",bgGlass:"rgba(22, 27, 34, 0.85)",text:"#F0F6FC",textSecondary:"#8B949E",textMuted:"#6E7681",border:"#30363D",borderHover:"#8B949E",borderAccent:"rgba(0, 217, 255, 0.4)",overlay:"rgba(0, 217, 255, 0.12)",overlayBorder:"#00D9FF",syntax:{keyword:"#FF79C6",string:"#A5D6FF",variable:"#79C0FF",number:"#A5D6A7",comment:"#6E7681",tag:"#7EE787",attribute:"#D2A8FF"}},c={mono:'"JetBrains Mono", "Fira Code", "SF Mono", "Consolas", monospace',system:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'},d={overlay:0x7ffffff8,tooltip:0x7ffffff9,panel:0x7ffffffa,detailPanel:0x7ffffffb,notification:0x80000002},h={xs:"4px",sm:"8px",md:"12px",lg:"16px",xl:"20px",xxl:"24px"},p={sm:"6px",md:"10px",lg:"14px",full:"9999px"},u={sm:"0 2px 8px rgba(0, 0, 0, 0.3)",lg:"0 8px 32px rgba(0, 0, 0, 0.5)",glow:"0 0 20px rgba(0, 217, 255, 0.3)",glowStrong:"0 0 30px rgba(0, 217, 255, 0.4)"},m=["__mnkys-devtools-overlay__","__mnkys-devtools-tooltip__","__mnkys-devtools-panel__","__mnkys-devtools-detail__","__mnkys-devtools-toggle__"];function b(e){return"string"!=typeof e?e:e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function g(e){return e.replace(/^@Storefront\//,"").replace(/^@(\w+)\//,"$1/").replace(/^storefront\//,"")}function v(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"success",o=document.createElement("div");o.className=`devtools-notification ${t}`,o.textContent=e,document.body.appendChild(o),requestAnimationFrame(()=>o.style.opacity="1"),setTimeout(()=>{o.style.opacity="0",setTimeout(()=>o.remove(),200)},2500)}function y(e){if(e.closest(m.map(e=>`#${e}`).join(", ")))return null;for(;e&&e!==document.body&&e!==document.documentElement;){if(e.dataset&&e.dataset.twigBlock)return e;e=e.parentElement}return null}function f(e){try{return JSON.parse(e.dataset.twigBlock)}catch(e){return console.warn("DevTools: Failed to parse twig data",e),null}}class _{constructor(){this.hoverElement=null,this.selectionElement=null,this.selectedTarget=null,this._onScrollResize=this._onScrollResize.bind(this)}create(){this.hoverElement||(this.hoverElement=document.createElement("div"),this.hoverElement.id="__mnkys-devtools-overlay__",document.body.appendChild(this.hoverElement)),this.selectionElement||(this.selectionElement=document.createElement("div"),this.selectionElement.id="__mnkys-devtools-selection__",document.body.appendChild(this.selectionElement)),window.addEventListener("scroll",this._onScrollResize,!0),window.addEventListener("resize",this._onScrollResize)}destroy(){this.hoverElement?.remove(),this.selectionElement?.remove(),this.hoverElement=null,this.selectionElement=null,this.selectedTarget=null,window.removeEventListener("scroll",this._onScrollResize,!0),window.removeEventListener("resize",this._onScrollResize)}show(){this.hoverElement&&(this.hoverElement.style.display="block")}hide(){this.hoverElement&&(this.hoverElement.style.display="none")}highlight(e){this.hoverElement&&e&&this._positionOverlay(this.hoverElement,e)}select(e){this.selectedTarget=e,this.selectionElement&&e&&this._positionOverlay(this.selectionElement,e)}clearSelection(){this.selectedTarget=null,this.selectionElement&&(this.selectionElement.style.display="none")}isSelected(e){return this.selectedTarget===e}getSelectedElement(){return this.selectedTarget}updateSelectionPosition(){if(this.selectedTarget&&this.selectionElement){if(!document.body.contains(this.selectedTarget)){this.clearSelection();return}this._positionOverlay(this.selectionElement,this.selectedTarget)}}_positionOverlay(e,t){let o=t.getBoundingClientRect();Object.assign(e.style,{display:"block",left:`${o.left-2}px`,top:`${o.top-2}px`,width:`${o.width+4}px`,height:`${o.height+4}px`})}_onScrollResize(){this.updateSelectionPosition()}isVisible(){return this.hoverElement&&"none"!==this.hoverElement.style.display}hasSelection(){return this.selectionElement&&"none"!==this.selectionElement.style.display}}class x{constructor(){this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-tooltip__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}update(e,t){let o=f(e);if(!o)return;let n=e.tagName.toLowerCase(),i=e.id?`#${e.id}`:"",s=e.className&&"string"==typeof e.className?"."+e.className.trim().split(/\s+/).slice(0,2).join("."):"";this.element.innerHTML=`
+            <div class="element-tag">&lt;${n}${i}${s}&gt;</div>
+            <div class="block-name">${b(o.block)}</div>
+            <div class="template-path">${b(o.template)}:${o.line}</div>
+        `,this.show(),this.position(t)}position(e){if(!this.element||"none"===this.element.style.display)return;let t=this.element.getBoundingClientRect(),o=window.innerWidth,n=window.innerHeight,i=e.clientX+15,s=e.clientY+15;i+t.width>o-15&&(i=e.clientX-t.width-15),s+t.height>n-15&&(s=e.clientY-t.height-15),i=Math.max(15,i),s=Math.max(15,s),this.element.style.left=`${i}px`,this.element.style.top=`${s}px`}isVisible(){return this.element&&"none"!==this.element.style.display}}class k{constructor(e={}){this.options={onToggle:null,...e},this.element=null,this.isActive=!1}create(){this.element||document.getElementById("__mnkys-devtools-toggle__")||(this._injectStyles(),this.element=document.createElement("button"),this.element.id="__mnkys-devtools-toggle__",this.element.innerHTML=`
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"/>
                 <path d="M21 21l-4.35-4.35"/>
             </svg>
             <span>Inspect</span>
-        `,this.element.title="Toggle Component Inspector (Ctrl+Shift+C)",this.element.setAttribute("aria-label","Toggle DevTools Inspector"),this.element.setAttribute("aria-pressed","false"),this.element.addEventListener("click",e=>{e.stopPropagation(),this.options.onToggle?.()}),document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}setActive(e){if(!this.element)return;this.isActive=e,this.element.classList.toggle("active",e),this.element.setAttribute("aria-pressed",String(e));let t=this.element.querySelector("span");t&&(t.textContent=e?"Exit":"Inspect");let n=this.element.querySelector("svg");n&&(e?n.innerHTML=`
+        `,this.element.title="Toggle Component Inspector (Ctrl+Shift+C)",this.element.setAttribute("aria-label","Toggle DevTools Inspector"),this.element.setAttribute("aria-pressed","false"),this.element.addEventListener("click",e=>{e.stopPropagation(),this.options.onToggle?.()}),document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}setActive(e){if(!this.element)return;this.isActive=e,this.element.classList.toggle("active",e),this.element.setAttribute("aria-pressed",String(e));let t=this.element.querySelector("span");t&&(t.textContent=e?"Exit":"Inspect");let o=this.element.querySelector("svg");o&&(e?o.innerHTML=`
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
-                `:n.innerHTML=`
+                `:o.innerHTML=`
                     <circle cx="11" cy="11" r="8"/>
                     <path d="M21 21l-4.35-4.35"/>
                 `)}exists(){return!!this.element}_injectStyles(){if(document.getElementById("__mnkys-devtools-toggle-styles__"))return;let e=document.createElement("style");e.id="__mnkys-devtools-toggle-styles__",e.textContent=`
@@ -95,7 +95,7 @@
                     transition: none;
                 }
             }
-        `,document.head.appendChild(e)}}let $=new class{constructor(){this._request=null,this._errorHandlingInternal=!1}get(e,t){let n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"application/json",o=this._createPreparedRequest("GET",e,n);return this._sendRequest(o,null,t)}post(e,t,n){let o=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";o=this._getContentType(t,o);let i=this._createPreparedRequest("POST",e,o);return this._sendRequest(i,t,n)}delete(e,t,n){let o=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";o=this._getContentType(t,o);let i=this._createPreparedRequest("DELETE",e,o);return this._sendRequest(i,t,n)}patch(e,t,n){let o=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";o=this._getContentType(t,o);let i=this._createPreparedRequest("PATCH",e,o);return this._sendRequest(i,t,n)}abort(){if(this._request)return this._request.abort()}setErrorHandlingInternal(e){this._errorHandlingInternal=e}_registerOnLoaded(e,t){t&&(!0===this._errorHandlingInternal?(e.addEventListener("load",()=>{t(e.responseText,e)}),e.addEventListener("abort",()=>{console.warn(`the request to ${e.responseURL} was aborted`)}),e.addEventListener("error",()=>{console.warn(`the request to ${e.responseURL} failed with status ${e.status}`)}),e.addEventListener("timeout",()=>{console.warn(`the request to ${e.responseURL} timed out`)})):e.addEventListener("loadend",()=>{t(e.responseText,e)}))}_sendRequest(e,t,n){return this._registerOnLoaded(e,n),e.send(t),e}_getContentType(e,t){return e instanceof FormData&&(t=!1),t}_createPreparedRequest(e,t,n){return this._request=new XMLHttpRequest,this._request.open(e,t),this._request.setRequestHeader("X-Requested-With","XMLHttpRequest"),n&&this._request.setRequestHeader("Content-type",n),this._request}},w={openEditor:"/devtools/open-editor",blockInfo:"/devtools/block-info"};function z(e){return new Promise((t,n)=>{let o=null;o=setTimeout(()=>{n(Error("Request timeout"))},1e4),$.get(e,e=>{clearTimeout(o);try{let n=JSON.parse(e);t(n)}catch(e){n(Error("Failed to parse response"))}},"application/json",!0)})}async function E(e,t){let n=`${w.openEditor}?file=${encodeURIComponent(e)}&line=${t}`;try{return await z(n)}catch(e){return console.warn("DevTools: Failed to open editor",e),{success:!1,error:e.message}}}async function T(e,t,n){let o=new URLSearchParams({template:e,block:t,line:String(n)}),i=`${w.blockInfo}?${o}`;try{return await z(i)}catch(e){return console.warn("DevTools: Failed to fetch block info",e),{success:!1,error:e.message}}}function C(){let e=document.getElementById("devtools-block-data");if(!e)return[];try{return(JSON.parse(e.textContent)||[]).sort((e,t)=>{let n=e.template.localeCompare(t.template);return 0!==n?n:e.block.localeCompare(t.block)})}catch(e){return console.warn("DevTools: Failed to parse block data",e),[]}}let L="mnkys-devtools-panel-state";function S(){try{let e=localStorage.getItem(L);return e?JSON.parse(e):{}}catch(e){return{}}}function M(e){try{localStorage.setItem(L,JSON.stringify(e))}catch(e){}}function I(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},n={panelId:e.id||"panel",dragHandleSelector:t.dragHandle||".panel-header, .detail-header",minWidth:t.minWidth||280,minHeight:t.minHeight||200,maxWidth:t.maxWidth||window.innerWidth-40,maxHeight:t.maxHeight||window.innerHeight-40,resizable:!1!==t.resizable,persistState:!1!==t.persistState,...t},o=!1,i=!1,s=null,r=0,l=0,a=0,c=0,d=0,p=0,h=null;if(n.resizable&&(h=function(){let t=document.createElement("div");return t.className="panel-resize-frame",t.innerHTML=`
+        `,document.head.appendChild(e)}}let $=new class{constructor(){this._request=null,this._errorHandlingInternal=!1}get(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"application/json",n=this._createPreparedRequest("GET",e,o);return this._sendRequest(n,null,t)}post(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("POST",e,n);return this._sendRequest(i,t,o)}delete(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("DELETE",e,n);return this._sendRequest(i,t,o)}patch(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("PATCH",e,n);return this._sendRequest(i,t,o)}abort(){if(this._request)return this._request.abort()}setErrorHandlingInternal(e){this._errorHandlingInternal=e}_registerOnLoaded(e,t){t&&(!0===this._errorHandlingInternal?(e.addEventListener("load",()=>{t(e.responseText,e)}),e.addEventListener("abort",()=>{console.warn(`the request to ${e.responseURL} was aborted`)}),e.addEventListener("error",()=>{console.warn(`the request to ${e.responseURL} failed with status ${e.status}`)}),e.addEventListener("timeout",()=>{console.warn(`the request to ${e.responseURL} timed out`)})):e.addEventListener("loadend",()=>{t(e.responseText,e)}))}_sendRequest(e,t,o){return this._registerOnLoaded(e,o),e.send(t),e}_getContentType(e,t){return e instanceof FormData&&(t=!1),t}_createPreparedRequest(e,t,o){return this._request=new XMLHttpRequest,this._request.open(e,t),this._request.setRequestHeader("X-Requested-With","XMLHttpRequest"),o&&this._request.setRequestHeader("Content-type",o),this._request}},w={openEditor:"/devtools/open-editor",blockInfo:"/devtools/block-info"};function E(e){return new Promise((t,o)=>{let n=null;n=setTimeout(()=>{o(Error("Request timeout"))},1e4),$.get(e,e=>{clearTimeout(n);try{let o=JSON.parse(e);t(o)}catch(e){o(Error("Failed to parse response"))}},"application/json",!0)})}async function z(e,t){let o=`${w.openEditor}?file=${encodeURIComponent(e)}&line=${t}`;try{return await E(o)}catch(e){return console.warn("DevTools: Failed to open editor",e),{success:!1,error:e.message}}}async function T(e,t,o){let n=new URLSearchParams({template:e,block:t,line:String(o)}),i=`${w.blockInfo}?${n}`;try{return await E(i)}catch(e){return console.warn("DevTools: Failed to fetch block info",e),{success:!1,error:e.message}}}function S(){let e=document.getElementById("devtools-block-data");if(!e)return[];try{return(JSON.parse(e.textContent)||[]).sort((e,t)=>{let o=e.template.localeCompare(t.template);return 0!==o?o:e.block.localeCompare(t.block)})}catch(e){return console.warn("DevTools: Failed to parse block data",e),[]}}let L="mnkys-devtools-panel-state";function C(){try{let e=localStorage.getItem(L);return e?JSON.parse(e):{}}catch(e){return{}}}function I(e){try{localStorage.setItem(L,JSON.stringify(e))}catch(e){}}function B(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},o={panelId:e.id||"panel",dragHandleSelector:t.dragHandle||".panel-header, .detail-header",minWidth:t.minWidth||280,minHeight:t.minHeight||200,maxWidth:t.maxWidth||window.innerWidth-40,maxHeight:t.maxHeight||window.innerHeight-40,resizable:!1!==t.resizable,persistState:!1!==t.persistState,...t},n=!1,i=!1,s=null,l=0,r=0,a=0,c=0,d=0,h=0,p=null;if(o.resizable&&(p=function(){let t=document.createElement("div");return t.className="panel-resize-frame",t.innerHTML=`
             <div class="panel-resize-handle panel-resize-top" data-edge="top"></div>
             <div class="panel-resize-handle panel-resize-right" data-edge="right"></div>
             <div class="panel-resize-handle panel-resize-bottom" data-edge="bottom"></div>
@@ -104,7 +104,7 @@
             <div class="panel-resize-handle panel-resize-top-right" data-edge="top-right"></div>
             <div class="panel-resize-handle panel-resize-bottom-left" data-edge="bottom-left"></div>
             <div class="panel-resize-handle panel-resize-bottom-right" data-edge="bottom-right"></div>
-        `,e.appendChild(t),t.querySelectorAll(".panel-resize-handle").forEach(e=>{e.addEventListener("mousedown",v)}),t}()),n.persistState){let t=S()[n.panelId];t&&(t.width&&(e.style.width=`${t.width}px`),t.height&&(e.style.height=`${t.height}px`),void 0!==t.left&&(e.style.left=`${t.left}px`,e.style.right="auto"),void 0!==t.top&&(e.style.top=`${t.top}px`,e.style.bottom="auto"))}function u(){if(!n.persistState)return;let t=e.getBoundingClientRect(),o=S();o[n.panelId]={width:t.width,height:t.height,left:t.left,top:t.top},M(o)}function m(t){if(!t.target.closest(n.dragHandleSelector)||t.target.closest("button, input, textarea, select, a, .panel-resize-handle"))return;o=!0,r=t.clientX,l=t.clientY;let i=e.getBoundingClientRect();d=i.left,p=i.top,e.style.left=`${d}px`,e.style.top=`${p}px`,e.style.right="auto",e.style.bottom="auto",e.classList.add("is-dragging"),t.preventDefault(),document.body.style.userSelect="none",document.body.style.webkitUserSelect="none",document.body.style.cursor="move",document.addEventListener("mousemove",b),document.addEventListener("mouseup",g)}function b(t){if(!o)return;let n=t.clientX-r,i=t.clientY-l,s=d+n,a=p+i,c=e.getBoundingClientRect();s=Math.max(0,Math.min(s,window.innerWidth-c.width)),a=Math.max(0,Math.min(a,window.innerHeight-c.height)),e.style.left=`${s}px`,e.style.top=`${a}px`,t.preventDefault()}function g(t){o&&(o=!1,e.classList.remove("is-dragging"),document.body.style.userSelect="",document.body.style.webkitUserSelect="",document.body.style.cursor="",document.removeEventListener("mousemove",b),document.removeEventListener("mouseup",g),u())}function v(t){i=!0,s=t.target.dataset.edge,r=t.clientX,l=t.clientY;let n=e.getBoundingClientRect();a=n.width,c=n.height,d=n.left,p=n.top,e.style.left=`${d}px`,e.style.top=`${p}px`,e.style.right="auto",e.style.bottom="auto",e.style.width=`${a}px`,e.style.height=`${c}px`,e.style.maxHeight="none",e.classList.add("is-resizing"),t.preventDefault(),t.stopPropagation(),document.body.style.userSelect="none",document.body.style.webkitUserSelect="none",document.body.style.cursor=({top:"ns-resize",bottom:"ns-resize",left:"ew-resize",right:"ew-resize","top-left":"nwse-resize","bottom-right":"nwse-resize","top-right":"nesw-resize","bottom-left":"nesw-resize"})[s]||"default",document.addEventListener("mousemove",f),document.addEventListener("mouseup",y)}function f(t){if(!i)return;let o=t.clientX-r,h=t.clientY-l,u=a,m=c,b=d,g=p;if(s.includes("right")&&(u=Math.max(n.minWidth,Math.min(n.maxWidth,a+o))),s.includes("left")){let e=a-o;e>=n.minWidth&&e<=n.maxWidth&&(u=e,b=d+o)}if(s.includes("bottom")&&(m=Math.max(n.minHeight,Math.min(n.maxHeight,c+h))),s.includes("top")){let e=c-h;e>=n.minHeight&&e<=n.maxHeight&&(m=e,g=p+h)}b=Math.max(0,b),g=Math.max(0,g),e.style.width=`${u}px`,e.style.height=`${m}px`,e.style.left=`${b}px`,e.style.top=`${g}px`,t.preventDefault()}function y(t){i&&(i=!1,s=null,e.classList.remove("is-resizing"),document.body.style.userSelect="",document.body.style.webkitUserSelect="",document.body.style.cursor="",document.removeEventListener("mousemove",f),document.removeEventListener("mouseup",y),u())}return e.addEventListener("mousedown",m),{reset:function(){if(e.style.width="",e.style.height="",e.style.left="",e.style.top="",e.style.right="",e.style.bottom="",e.style.maxHeight="",n.persistState){let e=S();delete e[n.panelId],M(e)}},destroy:function(){e.removeEventListener("mousedown",m),document.removeEventListener("mousemove",b),document.removeEventListener("mouseup",g),document.removeEventListener("mousemove",f),document.removeEventListener("mouseup",y),h?.remove()},saveState:u}}class D{constructor(e={}){this.options={onBlockSelect:null,...e},this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm="",this.panelInteractions=null}create(){this.element||(this.blocks=C(),this.filteredBlocks=[...this.blocks],this.element=document.createElement("div"),this.element.id="__mnkys-devtools-panel__",this.element.innerHTML=this._buildHTML(),document.body.appendChild(this.element),this._attachEvents(),this.panelInteractions=I(this.element,{panelId:"block-panel",dragHandle:".panel-header",minWidth:260,minHeight:200,maxWidth:window.innerWidth-40,maxHeight:window.innerHeight-40}))}destroy(){this.panelInteractions?.destroy(),this.panelInteractions=null,this.element?.remove(),this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm=""}reload(){this.blocks=C(),this.filteredBlocks=[...this.blocks],this._updateList()}getBlocks(){return this.blocks}hasBlocks(){return this.blocks.length>0}_buildHTML(){return`
+        `,e.appendChild(t),t.querySelectorAll(".panel-resize-handle").forEach(e=>{e.addEventListener("mousedown",v)}),t}()),o.persistState){let t=C()[o.panelId];t&&(t.width&&(e.style.width=`${t.width}px`),t.height&&(e.style.height=`${t.height}px`),void 0!==t.left&&(e.style.left=`${t.left}px`,e.style.right="auto"),void 0!==t.top&&(e.style.top=`${t.top}px`,e.style.bottom="auto"))}function u(){if(!o.persistState)return;let t=e.getBoundingClientRect(),n=C();n[o.panelId]={width:t.width,height:t.height,left:t.left,top:t.top},I(n)}function m(t){if(!t.target.closest(o.dragHandleSelector)||t.target.closest("button, input, textarea, select, a, .panel-resize-handle"))return;n=!0,l=t.clientX,r=t.clientY;let i=e.getBoundingClientRect();d=i.left,h=i.top,e.style.left=`${d}px`,e.style.top=`${h}px`,e.style.right="auto",e.style.bottom="auto",e.classList.add("is-dragging"),t.preventDefault(),document.body.style.userSelect="none",document.body.style.webkitUserSelect="none",document.body.style.cursor="move",document.addEventListener("mousemove",b),document.addEventListener("mouseup",g)}function b(t){if(!n)return;let o=t.clientX-l,i=t.clientY-r,s=d+o,a=h+i,c=e.getBoundingClientRect();s=Math.max(0,Math.min(s,window.innerWidth-c.width)),a=Math.max(0,Math.min(a,window.innerHeight-c.height)),e.style.left=`${s}px`,e.style.top=`${a}px`,t.preventDefault()}function g(t){n&&(n=!1,e.classList.remove("is-dragging"),document.body.style.userSelect="",document.body.style.webkitUserSelect="",document.body.style.cursor="",document.removeEventListener("mousemove",b),document.removeEventListener("mouseup",g),u())}function v(t){i=!0,s=t.target.dataset.edge,l=t.clientX,r=t.clientY;let o=e.getBoundingClientRect();a=o.width,c=o.height,d=o.left,h=o.top,e.style.left=`${d}px`,e.style.top=`${h}px`,e.style.right="auto",e.style.bottom="auto",e.style.width=`${a}px`,e.style.height=`${c}px`,e.style.maxHeight="none",e.classList.add("is-resizing"),t.preventDefault(),t.stopPropagation(),document.body.style.userSelect="none",document.body.style.webkitUserSelect="none",document.body.style.cursor=({top:"ns-resize",bottom:"ns-resize",left:"ew-resize",right:"ew-resize","top-left":"nwse-resize","bottom-right":"nwse-resize","top-right":"nesw-resize","bottom-left":"nesw-resize"})[s]||"default",document.addEventListener("mousemove",y),document.addEventListener("mouseup",f)}function y(t){if(!i)return;let n=t.clientX-l,p=t.clientY-r,u=a,m=c,b=d,g=h;if(s.includes("right")&&(u=Math.max(o.minWidth,Math.min(o.maxWidth,a+n))),s.includes("left")){let e=a-n;e>=o.minWidth&&e<=o.maxWidth&&(u=e,b=d+n)}if(s.includes("bottom")&&(m=Math.max(o.minHeight,Math.min(o.maxHeight,c+p))),s.includes("top")){let e=c-p;e>=o.minHeight&&e<=o.maxHeight&&(m=e,g=h+p)}b=Math.max(0,b),g=Math.max(0,g),e.style.width=`${u}px`,e.style.height=`${m}px`,e.style.left=`${b}px`,e.style.top=`${g}px`,t.preventDefault()}function f(t){i&&(i=!1,s=null,e.classList.remove("is-resizing"),document.body.style.userSelect="",document.body.style.webkitUserSelect="",document.body.style.cursor="",document.removeEventListener("mousemove",y),document.removeEventListener("mouseup",f),u())}return e.addEventListener("mousedown",m),{reset:function(){if(e.style.width="",e.style.height="",e.style.left="",e.style.top="",e.style.right="",e.style.bottom="",e.style.maxHeight="",o.persistState){let e=C();delete e[o.panelId],I(e)}},destroy:function(){e.removeEventListener("mousedown",m),document.removeEventListener("mousemove",b),document.removeEventListener("mouseup",g),document.removeEventListener("mousemove",y),document.removeEventListener("mouseup",f),p?.remove()},saveState:u}}class M{constructor(e={}){this.options={onBlockSelect:null,onBlockHover:null,...e},this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm="",this.selectedBlockId=null,this.panelInteractions=null}create(){this.element||(this.blocks=S(),this.filteredBlocks=[...this.blocks],this.element=document.createElement("div"),this.element.id="__mnkys-devtools-panel__",this.element.innerHTML=this._buildHTML(),document.body.appendChild(this.element),this._attachEvents(),this.panelInteractions=B(this.element,{panelId:"block-panel",dragHandle:".panel-header",minWidth:260,minHeight:200,maxWidth:window.innerWidth-40,maxHeight:window.innerHeight-40}))}destroy(){this.panelInteractions?.destroy(),this.panelInteractions=null,this.element?.remove(),this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm="",this.selectedBlockId=null}reload(){this.blocks=S(),this.filteredBlocks=[...this.blocks],this._updateList()}setSelectedBlock(e){this.selectedBlockId=e,this._updateSelectedState()}getBlocks(){return this.blocks}hasBlocks(){return this.blocks.length>0}_buildHTML(){return`
             <div class="panel-header">
                 <div class="panel-title">Twig Blocks</div>
                 <input type="text" class="panel-search" placeholder="Search blocks..." />
@@ -116,22 +116,22 @@
             <div class="panel-footer">
                 <kbd>Esc</kbd> close &bull; <kbd>Click</kbd> for details
             </div>
-        `}_buildListHTML(){return 0===this.filteredBlocks.length?'<div class="panel-empty">No blocks found</div>':this.filteredBlocks.map(e=>`
-            <div class="block-item" 
-                 data-template="${b(e.template)}" 
-                 data-block="${b(e.block)}"
-                 data-line="${e.line}"
-                 data-block-id="${b(e.blockId||"")}">
-                <div class="block-item-name">${this._highlightMatch(e.block)}</div>
-                <div class="block-item-path">${this._highlightMatch(g(e.template))}:${e.line}</div>
-            </div>
-        `).join("")}_highlightMatch(e){if(!this.searchTerm)return b(e);let t=b(e),n=RegExp(`(${this.searchTerm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");return t.replace(n,'<span class="highlight">$1</span>')}_attachEvents(){let e=this.element.querySelector(".panel-search");e?.addEventListener("input",e=>{this.searchTerm=e.target.value.toLowerCase(),this._filterBlocks(),this._updateList()}),this.element.addEventListener("click",e=>{let t=e.target.closest(".block-item");if(t){let e={block:t.dataset.block,template:t.dataset.template,line:parseInt(t.dataset.line,10),blockId:t.dataset.blockId};this.options.onBlockSelect?.(e)}})}_filterBlocks(){if(!this.searchTerm){this.filteredBlocks=[...this.blocks];return}this.filteredBlocks=this.blocks.filter(e=>e.block.toLowerCase().includes(this.searchTerm)||e.template.toLowerCase().includes(this.searchTerm))}_updateList(){let e=this.element?.querySelector(".panel-list");e&&(e.innerHTML=this._buildListHTML());let t=this.element?.querySelector(".panel-stats");t&&(t.textContent=this.searchTerm?`${this.filteredBlocks.length} of ${this.blocks.length} blocks`:`${this.blocks.length} blocks`)}}class H{constructor(e={}){this.options={onClose:null,onOpenEditor:null,...e},this.element=null,this.currentBlock=null,this.contextData={},this.blockInfo=null,this.activeTab="context",this.isLoading=!1,this.panelInteractions=null}create(){this.element||(this.contextData=function(){let e=document.getElementById("devtools-context-data");if(!e)return{};try{return JSON.parse(e.textContent)||{}}catch(e){return console.warn("DevTools: Failed to parse context data",e),{}}}(),this.element=document.createElement("div"),this.element.id="__mnkys-devtools-detail__",this.element.style.display="none",this.contentContainer=document.createElement("div"),this.contentContainer.className="detail-panel-content",this.element.appendChild(this.contentContainer),document.body.appendChild(this.element))}_initInteractions(){this.panelInteractions||(this.panelInteractions=I(this.element,{panelId:"detail-panel",dragHandle:".detail-header",minWidth:380,minHeight:300,maxWidth:window.innerWidth-40,maxHeight:window.innerHeight-40}))}async show(e,t){this.element||this.create(),this.currentBlock=e,this.blockInfo=null,this.activeTab="context";let n=t.tagName.toLowerCase(),o=t.id?`#${t.id}`:"",i=t.className&&"string"==typeof t.className?"."+t.className.trim().split(/\s+/).slice(0,2).join("."):"";this.elementInfo=`<${n}${o}${i}>`,this.render(),this.element.style.display="flex",this._initInteractions(),this.fetchBlockInfo()}hide(){this.element&&(this.element.style.display="none"),this.currentBlock=null,this.blockInfo=null}destroy(){this.panelInteractions?.destroy(),this.panelInteractions=null,this.element?.remove(),this.element=null}async fetchBlockInfo(){if(this.currentBlock){this.isLoading=!0,this.updateTabContent();try{let e=await T(this.currentBlock.template,this.currentBlock.block,this.currentBlock.line);e.success&&e.data&&(this.blockInfo=e.data)}catch(e){console.warn("DevTools: Failed to fetch block info",e)}finally{this.isLoading=!1,this.updateTabContent()}}}render(){if(!this.contentContainer||!this.currentBlock)return;let{block:e,template:t,line:n,blockId:o}=this.currentBlock;this.contentContainer.innerHTML=`
+        `}_buildListHTML(){return 0===this.filteredBlocks.length?'<div class="panel-empty">No blocks found</div>':this.filteredBlocks.map(e=>{let t=e.blockId||e.block,o=this.selectedBlockId&&(t===this.selectedBlockId||e.block===this.selectedBlockId);return`
+                <div class="block-item ${o?"selected":""}" 
+                     data-template="${b(e.template)}" 
+                     data-block="${b(e.block)}"
+                     data-line="${e.line}"
+                     data-block-id="${b(e.blockId||"")}">
+                    <div class="block-item-name">${this._highlightMatch(e.block)}</div>
+                    <div class="block-item-path">${this._highlightMatch(g(e.template))}:${e.line}</div>
+                </div>
+            `}).join("")}_highlightMatch(e){if(!this.searchTerm)return b(e);let t=b(e),o=RegExp(`(${this.searchTerm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");return t.replace(o,'<span class="highlight">$1</span>')}_attachEvents(){let e=this.element.querySelector(".panel-search");e?.addEventListener("input",e=>{this.searchTerm=e.target.value.toLowerCase(),this._filterBlocks(),this._updateList()}),this.element.addEventListener("click",e=>{let t=e.target.closest(".block-item");if(t){let e=this._getBlockDataFromItem(t);this.options.onBlockSelect?.(e)}}),this.element.addEventListener("mouseenter",e=>{let t=e.target.closest(".block-item");if(t){let e=this._getBlockDataFromItem(t);this.options.onBlockHover?.(e,!0)}},!0),this.element.addEventListener("mouseleave",e=>{let t=e.target.closest(".block-item");if(t){let e=this._getBlockDataFromItem(t);this.options.onBlockHover?.(e,!1)}},!0)}_getBlockDataFromItem(e){return{block:e.dataset.block,template:e.dataset.template,line:parseInt(e.dataset.line,10),blockId:e.dataset.blockId}}_filterBlocks(){if(!this.searchTerm){this.filteredBlocks=[...this.blocks];return}this.filteredBlocks=this.blocks.filter(e=>e.block.toLowerCase().includes(this.searchTerm)||e.template.toLowerCase().includes(this.searchTerm))}_updateList(){let e=this.element?.querySelector(".panel-list");e&&(e.innerHTML=this._buildListHTML());let t=this.element?.querySelector(".panel-stats");t&&(t.textContent=this.searchTerm?`${this.filteredBlocks.length} of ${this.blocks.length} blocks`:`${this.blocks.length} blocks`)}_updateSelectedState(){this.element&&this.element.querySelectorAll(".block-item").forEach(e=>{let t=e.dataset.blockId||e.dataset.block,o=this.selectedBlockId&&(t===this.selectedBlockId||e.dataset.block===this.selectedBlockId);e.classList.toggle("selected",o),o&&e.scrollIntoView({behavior:"smooth",block:"nearest"})})}}class D{constructor(e={}){this.options={onClose:null,onOpenEditor:null,...e},this.element=null,this.currentBlock=null,this.contextData={},this.blockInfo=null,this.activeTab="context",this.isLoading=!1,this.panelInteractions=null}create(){this.element||(this.contextData=function(){let e=document.getElementById("devtools-context-data");if(!e)return{};try{return JSON.parse(e.textContent)||{}}catch(e){return console.warn("DevTools: Failed to parse context data",e),{}}}(),this.element=document.createElement("div"),this.element.id="__mnkys-devtools-detail__",this.element.style.display="none",this.contentContainer=document.createElement("div"),this.contentContainer.className="detail-panel-content",this.element.appendChild(this.contentContainer),document.body.appendChild(this.element))}_initInteractions(){this.panelInteractions||(this.panelInteractions=B(this.element,{panelId:"detail-panel",dragHandle:".detail-header",minWidth:380,minHeight:300,maxWidth:window.innerWidth-40,maxHeight:window.innerHeight-40}))}async show(e,t){this.element||this.create(),this.currentBlock=e,this.blockInfo=null,this.activeTab="context";let o=t.tagName.toLowerCase(),n=t.id?`#${t.id}`:"",i=t.className&&"string"==typeof t.className?"."+t.className.trim().split(/\s+/).slice(0,2).join("."):"";this.elementInfo=`<${o}${n}${i}>`,this.render(),this.element.style.display="flex",this._initInteractions(),this.fetchBlockInfo()}hide(){this.element&&(this.element.style.display="none"),this.currentBlock=null,this.blockInfo=null}destroy(){this.panelInteractions?.destroy(),this.panelInteractions=null,this.element?.remove(),this.element=null}async fetchBlockInfo(){if(this.currentBlock){this.isLoading=!0,this.updateTabContent();try{let e=await T(this.currentBlock.template,this.currentBlock.block,this.currentBlock.line);e.success&&e.data&&(this.blockInfo=e.data)}catch(e){console.warn("DevTools: Failed to fetch block info",e)}finally{this.isLoading=!1,this.updateTabContent()}}}render(){if(!this.contentContainer||!this.currentBlock)return;let{block:e,template:t,line:o,blockId:n}=this.currentBlock;this.contentContainer.innerHTML=`
             <div class="detail-header">
                 <div class="element-info">${b(this.elementInfo)}</div>
                 <div class="block-title">{% block ${b(e)} %}</div>
                 <div class="template-info">
                     ${b(g(t))}
-                    <span class="line-num">:${n}</span>
+                    <span class="line-num">:${o}</span>
                 </div>
             </div>
             
@@ -167,42 +167,42 @@
                     Open in Editor
                 </button>
             </div>
-        `,this.attachEvents()}updateTabContent(){if(!this.element)return;let e=this.element.querySelector('[data-pane="context"]'),t=this.element.querySelector('[data-pane="hierarchy"]'),n=this.element.querySelector('[data-pane="source"]');e&&(e.innerHTML=this.renderContextTab()),t&&(t.innerHTML=this.renderHierarchyTab()),n&&(n.innerHTML=this.renderSourceTab()),this.attachTreeEvents()}renderContextTab(){let{blockId:e}=this.currentBlock,t=this.contextData[e];if(!t||!t.context)return'<div class="source-loading">No context data available</div>';let n=t.context,o=Object.keys(n);return 0===o.length?'<div class="source-loading">No variables in context</div>':`
+        `,this.attachEvents()}updateTabContent(){if(!this.element)return;let e=this.element.querySelector('[data-pane="context"]'),t=this.element.querySelector('[data-pane="hierarchy"]'),o=this.element.querySelector('[data-pane="source"]');e&&(e.innerHTML=this.renderContextTab()),t&&(t.innerHTML=this.renderHierarchyTab()),o&&(o.innerHTML=this.renderSourceTab()),this.attachTreeEvents()}renderContextTab(){let{blockId:e}=this.currentBlock,t=this.contextData[e];if(!t||!t.context)return'<div class="source-loading">No context data available</div>';let o=t.context,n=Object.keys(o);return 0===n.length?'<div class="source-loading">No variables in context</div>':`
             <ul class="var-tree">
-                ${o.map(e=>this.renderVariable(e,n[e])).join("")}
+                ${n.map(e=>this.renderVariable(e,o[e])).join("")}
             </ul>
-        `}renderVariable(e,t){let n=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0,o=this.hasExpandableContent(t),i=this.getTypeClass(t.type),s=this.getDisplayValue(t);return`
-            <li class="var-item" data-depth="${n}">
+        `}renderVariable(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0,n=this.hasExpandableContent(t),i=this.getTypeClass(t.type),s=this.getDisplayValue(t);return`
+            <li class="var-item" data-depth="${o}">
                 <div class="var-row">
-                    <span class="var-toggle ${o?"expandable":""}"></span>
+                    <span class="var-toggle ${n?"expandable":""}"></span>
                     <span class="var-name">${b(e)}</span>
                     <span class="var-type">${b(this.getTypeLabel(t))}</span>
                     ${s?`<span class="var-value ${i}">${b(s)}</span>`:""}
                 </div>
-                ${o?`<ul class="var-children">${this.renderVariableChildren(t)}</ul>`:""}
+                ${n?`<ul class="var-children">${this.renderVariableChildren(t)}</ul>`:""}
             </li>
-        `}hasExpandableContent(e){return!!e&&(!!e.properties&&Object.keys(e.properties).length>0||!!e.items&&Object.keys(e.items).length>0||!!e.keys&&e.keys.length>0)}renderVariableChildren(e){let t=[];if(e.properties)for(let[n,o]of Object.entries(e.properties))t.push(this.renderVariable(n,o,1));if(e.items)for(let[n,o]of Object.entries(e.items))t.push(this.renderVariable(n,o,1));if(e.keys&&!e.items)for(let n of e.keys)t.push(`
+        `}hasExpandableContent(e){return!!e&&(!!e.properties&&Object.keys(e.properties).length>0||!!e.items&&Object.keys(e.items).length>0||!!e.keys&&e.keys.length>0)}renderVariableChildren(e){let t=[];if(e.properties)for(let[o,n]of Object.entries(e.properties))t.push(this.renderVariable(o,n,1));if(e.items)for(let[o,n]of Object.entries(e.items))t.push(this.renderVariable(o,n,1));if(e.keys&&!e.items)for(let o of e.keys)t.push(`
                     <li class="var-item">
                         <div class="var-row">
                             <span class="var-toggle"></span>
-                            <span class="var-name">${b(n)}</span>
+                            <span class="var-name">${b(o)}</span>
                             <span class="var-type">key</span>
                         </div>
                     </li>
-                `);return t.join("")}getTypeClass(e){switch(e){case"string":return"string";case"int":case"float":return"number";case"bool":return"bool";case"null":return"null";case"object":return"object";default:return""}}getTypeLabel(e){if(!e)return"unknown";let t=e.type;return e.class&&(t=e.class),void 0!==e.count&&(t+=`(${e.count})`),void 0!==e.length&&"string"===e.type&&(t+=`[${e.length}]`),t}getDisplayValue(e){return e?void 0!==e.value?"bool"===e.type?e.value?"true":"false":"string"===e.type?`"${e.value}"`:String(e.value):e.preview?`"${e.preview}"`:e.name?e.name:e.id?`id: ${e.id}`:"":""}renderHierarchyTab(){if(this.isLoading)return'<div class="source-loading"><span class="devtools-loading"></span> Loading hierarchy...</div>';if(!this.blockInfo||!this.blockInfo.hierarchy)return'<div class="source-loading">Hierarchy information not available</div>';let e=this.blockInfo.hierarchy,t=this.currentBlock.template,n=e.length;return`
+                `);return t.join("")}getTypeClass(e){switch(e){case"string":return"string";case"int":case"float":return"number";case"bool":return"bool";case"null":return"null";case"object":return"object";default:return""}}getTypeLabel(e){if(!e)return"unknown";let t=e.type;return e.class&&(t=e.class),void 0!==e.count&&(t+=`(${e.count})`),void 0!==e.length&&"string"===e.type&&(t+=`[${e.length}]`),t}getDisplayValue(e){return e?void 0!==e.value?"bool"===e.type?e.value?"true":"false":"string"===e.type?`"${e.value}"`:String(e.value):e.preview?`"${e.preview}"`:e.name?e.name:e.id?`id: ${e.id}`:"":""}renderHierarchyTab(){if(this.isLoading)return'<div class="source-loading"><span class="devtools-loading"></span> Loading hierarchy...</div>';if(!this.blockInfo||!this.blockInfo.hierarchy)return'<div class="source-loading">Hierarchy information not available</div>';let e=this.blockInfo.hierarchy,t=this.currentBlock.template,o=e.length;return`
             <div class="hierarchy-section">
                 <div class="hierarchy-label">Template Inheritance Chain</div>
                 <div class="hierarchy-tree">
-                    ${e.map((e,o)=>{let i=e.template===t,s=e.isRoot||0===o,r=e.blocks?e.blocks.length:0,l="";if(o>0){for(let e=0;e<o-1;e++)l+='<span class="tree-line">│</span>';l+=o===n-1?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>'}return`
+                    ${e.map((e,n)=>{let i=e.template===t,s=e.isRoot||0===n,l=e.blocks?e.blocks.length:0,r="";if(n>0){for(let e=0;e<n-1;e++)r+='<span class="tree-line">│</span>';r+=n===o-1?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>'}return`
                             <div class="hierarchy-item ${i?"current":""} ${i?"":"clickable"}"
                                  data-template="${b(e.template)}"
                                  data-line="1"
-                                 data-depth="${o}">
-                                <div class="hierarchy-tree-line">${l}</div>
+                                 data-depth="${n}">
+                                <div class="hierarchy-tree-line">${r}</div>
                                 <div class="hierarchy-content">
                                     ${s?'<span class="hierarchy-icon root" title="Base template">◆</span>':'<span class="hierarchy-icon child" title="Extends parent">◇</span>'}
                                     <span class="hierarchy-template" title="${b(e.template)}">${b(g(e.template))}</span>
-                                    <span class="hierarchy-blocks">${r}</span>
+                                    <span class="hierarchy-blocks">${l}</span>
                                 </div>
                                 ${i?'<span class="hierarchy-current-badge">current</span>':""}
                             </div>
@@ -211,36 +211,36 @@
             </div>
             
             ${this.blockInfo.blocks?this.renderBlockList():""}
-        `}renderBlockList(){let e=this.blockInfo.blocks,t=e.flat||e,n=e.tree||Object.keys(t);if(!t||0===Object.keys(t).length)return"";let o=this.currentBlock.block,i=(e,n,s,r)=>{let l=t[e];if(!l)return"";let a=e===o,c=l.children||[],d=c.length>0,p="";for(let e=0;e<r.length;e++)p+=r[e]?'<span class="tree-line">│</span>':'<span class="tree-line"> </span>';n>0&&(p+=s?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>');let h=`
+        `}renderBlockList(){let e=this.blockInfo.blocks,t=e.flat||e,o=e.tree||Object.keys(t);if(!t||0===Object.keys(t).length)return"";let n=this.currentBlock.block,i=(e,o,s,l)=>{let r=t[e];if(!r)return"";let a=e===n,c=r.children||[],d=c.length>0,h="";for(let e=0;e<l.length;e++)h+=l[e]?'<span class="tree-line">│</span>':'<span class="tree-line"> </span>';o>0&&(h+=s?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>');let p=`
                 <div class="block-entry ${a?"current":""}" 
                      data-block="${b(e)}" 
-                     data-line="${l.line}"
-                     data-depth="${n}">
-                    <div class="block-tree-line">${p}</div>
+                     data-line="${r.line}"
+                     data-depth="${o}">
+                    <div class="block-tree-line">${h}</div>
                     <span class="block-icon">{%</span>
                     <span class="block-entry-name">${b(e)}</span>
-                    <span class="block-line">:${l.line}</span>
+                    <span class="block-line">:${r.line}</span>
                     ${a?'<span class="block-current-badge">●</span>':""}
                 </div>
-            `;if(d){let e=[...r,!s];c.forEach((t,o)=>{let s=o===c.length-1;h+=i(t,n+1,s,e)})}return h},s="";return n.forEach((e,t)=>{let o=t===n.length-1;s+=i(e,0,o,[])}),`
+            `;if(d){let e=[...l,!s];c.forEach((t,n)=>{let s=n===c.length-1;p+=i(t,o+1,s,e)})}return p},s="";return o.forEach((e,t)=>{let n=t===o.length-1;s+=i(e,0,n,[])}),`
             <div class="hierarchy-section blocks-section">
                 <div class="hierarchy-label">Blocks in Current Template</div>
                 <div class="blocks-tree">
                     ${s}
                 </div>
             </div>
-        `}renderSourceTab(){if(this.isLoading)return'<div class="source-loading"><span class="devtools-loading"></span> Loading source...</div>';if(!this.blockInfo||!this.blockInfo.source)return'<div class="source-loading">Source code not available</div>';let{lines:e,blockStart:t,blockEnd:n}=this.blockInfo.source;return e&&0!==e.length?`
+        `}renderSourceTab(){if(this.isLoading)return'<div class="source-loading"><span class="devtools-loading"></span> Loading source...</div>';if(!this.blockInfo||!this.blockInfo.source)return'<div class="source-loading">Source code not available</div>';let{lines:e,blockStart:t,blockEnd:o}=this.blockInfo.source;return e&&0!==e.length?`
             <div class="source-container">
                 <div class="source-code">
-                    ${e.map(e=>{let t=e.isBlockLine,n=e.isStartLine;return`
-                            <div class="source-line ${t?"highlight":""} ${n?"block-start":""}">
+                    ${e.map(e=>{let t=e.isBlockLine,o=e.isStartLine;return`
+                            <div class="source-line ${t?"highlight":""} ${o?"block-start":""}">
                                 <span class="line-number">${e.number}</span>
                                 <span class="line-content">${b(e.content).replace(/(\{#.*?#\})/g,'<span class="twig-comment">$1</span>').replace(/(\{%\s*)(\w+)(.*?)(%\})/g,'<span class="twig-tag">$1</span><span class="twig-name">$2</span>$3<span class="twig-tag">$4</span>').replace(/(\{\{)(.*?)(\}\})/g,'<span class="twig-tag">$1</span>$2<span class="twig-tag">$3</span>').replace(/(&quot;[^&]*&quot;|&#039;[^&]*&#039;)/g,'<span class="twig-string">$1</span>').replace(/(&lt;\/?)(\w+)((?:\s+[^&]*?)?)(&gt;)/g,'$1<span class="html-tag">$2</span>$3$4')}</span>
                             </div>
                         `}).join("")}
                 </div>
             </div>
-        `:'<div class="source-loading">No source lines available</div>'}attachEvents(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.addEventListener("click",e=>{this.activeTab=e.target.dataset.tab,this.updateTabs()})}),this.element.querySelector('[data-action="close"]')?.addEventListener("click",()=>{this.hide(),this.options.onClose?.()}),this.element.querySelector('[data-action="open-editor"]')?.addEventListener("click",()=>{this.handleOpenEditor()}),this.element.querySelectorAll(".hierarchy-item.clickable").forEach(e=>{e.addEventListener("click",()=>{E(e.dataset.template,parseInt(e.dataset.line,10)||1)})}),this.attachTreeEvents())}attachTreeEvents(){this.element&&this.element.querySelectorAll(".var-row").forEach(e=>{e.addEventListener("click",t=>{let n=e.closest(".var-item");n&&e.querySelector(".var-toggle.expandable")&&n.classList.toggle("expanded")})})}updateTabs(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.classList.toggle("active",e.dataset.tab===this.activeTab)}),this.element.querySelectorAll(".tab-pane").forEach(e=>{e.classList.toggle("active",e.dataset.pane===this.activeTab)}))}async handleOpenEditor(){if(this.currentBlock)try{let e=await E(this.currentBlock.template,this.currentBlock.line);e.success?this.options.onOpenEditor?.(e):e.editorUrl?window.location.href=e.editorUrl:e.error&&console.warn("DevTools: Failed to open editor:",e.error)}catch(e){console.warn("DevTools: Failed to open editor",e)}}}class B extends l{static #e=this.options={keyboardShortcut:!0};init(){this._enabled=!1,this._currentTarget=null,this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null,this._toggle=null,this._onMouseMove=this._onMouseMove.bind(this),this._onClick=this._onClick.bind(this),this._onKeyDown=this._onKeyDown.bind(this),this._initToggle(),this.options.keyboardShortcut&&document.addEventListener("keydown",this._onKeyDown)}_initToggle(){this._isDevToolsEnabled()?this._createToggle():setTimeout(()=>{!this._toggle?.exists()&&this._isDevToolsEnabled()&&this._createToggle()},100)}_createToggle(){this._toggle=new k({onToggle:()=>this.toggle()}),this._toggle.create()}_isDevToolsEnabled(){return!!("true"===document.body.dataset.devtoolsEnabled||document.getElementById("devtools-block-data"))}toggle(){this._enabled?this.disable():this.enable()}enable(){this._enabled||(this._enabled=!0,function(){if(document.getElementById("__mnkys-devtools-styles__"))return;let e=document.createElement("style");e.id="__mnkys-devtools-styles__",e.textContent=`
+        `:'<div class="source-loading">No source lines available</div>'}attachEvents(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.addEventListener("click",e=>{this.activeTab=e.target.dataset.tab,this.updateTabs()})}),this.element.querySelector('[data-action="close"]')?.addEventListener("click",()=>{this.hide(),this.options.onClose?.()}),this.element.querySelector('[data-action="open-editor"]')?.addEventListener("click",()=>{this.handleOpenEditor()}),this.element.querySelectorAll(".hierarchy-item.clickable").forEach(e=>{e.addEventListener("click",()=>{z(e.dataset.template,parseInt(e.dataset.line,10)||1)})}),this.attachTreeEvents())}attachTreeEvents(){this.element&&this.element.querySelectorAll(".var-row").forEach(e=>{e.addEventListener("click",t=>{let o=e.closest(".var-item");o&&e.querySelector(".var-toggle.expandable")&&o.classList.toggle("expanded")})})}updateTabs(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.classList.toggle("active",e.dataset.tab===this.activeTab)}),this.element.querySelectorAll(".tab-pane").forEach(e=>{e.classList.toggle("active",e.dataset.pane===this.activeTab)}))}async handleOpenEditor(){if(this.currentBlock)try{let e=await z(this.currentBlock.template,this.currentBlock.line);e.success?this.options.onOpenEditor?.(e):e.editorUrl?window.location.href=e.editorUrl:e.error&&console.warn("DevTools: Failed to open editor:",e.error)}catch(e){console.warn("DevTools: Failed to open editor",e)}}}class H extends r{static #e=this.options={keyboardShortcut:!0};init(){this._enabled=!1,this._currentTarget=null,this._selectedTarget=null,this._selectedBlockData=null,this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null,this._toggle=null,this._onMouseMove=this._onMouseMove.bind(this),this._onClick=this._onClick.bind(this),this._onKeyDown=this._onKeyDown.bind(this),this._initToggle(),this.options.keyboardShortcut&&document.addEventListener("keydown",this._onKeyDown)}_initToggle(){this._isDevToolsEnabled()?this._createToggle():setTimeout(()=>{!this._toggle?.exists()&&this._isDevToolsEnabled()&&this._createToggle()},100)}_createToggle(){this._toggle=new k({onToggle:()=>this.toggle()}),this._toggle.create()}_isDevToolsEnabled(){return!!("true"===document.body.dataset.devtoolsEnabled||document.getElementById("devtools-block-data"))}toggle(){this._enabled?this.disable():this.enable()}enable(){this._enabled||(this._enabled=!0,function(){if(document.getElementById("__mnkys-devtools-styles__"))return;let e=document.createElement("style");e.id="__mnkys-devtools-styles__",e.textContent=`
 /* ========================================
    DevTools Inspector - Modern UI
    ======================================== */
@@ -264,7 +264,7 @@
 }
 
 /* ========================================
-   Highlight Overlay
+   Highlight Overlay (Hover)
    ======================================== */
 
 #__mnkys-devtools-overlay__ {
@@ -274,7 +274,7 @@
     
     background: ${a.overlay};
     border: 2px solid ${a.overlayBorder};
-    border-radius: ${h.sm};
+    border-radius: ${p.sm};
     
     box-shadow: 0 0 0 4px ${a.accentMuted},
                 inset 0 0 20px ${a.accentMuted};
@@ -282,6 +282,44 @@
     transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     display: none;
     box-sizing: border-box;
+}
+
+/* ========================================
+   Selection Overlay (Persistent)
+   ======================================== */
+
+#__mnkys-devtools-selection__ {
+    position: fixed;
+    pointer-events: none;
+    z-index: ${d.overlay-1};
+    
+    background: rgba(0, 230, 118, 0.08);
+    border: 2px solid ${a.success};
+    border-radius: ${p.sm};
+    
+    box-shadow: 0 0 0 4px rgba(0, 230, 118, 0.15),
+                inset 0 0 20px rgba(0, 230, 118, 0.1),
+                0 0 20px rgba(0, 230, 118, 0.2);
+    
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: none;
+    box-sizing: border-box;
+    
+    /* Pulsing animation for visibility */
+    animation: selectionPulse 2s ease-in-out infinite;
+}
+
+@keyframes selectionPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 4px rgba(0, 230, 118, 0.15),
+                    inset 0 0 20px rgba(0, 230, 118, 0.1),
+                    0 0 20px rgba(0, 230, 118, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(0, 230, 118, 0.2),
+                    inset 0 0 25px rgba(0, 230, 118, 0.15),
+                    0 0 30px rgba(0, 230, 118, 0.3);
+    }
 }
 
 /* ========================================
@@ -298,8 +336,8 @@
     -webkit-backdrop-filter: blur(16px) saturate(180%);
     
     color: ${a.text};
-    padding: ${p.md} ${p.lg};
-    border-radius: ${h.md};
+    padding: ${h.md} ${h.lg};
+    border-radius: ${p.md};
     
     font-size: 12px;
     font-family: ${c.mono};
@@ -328,7 +366,7 @@
 #__mnkys-devtools-tooltip__ .element-tag {
     color: ${a.textMuted};
     font-size: 10px;
-    margin-bottom: ${p.sm};
+    margin-bottom: ${h.sm};
     font-family: ${c.mono};
     opacity: 0.8;
 }
@@ -337,10 +375,10 @@
     color: ${a.accent};
     font-weight: 700;
     font-size: 14px;
-    margin-bottom: ${p.xs};
+    margin-bottom: ${h.xs};
     display: flex;
     align-items: center;
-    gap: ${p.xs};
+    gap: ${h.xs};
 }
 
 #__mnkys-devtools-tooltip__ .block-name::before {
@@ -361,10 +399,10 @@
     color: ${a.syntax.variable};
     font-size: 11px;
     word-break: break-all;
-    padding: ${p.sm} ${p.md};
+    padding: ${h.sm} ${h.md};
     background: ${a.bgDeep};
-    border-radius: ${h.sm};
-    margin-top: ${p.sm};
+    border-radius: ${p.sm};
+    margin-top: ${h.sm};
 }
 
 /* ========================================
@@ -373,8 +411,8 @@
 
 #__mnkys-devtools-panel__ {
     position: fixed;
-    right: ${p.xl};
-    top: ${p.xl};
+    right: ${h.xl};
+    top: ${h.xl};
     width: 340px;
     max-height: 50vh;
     
@@ -383,7 +421,7 @@
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     
     color: ${a.text};
-    border-radius: ${h.lg};
+    border-radius: ${p.lg};
     font-size: 12px;
     font-family: ${c.mono};
     
@@ -410,7 +448,7 @@
 }
 
 #__mnkys-devtools-panel__ .panel-header {
-    padding: ${p.lg};
+    padding: ${h.lg};
     border-bottom: 1px solid ${a.border};
     flex-shrink: 0;
     background: ${a.bgElevated};
@@ -420,10 +458,10 @@
     color: ${a.text};
     font-size: 14px;
     font-weight: 700;
-    margin: 0 0 ${p.md};
+    margin: 0 0 ${h.md};
     display: flex;
     align-items: center;
-    gap: ${p.sm};
+    gap: ${h.sm};
 }
 
 #__mnkys-devtools-panel__ .panel-title::before {
@@ -438,10 +476,10 @@
 
 #__mnkys-devtools-panel__ .panel-search {
     width: 100%;
-    padding: ${p.md} ${p.md};
+    padding: ${h.md} ${h.md};
     background: ${a.bgDeep};
     border: 1px solid ${a.border};
-    border-radius: ${h.sm};
+    border-radius: ${p.sm};
     color: ${a.text};
     font-size: 12px;
     font-family: inherit;
@@ -462,13 +500,13 @@
 #__mnkys-devtools-panel__ .panel-stats {
     font-size: 11px;
     color: ${a.textSecondary};
-    margin-top: ${p.sm};
+    margin-top: ${h.sm};
 }
 
 #__mnkys-devtools-panel__ .panel-list {
     flex: 1;
     overflow-y: auto;
-    padding: ${p.sm} 0;
+    padding: ${h.sm} 0;
 }
 
 #__mnkys-devtools-panel__ .panel-list::-webkit-scrollbar {
@@ -481,7 +519,7 @@
 
 #__mnkys-devtools-panel__ .panel-list::-webkit-scrollbar-thumb {
     background: ${a.border};
-    border-radius: ${h.full};
+    border-radius: ${p.full};
 }
 
 #__mnkys-devtools-panel__ .panel-list::-webkit-scrollbar-thumb:hover {
@@ -489,7 +527,7 @@
 }
 
 #__mnkys-devtools-panel__ .block-item {
-    padding: ${p.md} ${p.lg};
+    padding: ${h.md} ${h.lg};
     cursor: pointer;
     border-left: 3px solid transparent;
     transition: all 0.15s ease;
@@ -501,6 +539,19 @@
     border-left-color: ${a.accent};
 }
 
+#__mnkys-devtools-panel__ .block-item.selected {
+    background: rgba(0, 230, 118, 0.1);
+    border-left-color: ${a.success};
+}
+
+#__mnkys-devtools-panel__ .block-item.selected:hover {
+    background: rgba(0, 230, 118, 0.15);
+}
+
+#__mnkys-devtools-panel__ .block-item.selected .block-item-name {
+    color: ${a.success};
+}
+
 #__mnkys-devtools-panel__ .block-item-name {
     color: ${a.accent};
     font-weight: 600;
@@ -510,14 +561,14 @@
 #__mnkys-devtools-panel__ .block-item-path {
     color: ${a.textMuted};
     font-size: 10px;
-    margin-top: ${p.xs};
+    margin-top: ${h.xs};
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 #__mnkys-devtools-panel__ .panel-footer {
-    padding: ${p.md} ${p.lg};
+    padding: ${h.md} ${h.lg};
     border-top: 1px solid ${a.border};
     font-size: 10px;
     color: ${a.textMuted};
@@ -529,14 +580,14 @@
     background: ${a.bgDeep};
     color: ${a.textSecondary};
     padding: 2px 6px;
-    border-radius: ${h.sm};
+    border-radius: ${p.sm};
     font-size: 10px;
     font-family: ${c.mono};
     border: 1px solid ${a.border};
 }
 
 #__mnkys-devtools-panel__ .panel-empty {
-    padding: ${p.xxl};
+    padding: ${h.xxl};
     text-align: center;
     color: ${a.textMuted};
 }
@@ -554,14 +605,14 @@
 
 #__mnkys-devtools-detail__ {
     position: fixed;
-    right: ${p.xl};
-    top: ${p.xl};
+    right: ${h.xl};
+    top: ${h.xl};
     width: 480px;
     max-height: 85vh;
     
     background: ${a.bg};
     color: ${a.text};
-    border-radius: ${h.lg};
+    border-radius: ${p.lg};
     font-size: 12px;
     font-family: ${c.mono};
     
@@ -598,7 +649,7 @@
 
 /* Detail Panel Header */
 .detail-header {
-    padding: ${p.lg} ${p.xl};
+    padding: ${h.lg} ${h.xl};
     border-bottom: 1px solid ${a.border};
     flex-shrink: 0;
     background: linear-gradient(180deg, ${a.bgElevated} 0%, ${a.bg} 100%);
@@ -607,7 +658,7 @@
 .detail-header .element-info {
     color: ${a.textMuted};
     font-size: 11px;
-    margin-bottom: ${p.sm};
+    margin-bottom: ${h.sm};
     font-family: ${c.mono};
 }
 
@@ -615,19 +666,19 @@
     color: ${a.accent};
     font-size: 16px;
     font-weight: 700;
-    margin-bottom: ${p.sm};
+    margin-bottom: ${h.sm};
     display: flex;
     align-items: center;
-    gap: ${p.sm};
+    gap: ${h.sm};
 }
 
 .detail-header .template-info {
     color: ${a.syntax.variable};
     font-size: 11px;
     word-break: break-all;
-    padding: ${p.sm} ${p.md};
+    padding: ${h.sm} ${h.md};
     background: ${a.bgDeep};
-    border-radius: ${h.sm};
+    border-radius: ${p.sm};
     display: inline-block;
 }
 
@@ -642,12 +693,12 @@
     border-bottom: 1px solid ${a.border};
     flex-shrink: 0;
     background: ${a.bgElevated};
-    padding: 0 ${p.sm};
+    padding: 0 ${h.sm};
 }
 
 .detail-tab {
     flex: 1;
-    padding: ${p.md} ${p.lg};
+    padding: ${h.md} ${h.lg};
     text-align: center;
     cursor: pointer;
     background: transparent;
@@ -681,7 +732,7 @@
 .detail-content {
     flex: 1;
     overflow-y: auto;
-    padding: ${p.lg} 0;
+    padding: ${h.lg} 0;
 }
 
 .detail-content::-webkit-scrollbar {
@@ -694,7 +745,7 @@
 
 .detail-content::-webkit-scrollbar-thumb {
     background: ${a.border};
-    border-radius: ${h.full};
+    border-radius: ${p.full};
     border: 2px solid ${a.bgDeep};
 }
 
@@ -704,7 +755,7 @@
 
 .tab-pane {
     display: none;
-    padding: 0 ${p.xl};
+    padding: 0 ${h.xl};
 }
 
 .tab-pane.active {
@@ -731,8 +782,8 @@
 .var-row {
     display: flex;
     align-items: flex-start;
-    padding: ${p.sm} ${p.md};
-    border-radius: ${h.sm};
+    padding: ${h.sm} ${h.md};
+    border-radius: ${p.sm};
     cursor: pointer;
     transition: background 0.15s ease;
 }
@@ -763,17 +814,17 @@
 
 .var-name {
     color: ${a.syntax.variable};
-    margin-right: ${p.sm};
+    margin-right: ${h.sm};
     font-weight: 500;
 }
 
 .var-type {
     color: ${a.textMuted};
     font-size: 10px;
-    margin-right: ${p.sm};
+    margin-right: ${h.sm};
     padding: 1px 6px;
     background: ${a.bgDeep};
-    border-radius: ${h.sm};
+    border-radius: ${p.sm};
 }
 
 .var-value {
@@ -793,10 +844,10 @@
 
 .var-children {
     display: none;
-    margin-left: ${p.lg};
+    margin-left: ${h.lg};
     border-left: 2px solid ${a.border};
-    padding-left: ${p.md};
-    margin-top: ${p.xs};
+    padding-left: ${h.md};
+    margin-top: ${h.xs};
 }
 
 .var-item.expanded > .var-children {
@@ -817,12 +868,12 @@
 
 /* Hierarchy Tab */
 .hierarchy-section {
-    margin-bottom: ${p.lg};
+    margin-bottom: ${h.lg};
 }
 
 .hierarchy-section.blocks-section {
-    margin-top: ${p.lg};
-    padding-top: ${p.lg};
+    margin-top: ${h.lg};
+    padding-top: ${h.lg};
     border-top: 1px solid ${a.border};
 }
 
@@ -832,21 +883,21 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: ${p.md};
-    padding: 0 ${p.sm};
+    margin-bottom: ${h.md};
+    padding: 0 ${h.sm};
 }
 
 .hierarchy-tree {
-    padding: ${p.xs} 0;
+    padding: ${h.xs} 0;
 }
 
 .hierarchy-item {
-    padding: ${p.sm} ${p.md};
+    padding: ${h.sm} ${h.md};
     margin: 2px 0;
-    border-radius: ${h.sm};
+    border-radius: ${p.sm};
     display: flex;
     align-items: center;
-    gap: ${p.sm};
+    gap: ${h.sm};
     transition: all 0.15s ease;
     position: relative;
 }
@@ -881,7 +932,7 @@
 .hierarchy-content {
     display: flex;
     align-items: center;
-    gap: ${p.sm};
+    gap: ${h.sm};
     flex: 1;
     min-width: 0;
 }
@@ -919,7 +970,7 @@
     font-size: 10px;
     padding: 2px 6px;
     background: ${a.bgDeep};
-    border-radius: ${h.full};
+    border-radius: ${p.full};
     flex-shrink: 0;
 }
 
@@ -932,7 +983,7 @@
     color: ${a.accent};
     background: ${a.bgDeep};
     padding: 2px 6px;
-    border-radius: ${h.full};
+    border-radius: ${p.full};
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -962,9 +1013,9 @@
 .block-entry {
     display: flex;
     align-items: center;
-    gap: ${p.sm};
-    padding: ${p.xs} ${p.md};
-    border-radius: ${h.sm};
+    gap: ${h.sm};
+    padding: ${h.xs} ${h.md};
+    border-radius: ${p.sm};
     transition: all 0.15s ease;
     cursor: pointer;
     min-height: 28px;
@@ -1036,7 +1087,7 @@
 /* Source Tab */
 .source-container {
     background: ${a.bgDeep};
-    border-radius: ${h.md};
+    border-radius: ${p.md};
     overflow-x: auto;
     overflow-y: visible;
     border: 1px solid ${a.border};
@@ -1053,7 +1104,7 @@
 
 .source-container::-webkit-scrollbar-thumb {
     background: ${a.border};
-    border-radius: ${h.full};
+    border-radius: ${p.full};
 }
 
 .source-container::-webkit-scrollbar-thumb:hover {
@@ -1092,7 +1143,7 @@
     flex-shrink: 0;
     width: 48px;
     min-width: 48px;
-    padding: 0 ${p.md};
+    padding: 0 ${h.md};
     text-align: right;
     color: ${a.textMuted};
     background: rgba(0, 0, 0, 0.2);
@@ -1102,18 +1153,18 @@
 
 .line-content {
     flex: 1;
-    padding: 0 ${p.lg};
+    padding: 0 ${h.lg};
     white-space: pre;
 }
 
 .source-loading {
-    padding: ${p.xxl};
+    padding: ${h.xxl};
     text-align: center;
     color: ${a.textMuted};
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: ${p.md};
+    gap: ${h.md};
 }
 
 /* Twig Syntax Highlighting */
@@ -1127,7 +1178,7 @@
 
 /* Detail Panel Footer */
 .detail-footer {
-    padding: ${p.lg} ${p.xl};
+    padding: ${h.lg} ${h.xl};
     border-top: 1px solid ${a.border};
     display: flex;
     justify-content: space-between;
@@ -1137,8 +1188,8 @@
 }
 
 .detail-btn {
-    padding: ${p.md} ${p.xl};
-    border-radius: ${h.sm};
+    padding: ${h.md} ${h.xl};
+    border-radius: ${p.sm};
     font-size: 13px;
     font-weight: 600;
     font-family: ${c.system};
@@ -1147,7 +1198,7 @@
     border: none;
     display: flex;
     align-items: center;
-    gap: ${p.sm};
+    gap: ${h.sm};
 }
 
 .detail-btn:focus {
@@ -1187,12 +1238,12 @@
 
 .devtools-notification {
     position: fixed;
-    top: ${p.xl};
+    top: ${h.xl};
     left: 50%;
     transform: translateX(-50%) translateY(-10px);
     
-    padding: ${p.md} ${p.xl};
-    border-radius: ${h.full};
+    padding: ${h.md} ${h.xl};
+    border-radius: ${p.full};
     font-size: 13px;
     font-weight: 500;
     font-family: ${c.system};
@@ -1475,4 +1526,4 @@
     user-select: text;
     -webkit-user-select: text;
 }
-`,document.head.appendChild(e)}(),this._createUIComponents(),document.addEventListener("mousemove",this._onMouseMove,!0),document.addEventListener("click",this._onClick,!0),document.body.classList.add("mnkys-devtools-active"),this._toggle?.setActive(!0),v("Inspector enabled - Hover to inspect, Click for details"))}disable(){this._enabled&&(this._enabled=!1,document.removeEventListener("mousemove",this._onMouseMove,!0),document.removeEventListener("click",this._onClick,!0),this._destroyUIComponents(),document.body.classList.remove("mnkys-devtools-active"),this._toggle?.setActive(!1),this._currentTarget=null)}_createUIComponents(){this._overlay=new x,this._overlay.create(),this._tooltip=new _,this._tooltip.create(),this._blockPanel=new D({onBlockSelect:e=>this._handleBlockSelect(e)}),this._blockPanel.create(),this._detailPanel=new H({onClose:()=>{},onOpenEditor:()=>{v("Opening in editor...")}}),this._detailPanel.create()}_destroyUIComponents(){this._overlay?.destroy(),this._tooltip?.destroy(),this._blockPanel?.destroy(),this._detailPanel?.destroy(),this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null}_handleBlockSelect(e){let t=document.querySelector(`[data-twig-block*="${e.block}"]`);this._detailPanel?.show(e,t||document.body)}_onMouseMove(e){if(!this._enabled)return;if(e.target.closest("#__mnkys-devtools-detail__")){this._hideHoverUI();return}let t=f(e.target);t&&t!==this._currentTarget?(this._currentTarget=t,this._overlay?.highlight(t),this._tooltip?.update(t,e)):!t&&this._currentTarget?(this._hideHoverUI(),this._currentTarget=null):t===this._currentTarget&&this._tooltip?.position(e)}_onClick(e){if(!this._enabled||e.target.closest("#__mnkys-devtools-panel__, #__mnkys-devtools-toggle__, #__mnkys-devtools-detail__"))return;let t=f(e.target);if(t){e.preventDefault(),e.stopPropagation();let n=y(t);n&&this._detailPanel?.show(n,t)}}_onKeyDown(e){e.ctrlKey&&e.shiftKey&&"C"===e.key&&(e.preventDefault(),this._isDevToolsEnabled()&&this.toggle()),"Escape"===e.key&&this._enabled&&(this._detailPanel?.element?.style.display!=="none"?this._detailPanel.hide():this.disable())}_hideHoverUI(){this._overlay?.hide(),this._tooltip?.hide()}}window.PluginManager.register("MnkysDevToolsComponentPicker",B,"body")})();
+`,document.head.appendChild(e)}(),this._createUIComponents(),document.addEventListener("mousemove",this._onMouseMove,!0),document.addEventListener("click",this._onClick,!0),document.body.classList.add("mnkys-devtools-active"),this._toggle?.setActive(!0),v("Inspector enabled - Hover to inspect, Click for details"))}disable(){this._enabled&&(this._enabled=!1,document.removeEventListener("mousemove",this._onMouseMove,!0),document.removeEventListener("click",this._onClick,!0),this._destroyUIComponents(),document.body.classList.remove("mnkys-devtools-active"),this._toggle?.setActive(!1),this._currentTarget=null,this._selectedTarget=null,this._selectedBlockData=null)}_createUIComponents(){this._overlay=new _,this._overlay.create(),this._tooltip=new x,this._tooltip.create(),this._blockPanel=new M({onBlockSelect:e=>this._handleBlockSelect(e),onBlockHover:(e,t)=>this._handleBlockHover(e,t)}),this._blockPanel.create(),this._detailPanel=new D({onClose:()=>{this._clearSelection()},onOpenEditor:()=>{v("Opening in editor...")}}),this._detailPanel.create()}_destroyUIComponents(){this._overlay?.destroy(),this._tooltip?.destroy(),this._blockPanel?.destroy(),this._detailPanel?.destroy(),this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null}_handleBlockSelect(e){let t=this._findElementForBlock(e);this._selectElement(t,e),this._detailPanel?.show(e,t||document.body)}_handleBlockHover(e,t){if(!t){this._selectedTarget?this._overlay?.highlight(this._selectedTarget):this._overlay?.hide(),this._tooltip?.hide();return}let o=this._findElementForBlock(e);o&&(this._overlay?.highlight(o),this._tooltip?.update(o,{clientX:0,clientY:0}))}_findElementForBlock(e){if(e.blockId){let t=document.querySelector(`[data-twig-block-id="${e.blockId}"]`);if(t)return t}return document.querySelector(`[data-twig-block*="${e.block}"]`)}_selectElement(e,t){this._selectedTarget=e,this._selectedBlockData=t,e&&this._overlay?.select(e),this._blockPanel?.setSelectedBlock(t?.blockId||t?.block)}_clearSelection(){this._selectedTarget=null,this._selectedBlockData=null,this._overlay?.clearSelection(),this._blockPanel?.setSelectedBlock(null)}_onMouseMove(e){if(!this._enabled)return;if(e.target.closest("#__mnkys-devtools-detail__, #__mnkys-devtools-panel__")){this._hideHoverUI();return}let t=y(e.target);t&&t!==this._currentTarget?(this._currentTarget=t,t!==this._selectedTarget&&this._overlay?.highlight(t),this._tooltip?.update(t,e)):!t&&this._currentTarget?(this._hideHoverUI(),this._currentTarget=null):t===this._currentTarget&&this._tooltip?.position(e)}_onClick(e){if(!this._enabled||e.target.closest("#__mnkys-devtools-panel__, #__mnkys-devtools-toggle__, #__mnkys-devtools-detail__"))return;let t=y(e.target);if(t){e.preventDefault(),e.stopPropagation();let o=f(t);o&&(this._selectElement(t,o),this._detailPanel?.show(o,t))}}_onKeyDown(e){e.ctrlKey&&e.shiftKey&&"C"===e.key&&(e.preventDefault(),this._isDevToolsEnabled()&&this.toggle()),"Escape"===e.key&&this._enabled&&(this._detailPanel?.element?.style.display!=="none"?(this._detailPanel.hide(),this._clearSelection()):this.disable())}_hideHoverUI(){this._selectedTarget||this._overlay?.hide(),this._tooltip?.hide()}}window.PluginManager.register("MnkysDevToolsComponentPicker",H,"body")})();

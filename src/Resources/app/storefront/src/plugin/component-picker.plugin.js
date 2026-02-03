@@ -8,6 +8,7 @@
  * - Click to open detailed inspector panel with context, hierarchy, and source
  * - Block list panel showing all blocks on the page
  * - Search/filter blocks by name or template
+ * - Persistent selection highlight that stays visible while inspecting
  */
 
 import Plugin from 'src/plugin-system/plugin.class';
@@ -28,6 +29,8 @@ export default class ComponentPickerPlugin extends Plugin {
     init() {
         this._enabled = false;
         this._currentTarget = null;
+        this._selectedTarget = null;
+        this._selectedBlockData = null;
 
         // UI Components
         this._overlay = null;
@@ -148,13 +151,15 @@ export default class ComponentPickerPlugin extends Plugin {
         document.body.classList.remove('mnkys-devtools-active');
         this._toggle?.setActive(false);
         this._currentTarget = null;
+        this._selectedTarget = null;
+        this._selectedBlockData = null;
     }
 
     /**
      * Create all UI components
      */
     _createUIComponents() {
-        // Overlay for highlighting
+        // Overlay for highlighting (hover + selection)
         this._overlay = new InspectorOverlay();
         this._overlay.create();
 
@@ -165,13 +170,14 @@ export default class ComponentPickerPlugin extends Plugin {
         // Block list panel
         this._blockPanel = new BlockPanel({
             onBlockSelect: (blockData) => this._handleBlockSelect(blockData),
+            onBlockHover: (blockData, isHovering) => this._handleBlockHover(blockData, isHovering),
         });
         this._blockPanel.create();
 
         // Detail panel for inspecting blocks
         this._detailPanel = new DetailPanel({
             onClose: () => {
-                // Keep inspector active when closing detail panel
+                this._clearSelection();
             },
             onOpenEditor: () => {
                 showNotification('Opening in editor...');
@@ -200,8 +206,75 @@ export default class ComponentPickerPlugin extends Plugin {
      */
     _handleBlockSelect(blockData) {
         // Find the element on page if possible
-        const element = document.querySelector(`[data-twig-block*="${blockData.block}"]`);
+        const element = this._findElementForBlock(blockData);
+        
+        // Select the element
+        this._selectElement(element, blockData);
+        
+        // Show detail panel
         this._detailPanel?.show(blockData, element || document.body);
+    }
+
+    /**
+     * Handle block hover from the panel
+     */
+    _handleBlockHover(blockData, isHovering) {
+        if (!isHovering) {
+            // On unhover, restore selection highlight or hide
+            if (this._selectedTarget) {
+                this._overlay?.highlight(this._selectedTarget);
+            } else {
+                this._overlay?.hide();
+            }
+            this._tooltip?.hide();
+            return;
+        }
+
+        // Find and highlight the hovered block's element
+        const element = this._findElementForBlock(blockData);
+        if (element) {
+            this._overlay?.highlight(element);
+            this._tooltip?.update(element, { clientX: 0, clientY: 0 });
+        }
+    }
+
+    /**
+     * Find DOM element for a block
+     */
+    _findElementForBlock(blockData) {
+        // Try to find by blockId first (most accurate)
+        if (blockData.blockId) {
+            const element = document.querySelector(`[data-twig-block-id="${blockData.blockId}"]`);
+            if (element) return element;
+        }
+        
+        // Fallback: find by block name
+        return document.querySelector(`[data-twig-block*="${blockData.block}"]`);
+    }
+
+    /**
+     * Select an element and show persistent highlight
+     */
+    _selectElement(element, blockData) {
+        this._selectedTarget = element;
+        this._selectedBlockData = blockData;
+        
+        if (element) {
+            this._overlay?.select(element);
+        }
+        
+        // Update block panel to show selection
+        this._blockPanel?.setSelectedBlock(blockData?.blockId || blockData?.block);
+    }
+
+    /**
+     * Clear current selection
+     */
+    _clearSelection() {
+        this._selectedTarget = null;
+        this._selectedBlockData = null;
+        this._overlay?.clearSelection();
+        this._blockPanel?.setSelectedBlock(null);
     }
 
     /**
@@ -212,8 +285,8 @@ export default class ComponentPickerPlugin extends Plugin {
             return;
         }
 
-        // Don't interfere with detail panel
-        if (e.target.closest('#__mnkys-devtools-detail__')) {
+        // Don't interfere with panels
+        if (e.target.closest('#__mnkys-devtools-detail__, #__mnkys-devtools-panel__')) {
             this._hideHoverUI();
             return;
         }
@@ -222,7 +295,13 @@ export default class ComponentPickerPlugin extends Plugin {
 
         if (target && target !== this._currentTarget) {
             this._currentTarget = target;
-            this._overlay?.highlight(target);
+            
+            // Only show hover highlight if not the selected element
+            // (selection has its own persistent highlight)
+            if (target !== this._selectedTarget) {
+                this._overlay?.highlight(target);
+            }
+            
             this._tooltip?.update(target, e);
         } else if (!target && this._currentTarget) {
             this._hideHoverUI();
@@ -253,6 +332,10 @@ export default class ComponentPickerPlugin extends Plugin {
 
             const data = getTwigData(target);
             if (data) {
+                // Select the element with persistent highlight
+                this._selectElement(target, data);
+                
+                // Show detail panel
                 this._detailPanel?.show(data, target);
             }
         }
@@ -275,6 +358,7 @@ export default class ComponentPickerPlugin extends Plugin {
             // First close detail panel if open
             if (this._detailPanel?.element?.style.display !== 'none') {
                 this._detailPanel.hide();
+                this._clearSelection();
             } else {
                 this.disable();
             }
@@ -285,7 +369,10 @@ export default class ComponentPickerPlugin extends Plugin {
      * Hide hover UI elements (overlay and tooltip)
      */
     _hideHoverUI() {
-        this._overlay?.hide();
+        // Only hide hover overlay if we have no selection, otherwise keep selection visible
+        if (!this._selectedTarget) {
+            this._overlay?.hide();
+        }
         this._tooltip?.hide();
     }
 }

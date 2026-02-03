@@ -136,7 +136,7 @@ function getStyles() {
 }
 
 /* ========================================
-   Highlight Overlay
+   Highlight Overlay (Hover)
    ======================================== */
 
 #__mnkys-devtools-overlay__ {
@@ -154,6 +154,44 @@ function getStyles() {
     transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     display: none;
     box-sizing: border-box;
+}
+
+/* ========================================
+   Selection Overlay (Persistent)
+   ======================================== */
+
+#__mnkys-devtools-selection__ {
+    position: fixed;
+    pointer-events: none;
+    z-index: ${Z_INDEX.overlay - 1};
+    
+    background: rgba(0, 230, 118, 0.08);
+    border: 2px solid ${COLORS.success};
+    border-radius: ${RADIUS.sm};
+    
+    box-shadow: 0 0 0 4px rgba(0, 230, 118, 0.15),
+                inset 0 0 20px rgba(0, 230, 118, 0.1),
+                0 0 20px rgba(0, 230, 118, 0.2);
+    
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: none;
+    box-sizing: border-box;
+    
+    /* Pulsing animation for visibility */
+    animation: selectionPulse 2s ease-in-out infinite;
+}
+
+@keyframes selectionPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 4px rgba(0, 230, 118, 0.15),
+                    inset 0 0 20px rgba(0, 230, 118, 0.1),
+                    0 0 20px rgba(0, 230, 118, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(0, 230, 118, 0.2),
+                    inset 0 0 25px rgba(0, 230, 118, 0.15),
+                    0 0 30px rgba(0, 230, 118, 0.3);
+    }
 }
 
 /* ========================================
@@ -371,6 +409,19 @@ function getStyles() {
 #__mnkys-devtools-panel__ .block-item:hover {
     background: ${COLORS.bgHover};
     border-left-color: ${COLORS.accent};
+}
+
+#__mnkys-devtools-panel__ .block-item.selected {
+    background: rgba(0, 230, 118, 0.1);
+    border-left-color: ${COLORS.success};
+}
+
+#__mnkys-devtools-panel__ .block-item.selected:hover {
+    background: rgba(0, 230, 118, 0.15);
+}
+
+#__mnkys-devtools-panel__ .block-item.selected .block-item-name {
+    color: ${COLORS.success};
 }
 
 #__mnkys-devtools-panel__ .block-item-name {

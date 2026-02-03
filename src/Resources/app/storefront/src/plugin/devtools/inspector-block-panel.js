@@ -14,6 +14,7 @@ export class BlockPanel {
     constructor(options = {}) {
         this.options = {
             onBlockSelect: null,
+            onBlockHover: null,
             ...options,
         };
 
@@ -21,6 +22,7 @@ export class BlockPanel {
         this.blocks = [];
         this.filteredBlocks = [];
         this.searchTerm = '';
+        this.selectedBlockId = null;
         this.panelInteractions = null;
     }
 
@@ -65,6 +67,7 @@ export class BlockPanel {
         this.blocks = [];
         this.filteredBlocks = [];
         this.searchTerm = '';
+        this.selectedBlockId = null;
     }
 
     /**
@@ -74,6 +77,15 @@ export class BlockPanel {
         this.blocks = loadBlockData();
         this.filteredBlocks = [...this.blocks];
         this._updateList();
+    }
+
+    /**
+     * Set the currently selected block
+     * @param {string|null} blockId - The block ID or name to select
+     */
+    setSelectedBlock(blockId) {
+        this.selectedBlockId = blockId;
+        this._updateSelectedState();
     }
 
     /**
@@ -121,16 +133,22 @@ export class BlockPanel {
             return '<div class="panel-empty">No blocks found</div>';
         }
 
-        return this.filteredBlocks.map(block => `
-            <div class="block-item" 
-                 data-template="${escapeHtml(block.template)}" 
-                 data-block="${escapeHtml(block.block)}"
-                 data-line="${block.line}"
-                 data-block-id="${escapeHtml(block.blockId || '')}">
-                <div class="block-item-name">${this._highlightMatch(block.block)}</div>
-                <div class="block-item-path">${this._highlightMatch(shortenPath(block.template))}:${block.line}</div>
-            </div>
-        `).join('');
+        return this.filteredBlocks.map(block => {
+            const blockIdentifier = block.blockId || block.block;
+            const isSelected = this.selectedBlockId && 
+                (blockIdentifier === this.selectedBlockId || block.block === this.selectedBlockId);
+            
+            return `
+                <div class="block-item ${isSelected ? 'selected' : ''}" 
+                     data-template="${escapeHtml(block.template)}" 
+                     data-block="${escapeHtml(block.block)}"
+                     data-line="${block.line}"
+                     data-block-id="${escapeHtml(block.blockId || '')}">
+                    <div class="block-item-name">${this._highlightMatch(block.block)}</div>
+                    <div class="block-item-path">${this._highlightMatch(shortenPath(block.template))}:${block.line}</div>
+                </div>
+            `;
+        }).join('');
     }
 
     /**
@@ -160,20 +178,44 @@ export class BlockPanel {
             this._updateList();
         });
 
-        // Block item clicks
+        // Block item clicks and hovers
         this.element.addEventListener('click', (e) => {
             const item = e.target.closest('.block-item');
             if (item) {
-                const blockData = {
-                    block: item.dataset.block,
-                    template: item.dataset.template,
-                    line: parseInt(item.dataset.line, 10),
-                    blockId: item.dataset.blockId,
-                };
-
+                const blockData = this._getBlockDataFromItem(item);
                 this.options.onBlockSelect?.(blockData);
             }
         });
+
+        // Hover events for highlighting elements on the page
+        this.element.addEventListener('mouseenter', (e) => {
+            const item = e.target.closest('.block-item');
+            if (item) {
+                const blockData = this._getBlockDataFromItem(item);
+                this.options.onBlockHover?.(blockData, true);
+            }
+        }, true);
+
+        this.element.addEventListener('mouseleave', (e) => {
+            const item = e.target.closest('.block-item');
+            if (item) {
+                const blockData = this._getBlockDataFromItem(item);
+                this.options.onBlockHover?.(blockData, false);
+            }
+        }, true);
+    }
+
+    /**
+     * Extract block data from a list item element
+     * @private
+     */
+    _getBlockDataFromItem(item) {
+        return {
+            block: item.dataset.block,
+            template: item.dataset.template,
+            line: parseInt(item.dataset.line, 10),
+            blockId: item.dataset.blockId,
+        };
     }
 
     /**
@@ -208,5 +250,27 @@ export class BlockPanel {
                 ? `${this.filteredBlocks.length} of ${this.blocks.length} blocks`
                 : `${this.blocks.length} blocks`;
         }
+    }
+
+    /**
+     * Update the selected state of list items without rebuilding
+     * @private
+     */
+    _updateSelectedState() {
+        if (!this.element) return;
+
+        const items = this.element.querySelectorAll('.block-item');
+        items.forEach(item => {
+            const blockIdentifier = item.dataset.blockId || item.dataset.block;
+            const isSelected = this.selectedBlockId && 
+                (blockIdentifier === this.selectedBlockId || item.dataset.block === this.selectedBlockId);
+            
+            item.classList.toggle('selected', isSelected);
+            
+            // Scroll selected item into view
+            if (isSelected) {
+                item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
     }
 }
