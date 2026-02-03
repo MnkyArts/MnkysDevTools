@@ -5,6 +5,7 @@
 
 import { escapeHtml, shortenPath, escapeRegex } from './inspector-utils.js';
 import { loadBlockData } from './inspector-api.js';
+import { makePanelInteractive } from './inspector-panel-interactions.js';
 
 /**
  * BlockPanel class - manages the block list sidebar
@@ -20,6 +21,7 @@ export class BlockPanel {
         this.blocks = [];
         this.filteredBlocks = [];
         this.searchTerm = '';
+        this.panelInteractions = null;
     }
 
     /**
@@ -40,12 +42,24 @@ export class BlockPanel {
 
         document.body.appendChild(this.element);
         this._attachEvents();
+        
+        // Make panel interactive (draggable & resizable)
+        this.panelInteractions = makePanelInteractive(this.element, {
+            panelId: 'block-panel',
+            dragHandle: '.panel-header',
+            minWidth: 260,
+            minHeight: 200,
+            maxWidth: window.innerWidth - 40,
+            maxHeight: window.innerHeight - 40,
+        });
     }
 
     /**
      * Destroy the panel element
      */
     destroy() {
+        this.panelInteractions?.destroy();
+        this.panelInteractions = null;
         this.element?.remove();
         this.element = null;
         this.blocks = [];

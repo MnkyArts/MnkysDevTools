@@ -448,6 +448,15 @@ function getStyles() {
     animation: detailSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Content container - fills the panel */
+#__mnkys-devtools-detail__ .detail-panel-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
 @keyframes detailSlideIn {
     from {
         opacity: 0;
@@ -1118,6 +1127,225 @@ function getStyles() {
 #__mnkys-devtools-tooltip__ ::selection {
     background: ${COLORS.accentMuted};
     color: ${COLORS.text};
+}
+
+/* ========================================
+   Panel Resize & Drag
+   ======================================== */
+
+/* Resize frame - contains all resize handles */
+.panel-resize-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* Resize handles */
+.panel-resize-handle {
+    position: absolute;
+    pointer-events: auto;
+    transition: background 0.15s ease;
+}
+
+/* Edge handles - visible borders */
+.panel-resize-top {
+    top: 0;
+    left: 12px;
+    right: 12px;
+    height: 6px;
+    cursor: ns-resize;
+    border-top: 2px solid transparent;
+}
+
+.panel-resize-top:hover {
+    border-top-color: ${COLORS.accent};
+}
+
+.panel-resize-bottom {
+    bottom: 0;
+    left: 12px;
+    right: 12px;
+    height: 6px;
+    cursor: ns-resize;
+    border-bottom: 2px solid transparent;
+}
+
+.panel-resize-bottom:hover {
+    border-bottom-color: ${COLORS.accent};
+}
+
+.panel-resize-left {
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 6px;
+    cursor: ew-resize;
+    border-left: 2px solid transparent;
+}
+
+.panel-resize-left:hover {
+    border-left-color: ${COLORS.accent};
+}
+
+.panel-resize-right {
+    right: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 6px;
+    cursor: ew-resize;
+    border-right: 2px solid transparent;
+}
+
+.panel-resize-right:hover {
+    border-right-color: ${COLORS.accent};
+}
+
+/* Corner handles - larger grab areas */
+.panel-resize-top-left {
+    top: 0;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+}
+
+.panel-resize-top-right {
+    top: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    cursor: nesw-resize;
+}
+
+.panel-resize-bottom-left {
+    bottom: 0;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    cursor: nesw-resize;
+}
+
+.panel-resize-bottom-right {
+    bottom: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+}
+
+/* Visual indicator on corner handles */
+.panel-resize-bottom-right::before,
+.panel-resize-bottom-left::before,
+.panel-resize-top-right::before,
+.panel-resize-top-left::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 2px solid ${COLORS.border};
+    opacity: 0.4;
+    transition: all 0.15s ease;
+}
+
+.panel-resize-bottom-right::before {
+    bottom: 2px;
+    right: 2px;
+    border-top: none;
+    border-left: none;
+    border-radius: 0 0 4px 0;
+}
+
+.panel-resize-bottom-left::before {
+    bottom: 2px;
+    left: 2px;
+    border-top: none;
+    border-right: none;
+    border-radius: 0 0 0 4px;
+}
+
+.panel-resize-top-right::before {
+    top: 2px;
+    right: 2px;
+    border-bottom: none;
+    border-left: none;
+    border-radius: 0 4px 0 0;
+}
+
+.panel-resize-top-left::before {
+    top: 2px;
+    left: 2px;
+    border-bottom: none;
+    border-right: none;
+    border-radius: 4px 0 0 0;
+}
+
+/* Hover states for corner handles */
+.panel-resize-bottom-right:hover::before,
+.panel-resize-bottom-left:hover::before,
+.panel-resize-top-right:hover::before,
+.panel-resize-top-left:hover::before {
+    opacity: 1;
+    border-color: ${COLORS.accent};
+}
+
+/* Dragging state */
+#__mnkys-devtools-panel__.is-dragging,
+#__mnkys-devtools-detail__.is-dragging {
+    opacity: 0.9;
+    box-shadow: ${SHADOWS.lg}, ${SHADOWS.glowStrong};
+    cursor: move !important;
+    user-select: none !important;
+}
+
+#__mnkys-devtools-panel__.is-dragging *,
+#__mnkys-devtools-detail__.is-dragging * {
+    cursor: move !important;
+    user-select: none !important;
+}
+
+/* Resizing state */
+#__mnkys-devtools-panel__.is-resizing,
+#__mnkys-devtools-detail__.is-resizing {
+    opacity: 0.95;
+    box-shadow: ${SHADOWS.lg}, 0 0 0 2px ${COLORS.accent};
+    user-select: none !important;
+}
+
+#__mnkys-devtools-panel__.is-resizing *,
+#__mnkys-devtools-detail__.is-resizing * {
+    user-select: none !important;
+}
+
+/* Drag handle cursor and user-select on headers */
+#__mnkys-devtools-panel__ .panel-header,
+#__mnkys-devtools-detail__ .detail-header {
+    cursor: move;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Don't apply move cursor to interactive elements in headers */
+#__mnkys-devtools-panel__ .panel-header input,
+#__mnkys-devtools-panel__ .panel-header button,
+#__mnkys-devtools-detail__ .detail-header button {
+    cursor: pointer;
+}
+
+#__mnkys-devtools-panel__ .panel-search {
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+/* Ensure content areas allow text selection */
+#__mnkys-devtools-panel__ .panel-list,
+#__mnkys-devtools-detail__ .detail-content {
+    user-select: text;
+    -webkit-user-select: text;
 }
 `;
 }

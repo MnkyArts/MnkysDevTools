@@ -1,8 +1,8 @@
-(()=>{"use strict";var e={156:e=>{var t=function(e){var t;return!!e&&"object"==typeof e&&"[object RegExp]"!==(t=Object.prototype.toString.call(e))&&"[object Date]"!==t&&e.$$typeof!==o},o="function"==typeof Symbol&&Symbol.for?Symbol.for("react.element"):60103;function n(e,t){return!1!==t.clone&&t.isMergeableObject(e)?a(Array.isArray(e)?[]:{},e,t):e}function i(e,t,o){return e.concat(t).map(function(e){return n(e,o)})}function s(e){return Object.keys(e).concat(Object.getOwnPropertySymbols?Object.getOwnPropertySymbols(e).filter(function(t){return Object.propertyIsEnumerable.call(e,t)}):[])}function r(e,t){try{return t in e}catch(e){return!1}}function a(e,o,l){(l=l||{}).arrayMerge=l.arrayMerge||i,l.isMergeableObject=l.isMergeableObject||t,l.cloneUnlessOtherwiseSpecified=n;var c,d,p=Array.isArray(o);return p!==Array.isArray(e)?n(o,l):p?l.arrayMerge(e,o,l):(d={},(c=l).isMergeableObject(e)&&s(e).forEach(function(t){d[t]=n(e[t],c)}),s(o).forEach(function(t){(!r(e,t)||Object.hasOwnProperty.call(e,t)&&Object.propertyIsEnumerable.call(e,t))&&(r(e,t)&&c.isMergeableObject(o[t])?d[t]=(function(e,t){if(!t.customMerge)return a;var o=t.customMerge(e);return"function"==typeof o?o:a})(t,c)(e[t],o[t],c):d[t]=n(o[t],c))}),d)}a.all=function(e,t){if(!Array.isArray(e))throw Error("first argument should be an array");return e.reduce(function(e,o){return a(e,o,t)},{})},e.exports=a}},t={};function o(n){var i=t[n];if(void 0!==i)return i.exports;var s=t[n]={exports:{}};return e[n](s,s.exports,o),s.exports}o.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return o.d(t,{a:t}),t},o.d=(e,t)=>{for(var n in t)o.o(t,n)&&!o.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},o.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t);var n=o(156),i=o.n(n);class s{static ucFirst(e){return e.charAt(0).toUpperCase()+e.slice(1)}static lcFirst(e){return e.charAt(0).toLowerCase()+e.slice(1)}static toDashCase(e){return e.replace(/([A-Z])/g,"-$1").replace(/^-/,"").toLowerCase()}static toLowerCamelCase(e,t){let o=s.toUpperCamelCase(e,t);return s.lcFirst(o)}static toUpperCamelCase(e,t){return t?e.split(t).map(e=>s.ucFirst(e.toLowerCase())).join(""):s.ucFirst(e.toLowerCase())}static parsePrimitive(e){try{return/^\d+(.|,)\d+$/.test(e)&&(e=e.replace(",",".")),JSON.parse(e)}catch(t){return e.toString()}}}class r{constructor(e=document){this._el=e,e.$emitter=this,this._listeners=[]}publish(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},o=arguments.length>2&&void 0!==arguments[2]&&arguments[2],n=new CustomEvent(e,{detail:t,cancelable:o});return this.el.dispatchEvent(n),n}subscribe(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},n=this,i=e.split("."),s=o.scope?t.bind(o.scope):t;if(o.once&&!0===o.once){let t=s;s=function(o){n.unsubscribe(e),t(o)}}return this.el.addEventListener(i[0],s),this.listeners.push({splitEventName:i,opts:o,cb:s}),!0}unsubscribe(e){let t=e.split(".");return this.listeners=this.listeners.reduce((e,o)=>([...o.splitEventName].sort().toString()===t.sort().toString()?this.el.removeEventListener(o.splitEventName[0],o.cb):e.push(o),e),[]),!0}reset(){return this.listeners.forEach(e=>{this.el.removeEventListener(e.splitEventName[0],e.cb)}),this.listeners=[],!0}get el(){return this._el}set el(e){this._el=e}get listeners(){return this._listeners}set listeners(e){this._listeners=e}}class a{constructor(e,t={},o=!1){if(!(e instanceof Node)){console.warn(`There is no valid element given while trying to create a plugin instance for "${o}".`);return}this.el=e,this.$emitter=new r(this.el),this._pluginName=this._getPluginName(o),this.options=this._mergeOptions(t),this._initialized=!1,this._registerInstance(),this._init()}init(){console.warn(`The "init" method for the plugin "${this._pluginName}" is not defined. The plugin will not be initialized.`)}update(){}_init(){this._initialized||(this.init(),this._initialized=!0)}_update(){this._initialized&&this.update()}_mergeOptions(e){let t=[this.constructor.options,this.options,e];return t.push(this._getConfigFromDataAttribute()),t.push(this._getOptionsFromDataAttribute()),i().all(t.filter(e=>e instanceof Object&&!(e instanceof Array)).map(e=>e||{}))}_getConfigFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-config`);return o?window.PluginConfigManager.get(this._pluginName,o):e}_getOptionsFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=s.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-options`);if(o)try{return JSON.parse(o)}catch(e){console.error(`The data attribute "data-${t}-options" could not be parsed to json: ${e.message}`)}return e}_registerInstance(){window.PluginManager.getPluginInstancesFromElement(this.el).set(this._pluginName,this),window.PluginManager.getPlugin(this._pluginName,!1).get("instances").push(this)}_getPluginName(e){return e||(e=this.constructor.name),e}}let l={accent:"#00D9FF",accentHover:"#00B8D9",accentMuted:"rgba(0, 217, 255, 0.15)",error:"#FF5252",bgDeep:"#0D1117",bg:"#161B22",bgElevated:"#21262D",bgHover:"#30363D",bgGlass:"rgba(22, 27, 34, 0.85)",text:"#F0F6FC",textSecondary:"#8B949E",textMuted:"#6E7681",border:"#30363D",borderHover:"#8B949E",borderAccent:"rgba(0, 217, 255, 0.4)",overlay:"rgba(0, 217, 255, 0.12)",overlayBorder:"#00D9FF",syntax:{keyword:"#FF79C6",string:"#A5D6FF",variable:"#79C0FF",number:"#A5D6A7",comment:"#6E7681",tag:"#7EE787",attribute:"#D2A8FF"}},c={mono:'"JetBrains Mono", "Fira Code", "SF Mono", "Consolas", monospace',system:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'},d={overlay:0x7ffffff8,tooltip:0x7ffffff9,panel:0x7ffffffa,detailPanel:0x7ffffffb,notification:0x80000002},p={xs:"4px",sm:"8px",md:"12px",lg:"16px",xl:"20px",xxl:"24px"},h={sm:"6px",md:"10px",lg:"14px",full:"9999px"},b={sm:"0 2px 8px rgba(0, 0, 0, 0.3)",lg:"0 8px 32px rgba(0, 0, 0, 0.5)",glow:"0 0 20px rgba(0, 217, 255, 0.3)"};function u(e){return"string"!=typeof e?e:e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function m(e){return e.replace(/^@Storefront\//,"").replace(/^@(\w+)\//,"$1/").replace(/^storefront\//,"")}function g(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"success",o=document.createElement("div");o.className=`devtools-notification ${t}`,o.textContent=e,document.body.appendChild(o),requestAnimationFrame(()=>o.style.opacity="1"),setTimeout(()=>{o.style.opacity="0",setTimeout(()=>o.remove(),200)},2500)}function v(e){if(e.closest(["__mnkys-devtools-overlay__","__mnkys-devtools-tooltip__","__mnkys-devtools-panel__","__mnkys-devtools-detail__","__mnkys-devtools-toggle__"].map(e=>`#${e}`).join(", ")))return null;for(;e&&e!==document.body&&e!==document.documentElement;){if(e.dataset&&e.dataset.twigBlock)return e;e=e.parentElement}return null}function y(e){try{return JSON.parse(e.dataset.twigBlock)}catch(e){return console.warn("DevTools: Failed to parse twig data",e),null}}class f{constructor(e={}){this.options={overlayColor:"rgba(66, 184, 131, 0.15)",overlayBorderColor:"#1699F7",overlayBorderWidth:"2px",transitionDuration:"0.12s",...e},this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-overlay__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}highlight(e){if(!this.element||!e)return;let t=e.getBoundingClientRect(),o=parseInt(this.options.overlayBorderWidth,10);Object.assign(this.element.style,{display:"block",left:`${t.left-o}px`,top:`${t.top-o}px`,width:`${t.width+2*o}px`,height:`${t.height+2*o}px`})}isVisible(){return this.element&&"none"!==this.element.style.display}}class _{constructor(){this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-tooltip__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}update(e,t){let o=y(e);if(!o)return;let n=e.tagName.toLowerCase(),i=e.id?`#${e.id}`:"",s=e.className&&"string"==typeof e.className?"."+e.className.trim().split(/\s+/).slice(0,2).join("."):"";this.element.innerHTML=`
-            <div class="element-tag">&lt;${n}${i}${s}&gt;</div>
-            <div class="block-name">${u(o.block)}</div>
-            <div class="template-path">${u(o.template)}:${o.line}</div>
-        `,this.show(),this.position(t)}position(e){if(!this.element||"none"===this.element.style.display)return;let t=this.element.getBoundingClientRect(),o=window.innerWidth,n=window.innerHeight,i=e.clientX+15,s=e.clientY+15;i+t.width>o-15&&(i=e.clientX-t.width-15),s+t.height>n-15&&(s=e.clientY-t.height-15),i=Math.max(15,i),s=Math.max(15,s),this.element.style.left=`${i}px`,this.element.style.top=`${s}px`}isVisible(){return this.element&&"none"!==this.element.style.display}}class x{constructor(e={}){this.options={onToggle:null,...e},this.element=null,this.isActive=!1}create(){this.element||document.getElementById("__mnkys-devtools-toggle__")||(this._injectStyles(),this.element=document.createElement("button"),this.element.id="__mnkys-devtools-toggle__",this.element.innerHTML=`
+(()=>{"use strict";var e={156:e=>{var t=function(e){var t;return!!e&&"object"==typeof e&&"[object RegExp]"!==(t=Object.prototype.toString.call(e))&&"[object Date]"!==t&&e.$$typeof!==o},o="function"==typeof Symbol&&Symbol.for?Symbol.for("react.element"):60103;function n(e,t){return!1!==t.clone&&t.isMergeableObject(e)?l(Array.isArray(e)?[]:{},e,t):e}function i(e,t,o){return e.concat(t).map(function(e){return n(e,o)})}function r(e){return Object.keys(e).concat(Object.getOwnPropertySymbols?Object.getOwnPropertySymbols(e).filter(function(t){return Object.propertyIsEnumerable.call(e,t)}):[])}function s(e,t){try{return t in e}catch(e){return!1}}function l(e,o,a){(a=a||{}).arrayMerge=a.arrayMerge||i,a.isMergeableObject=a.isMergeableObject||t,a.cloneUnlessOtherwiseSpecified=n;var c,d,p=Array.isArray(o);return p!==Array.isArray(e)?n(o,a):p?a.arrayMerge(e,o,a):(d={},(c=a).isMergeableObject(e)&&r(e).forEach(function(t){d[t]=n(e[t],c)}),r(o).forEach(function(t){(!s(e,t)||Object.hasOwnProperty.call(e,t)&&Object.propertyIsEnumerable.call(e,t))&&(s(e,t)&&c.isMergeableObject(o[t])?d[t]=(function(e,t){if(!t.customMerge)return l;var o=t.customMerge(e);return"function"==typeof o?o:l})(t,c)(e[t],o[t],c):d[t]=n(o[t],c))}),d)}l.all=function(e,t){if(!Array.isArray(e))throw Error("first argument should be an array");return e.reduce(function(e,o){return l(e,o,t)},{})},e.exports=l}},t={};function o(n){var i=t[n];if(void 0!==i)return i.exports;var r=t[n]={exports:{}};return e[n](r,r.exports,o),r.exports}o.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return o.d(t,{a:t}),t},o.d=(e,t)=>{for(var n in t)o.o(t,n)&&!o.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},o.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t);var n=o(156),i=o.n(n);class r{static ucFirst(e){return e.charAt(0).toUpperCase()+e.slice(1)}static lcFirst(e){return e.charAt(0).toLowerCase()+e.slice(1)}static toDashCase(e){return e.replace(/([A-Z])/g,"-$1").replace(/^-/,"").toLowerCase()}static toLowerCamelCase(e,t){let o=r.toUpperCamelCase(e,t);return r.lcFirst(o)}static toUpperCamelCase(e,t){return t?e.split(t).map(e=>r.ucFirst(e.toLowerCase())).join(""):r.ucFirst(e.toLowerCase())}static parsePrimitive(e){try{return/^\d+(.|,)\d+$/.test(e)&&(e=e.replace(",",".")),JSON.parse(e)}catch(t){return e.toString()}}}class s{constructor(e=document){this._el=e,e.$emitter=this,this._listeners=[]}publish(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},o=arguments.length>2&&void 0!==arguments[2]&&arguments[2],n=new CustomEvent(e,{detail:t,cancelable:o});return this.el.dispatchEvent(n),n}subscribe(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},n=this,i=e.split("."),r=o.scope?t.bind(o.scope):t;if(o.once&&!0===o.once){let t=r;r=function(o){n.unsubscribe(e),t(o)}}return this.el.addEventListener(i[0],r),this.listeners.push({splitEventName:i,opts:o,cb:r}),!0}unsubscribe(e){let t=e.split(".");return this.listeners=this.listeners.reduce((e,o)=>([...o.splitEventName].sort().toString()===t.sort().toString()?this.el.removeEventListener(o.splitEventName[0],o.cb):e.push(o),e),[]),!0}reset(){return this.listeners.forEach(e=>{this.el.removeEventListener(e.splitEventName[0],e.cb)}),this.listeners=[],!0}get el(){return this._el}set el(e){this._el=e}get listeners(){return this._listeners}set listeners(e){this._listeners=e}}class l{constructor(e,t={},o=!1){if(!(e instanceof Node)){console.warn(`There is no valid element given while trying to create a plugin instance for "${o}".`);return}this.el=e,this.$emitter=new s(this.el),this._pluginName=this._getPluginName(o),this.options=this._mergeOptions(t),this._initialized=!1,this._registerInstance(),this._init()}init(){console.warn(`The "init" method for the plugin "${this._pluginName}" is not defined. The plugin will not be initialized.`)}update(){}_init(){this._initialized||(this.init(),this._initialized=!0)}_update(){this._initialized&&this.update()}_mergeOptions(e){let t=[this.constructor.options,this.options,e];return t.push(this._getConfigFromDataAttribute()),t.push(this._getOptionsFromDataAttribute()),i().all(t.filter(e=>e instanceof Object&&!(e instanceof Array)).map(e=>e||{}))}_getConfigFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=r.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-config`);return o?window.PluginConfigManager.get(this._pluginName,o):e}_getOptionsFromDataAttribute(){let e={};if("function"!=typeof this.el.getAttribute)return e;let t=r.toDashCase(this._pluginName),o=this.el.getAttribute(`data-${t}-options`);if(o)try{return JSON.parse(o)}catch(e){console.error(`The data attribute "data-${t}-options" could not be parsed to json: ${e.message}`)}return e}_registerInstance(){window.PluginManager.getPluginInstancesFromElement(this.el).set(this._pluginName,this),window.PluginManager.getPlugin(this._pluginName,!1).get("instances").push(this)}_getPluginName(e){return e||(e=this.constructor.name),e}}let a={accent:"#00D9FF",accentHover:"#00B8D9",accentMuted:"rgba(0, 217, 255, 0.15)",error:"#FF5252",bgDeep:"#0D1117",bg:"#161B22",bgElevated:"#21262D",bgHover:"#30363D",bgGlass:"rgba(22, 27, 34, 0.85)",text:"#F0F6FC",textSecondary:"#8B949E",textMuted:"#6E7681",border:"#30363D",borderHover:"#8B949E",borderAccent:"rgba(0, 217, 255, 0.4)",overlay:"rgba(0, 217, 255, 0.12)",overlayBorder:"#00D9FF",syntax:{keyword:"#FF79C6",string:"#A5D6FF",variable:"#79C0FF",number:"#A5D6A7",comment:"#6E7681",tag:"#7EE787",attribute:"#D2A8FF"}},c={mono:'"JetBrains Mono", "Fira Code", "SF Mono", "Consolas", monospace',system:'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'},d={overlay:0x7ffffff8,tooltip:0x7ffffff9,panel:0x7ffffffa,detailPanel:0x7ffffffb,notification:0x80000002},p={xs:"4px",sm:"8px",md:"12px",lg:"16px",xl:"20px",xxl:"24px"},h={sm:"6px",md:"10px",lg:"14px",full:"9999px"},u={sm:"0 2px 8px rgba(0, 0, 0, 0.3)",lg:"0 8px 32px rgba(0, 0, 0, 0.5)",glow:"0 0 20px rgba(0, 217, 255, 0.3)",glowStrong:"0 0 30px rgba(0, 217, 255, 0.4)"};function m(e){return"string"!=typeof e?e:e.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function b(e){return e.replace(/^@Storefront\//,"").replace(/^@(\w+)\//,"$1/").replace(/^storefront\//,"")}function g(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"success",o=document.createElement("div");o.className=`devtools-notification ${t}`,o.textContent=e,document.body.appendChild(o),requestAnimationFrame(()=>o.style.opacity="1"),setTimeout(()=>{o.style.opacity="0",setTimeout(()=>o.remove(),200)},2500)}function v(e){if(e.closest(["__mnkys-devtools-overlay__","__mnkys-devtools-tooltip__","__mnkys-devtools-panel__","__mnkys-devtools-detail__","__mnkys-devtools-toggle__"].map(e=>`#${e}`).join(", ")))return null;for(;e&&e!==document.body&&e!==document.documentElement;){if(e.dataset&&e.dataset.twigBlock)return e;e=e.parentElement}return null}function y(e){try{return JSON.parse(e.dataset.twigBlock)}catch(e){return console.warn("DevTools: Failed to parse twig data",e),null}}class f{constructor(e={}){this.options={overlayColor:"rgba(66, 184, 131, 0.15)",overlayBorderColor:"#1699F7",overlayBorderWidth:"2px",transitionDuration:"0.12s",...e},this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-overlay__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}highlight(e){if(!this.element||!e)return;let t=e.getBoundingClientRect(),o=parseInt(this.options.overlayBorderWidth,10);Object.assign(this.element.style,{display:"block",left:`${t.left-o}px`,top:`${t.top-o}px`,width:`${t.width+2*o}px`,height:`${t.height+2*o}px`})}isVisible(){return this.element&&"none"!==this.element.style.display}}class x{constructor(){this.element=null}create(){this.element||(this.element=document.createElement("div"),this.element.id="__mnkys-devtools-tooltip__",document.body.appendChild(this.element))}destroy(){this.element?.remove(),this.element=null}show(){this.element&&(this.element.style.display="block")}hide(){this.element&&(this.element.style.display="none")}update(e,t){let o=y(e);if(!o)return;let n=e.tagName.toLowerCase(),i=e.id?`#${e.id}`:"",r=e.className&&"string"==typeof e.className?"."+e.className.trim().split(/\s+/).slice(0,2).join("."):"";this.element.innerHTML=`
+            <div class="element-tag">&lt;${n}${i}${r}&gt;</div>
+            <div class="block-name">${m(o.block)}</div>
+            <div class="template-path">${m(o.template)}:${o.line}</div>
+        `,this.show(),this.position(t)}position(e){if(!this.element||"none"===this.element.style.display)return;let t=this.element.getBoundingClientRect(),o=window.innerWidth,n=window.innerHeight,i=e.clientX+15,r=e.clientY+15;i+t.width>o-15&&(i=e.clientX-t.width-15),r+t.height>n-15&&(r=e.clientY-t.height-15),i=Math.max(15,i),r=Math.max(15,r),this.element.style.left=`${i}px`,this.element.style.top=`${r}px`}isVisible(){return this.element&&"none"!==this.element.style.display}}class _{constructor(e={}){this.options={onToggle:null,...e},this.element=null,this.isActive=!1}create(){this.element||document.getElementById("__mnkys-devtools-toggle__")||(this._injectStyles(),this.element=document.createElement("button"),this.element.id="__mnkys-devtools-toggle__",this.element.innerHTML=`
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"/>
                 <path d="M21 21l-4.35-4.35"/>
@@ -95,7 +95,16 @@
                     transition: none;
                 }
             }
-        `,document.head.appendChild(e)}}let k=new class{constructor(){this._request=null,this._errorHandlingInternal=!1}get(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"application/json",n=this._createPreparedRequest("GET",e,o);return this._sendRequest(n,null,t)}post(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("POST",e,n);return this._sendRequest(i,t,o)}delete(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("DELETE",e,n);return this._sendRequest(i,t,o)}patch(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("PATCH",e,n);return this._sendRequest(i,t,o)}abort(){if(this._request)return this._request.abort()}setErrorHandlingInternal(e){this._errorHandlingInternal=e}_registerOnLoaded(e,t){t&&(!0===this._errorHandlingInternal?(e.addEventListener("load",()=>{t(e.responseText,e)}),e.addEventListener("abort",()=>{console.warn(`the request to ${e.responseURL} was aborted`)}),e.addEventListener("error",()=>{console.warn(`the request to ${e.responseURL} failed with status ${e.status}`)}),e.addEventListener("timeout",()=>{console.warn(`the request to ${e.responseURL} timed out`)})):e.addEventListener("loadend",()=>{t(e.responseText,e)}))}_sendRequest(e,t,o){return this._registerOnLoaded(e,o),e.send(t),e}_getContentType(e,t){return e instanceof FormData&&(t=!1),t}_createPreparedRequest(e,t,o){return this._request=new XMLHttpRequest,this._request.open(e,t),this._request.setRequestHeader("X-Requested-With","XMLHttpRequest"),o&&this._request.setRequestHeader("Content-type",o),this._request}},$={openEditor:"/devtools/open-editor",blockInfo:"/devtools/block-info"};function w(e,t){return new Promise((o,n)=>{let i=`${$.openEditor}?file=${encodeURIComponent(e)}&line=${t}`;k.get(i,e=>{try{let t=JSON.parse(e);o(t)}catch(e){n(Error("Failed to parse response"))}},"application/json",!0)})}function T(){let e=document.getElementById("devtools-block-data");if(!e)return[];try{return(JSON.parse(e.textContent)||[]).sort((e,t)=>{let o=e.template.localeCompare(t.template);return 0!==o?o:e.block.localeCompare(t.block)})}catch(e){return console.warn("DevTools: Failed to parse block data",e),[]}}class E{constructor(e={}){this.options={onBlockSelect:null,...e},this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm=""}create(){this.element||(this.blocks=T(),this.filteredBlocks=[...this.blocks],this.element=document.createElement("div"),this.element.id="__mnkys-devtools-panel__",this.element.innerHTML=this._buildHTML(),document.body.appendChild(this.element),this._attachEvents())}destroy(){this.element?.remove(),this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm=""}reload(){this.blocks=T(),this.filteredBlocks=[...this.blocks],this._updateList()}getBlocks(){return this.blocks}hasBlocks(){return this.blocks.length>0}_buildHTML(){return`
+        `,document.head.appendChild(e)}}let k=new class{constructor(){this._request=null,this._errorHandlingInternal=!1}get(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"application/json",n=this._createPreparedRequest("GET",e,o);return this._sendRequest(n,null,t)}post(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("POST",e,n);return this._sendRequest(i,t,o)}delete(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("DELETE",e,n);return this._sendRequest(i,t,o)}patch(e,t,o){let n=arguments.length>3&&void 0!==arguments[3]?arguments[3]:"application/json";n=this._getContentType(t,n);let i=this._createPreparedRequest("PATCH",e,n);return this._sendRequest(i,t,o)}abort(){if(this._request)return this._request.abort()}setErrorHandlingInternal(e){this._errorHandlingInternal=e}_registerOnLoaded(e,t){t&&(!0===this._errorHandlingInternal?(e.addEventListener("load",()=>{t(e.responseText,e)}),e.addEventListener("abort",()=>{console.warn(`the request to ${e.responseURL} was aborted`)}),e.addEventListener("error",()=>{console.warn(`the request to ${e.responseURL} failed with status ${e.status}`)}),e.addEventListener("timeout",()=>{console.warn(`the request to ${e.responseURL} timed out`)})):e.addEventListener("loadend",()=>{t(e.responseText,e)}))}_sendRequest(e,t,o){return this._registerOnLoaded(e,o),e.send(t),e}_getContentType(e,t){return e instanceof FormData&&(t=!1),t}_createPreparedRequest(e,t,o){return this._request=new XMLHttpRequest,this._request.open(e,t),this._request.setRequestHeader("X-Requested-With","XMLHttpRequest"),o&&this._request.setRequestHeader("Content-type",o),this._request}},$={openEditor:"/devtools/open-editor",blockInfo:"/devtools/block-info"};function w(e,t){return new Promise((o,n)=>{let i=`${$.openEditor}?file=${encodeURIComponent(e)}&line=${t}`;k.get(i,e=>{try{let t=JSON.parse(e);o(t)}catch(e){n(Error("Failed to parse response"))}},"application/json",!0)})}function z(){let e=document.getElementById("devtools-block-data");if(!e)return[];try{return(JSON.parse(e.textContent)||[]).sort((e,t)=>{let o=e.template.localeCompare(t.template);return 0!==o?o:e.block.localeCompare(t.block)})}catch(e){return console.warn("DevTools: Failed to parse block data",e),[]}}let E="mnkys-devtools-panel-state";function C(){try{let e=localStorage.getItem(E);return e?JSON.parse(e):{}}catch(e){return{}}}function T(e){try{localStorage.setItem(E,JSON.stringify(e))}catch(e){}}function L(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},o={panelId:e.id||"panel",dragHandleSelector:t.dragHandle||".panel-header, .detail-header",minWidth:t.minWidth||280,minHeight:t.minHeight||200,maxWidth:t.maxWidth||window.innerWidth-40,maxHeight:t.maxHeight||window.innerHeight-40,resizable:!1!==t.resizable,persistState:!1!==t.persistState,...t},n=!1,i=!1,r=null,s=0,l=0,a=0,c=0,d=0,p=0,h=null;if(o.resizable&&(h=function(){let t=document.createElement("div");return t.className="panel-resize-frame",t.innerHTML=`
+            <div class="panel-resize-handle panel-resize-top" data-edge="top"></div>
+            <div class="panel-resize-handle panel-resize-right" data-edge="right"></div>
+            <div class="panel-resize-handle panel-resize-bottom" data-edge="bottom"></div>
+            <div class="panel-resize-handle panel-resize-left" data-edge="left"></div>
+            <div class="panel-resize-handle panel-resize-top-left" data-edge="top-left"></div>
+            <div class="panel-resize-handle panel-resize-top-right" data-edge="top-right"></div>
+            <div class="panel-resize-handle panel-resize-bottom-left" data-edge="bottom-left"></div>
+            <div class="panel-resize-handle panel-resize-bottom-right" data-edge="bottom-right"></div>
+        `,e.appendChild(t),t.querySelectorAll(".panel-resize-handle").forEach(e=>{e.addEventListener("mousedown",v)}),t}()),o.persistState){let t=C()[o.panelId];t&&(t.width&&(e.style.width=`${t.width}px`),t.height&&(e.style.height=`${t.height}px`),void 0!==t.left&&(e.style.left=`${t.left}px`,e.style.right="auto"),void 0!==t.top&&(e.style.top=`${t.top}px`,e.style.bottom="auto"))}function u(){if(!o.persistState)return;let t=e.getBoundingClientRect(),n=C();n[o.panelId]={width:t.width,height:t.height,left:t.left,top:t.top},T(n)}function m(t){if(!t.target.closest(o.dragHandleSelector)||t.target.closest("button, input, textarea, select, a, .panel-resize-handle"))return;n=!0,s=t.clientX,l=t.clientY;let i=e.getBoundingClientRect();d=i.left,p=i.top,e.style.left=`${d}px`,e.style.top=`${p}px`,e.style.right="auto",e.style.bottom="auto",e.classList.add("is-dragging"),t.preventDefault(),document.body.style.userSelect="none",document.body.style.webkitUserSelect="none",document.body.style.cursor="move",document.addEventListener("mousemove",b),document.addEventListener("mouseup",g)}function b(t){if(!n)return;let o=t.clientX-s,i=t.clientY-l,r=d+o,a=p+i,c=e.getBoundingClientRect();r=Math.max(0,Math.min(r,window.innerWidth-c.width)),a=Math.max(0,Math.min(a,window.innerHeight-c.height)),e.style.left=`${r}px`,e.style.top=`${a}px`,t.preventDefault()}function g(t){n&&(n=!1,e.classList.remove("is-dragging"),document.body.style.userSelect="",document.body.style.webkitUserSelect="",document.body.style.cursor="",document.removeEventListener("mousemove",b),document.removeEventListener("mouseup",g),u())}function v(t){i=!0,r=t.target.dataset.edge,s=t.clientX,l=t.clientY;let o=e.getBoundingClientRect();a=o.width,c=o.height,d=o.left,p=o.top,e.style.left=`${d}px`,e.style.top=`${p}px`,e.style.right="auto",e.style.bottom="auto",e.style.width=`${a}px`,e.style.height=`${c}px`,e.style.maxHeight="none",e.classList.add("is-resizing"),t.preventDefault(),t.stopPropagation(),document.body.style.userSelect="none",document.body.style.webkitUserSelect="none",document.body.style.cursor=({top:"ns-resize",bottom:"ns-resize",left:"ew-resize",right:"ew-resize","top-left":"nwse-resize","bottom-right":"nwse-resize","top-right":"nesw-resize","bottom-left":"nesw-resize"})[r]||"default",document.addEventListener("mousemove",y),document.addEventListener("mouseup",f)}function y(t){if(!i)return;let n=t.clientX-s,h=t.clientY-l,u=a,m=c,b=d,g=p;if(r.includes("right")&&(u=Math.max(o.minWidth,Math.min(o.maxWidth,a+n))),r.includes("left")){let e=a-n;e>=o.minWidth&&e<=o.maxWidth&&(u=e,b=d+n)}if(r.includes("bottom")&&(m=Math.max(o.minHeight,Math.min(o.maxHeight,c+h))),r.includes("top")){let e=c-h;e>=o.minHeight&&e<=o.maxHeight&&(m=e,g=p+h)}b=Math.max(0,b),g=Math.max(0,g),e.style.width=`${u}px`,e.style.height=`${m}px`,e.style.left=`${b}px`,e.style.top=`${g}px`,t.preventDefault()}function f(t){i&&(i=!1,r=null,e.classList.remove("is-resizing"),document.body.style.userSelect="",document.body.style.webkitUserSelect="",document.body.style.cursor="",document.removeEventListener("mousemove",y),document.removeEventListener("mouseup",f),u())}return e.addEventListener("mousedown",m),{reset:function(){if(e.style.width="",e.style.height="",e.style.left="",e.style.top="",e.style.right="",e.style.bottom="",e.style.maxHeight="",o.persistState){let e=C();delete e[o.panelId],T(e)}},destroy:function(){e.removeEventListener("mousedown",m),document.removeEventListener("mousemove",b),document.removeEventListener("mouseup",g),document.removeEventListener("mousemove",y),document.removeEventListener("mouseup",f),h?.remove()},saveState:u}}class S{constructor(e={}){this.options={onBlockSelect:null,...e},this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm="",this.panelInteractions=null}create(){this.element||(this.blocks=z(),this.filteredBlocks=[...this.blocks],this.element=document.createElement("div"),this.element.id="__mnkys-devtools-panel__",this.element.innerHTML=this._buildHTML(),document.body.appendChild(this.element),this._attachEvents(),this.panelInteractions=L(this.element,{panelId:"block-panel",dragHandle:".panel-header",minWidth:260,minHeight:200,maxWidth:window.innerWidth-40,maxHeight:window.innerHeight-40}))}destroy(){this.panelInteractions?.destroy(),this.panelInteractions=null,this.element?.remove(),this.element=null,this.blocks=[],this.filteredBlocks=[],this.searchTerm=""}reload(){this.blocks=z(),this.filteredBlocks=[...this.blocks],this._updateList()}getBlocks(){return this.blocks}hasBlocks(){return this.blocks.length>0}_buildHTML(){return`
             <div class="panel-header">
                 <div class="panel-title">Twig Blocks</div>
                 <input type="text" class="panel-search" placeholder="Search blocks..." />
@@ -109,19 +118,19 @@
             </div>
         `}_buildListHTML(){return 0===this.filteredBlocks.length?'<div class="panel-empty">No blocks found</div>':this.filteredBlocks.map(e=>`
             <div class="block-item" 
-                 data-template="${u(e.template)}" 
-                 data-block="${u(e.block)}"
+                 data-template="${m(e.template)}" 
+                 data-block="${m(e.block)}"
                  data-line="${e.line}"
-                 data-block-id="${u(e.blockId||"")}">
+                 data-block-id="${m(e.blockId||"")}">
                 <div class="block-item-name">${this._highlightMatch(e.block)}</div>
-                <div class="block-item-path">${this._highlightMatch(m(e.template))}:${e.line}</div>
+                <div class="block-item-path">${this._highlightMatch(b(e.template))}:${e.line}</div>
             </div>
-        `).join("")}_highlightMatch(e){if(!this.searchTerm)return u(e);let t=u(e),o=RegExp(`(${this.searchTerm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");return t.replace(o,'<span class="highlight">$1</span>')}_attachEvents(){let e=this.element.querySelector(".panel-search");e?.addEventListener("input",e=>{this.searchTerm=e.target.value.toLowerCase(),this._filterBlocks(),this._updateList()}),this.element.addEventListener("click",e=>{let t=e.target.closest(".block-item");if(t){let e={block:t.dataset.block,template:t.dataset.template,line:parseInt(t.dataset.line,10),blockId:t.dataset.blockId};this.options.onBlockSelect?.(e)}})}_filterBlocks(){if(!this.searchTerm){this.filteredBlocks=[...this.blocks];return}this.filteredBlocks=this.blocks.filter(e=>e.block.toLowerCase().includes(this.searchTerm)||e.template.toLowerCase().includes(this.searchTerm))}_updateList(){let e=this.element?.querySelector(".panel-list");e&&(e.innerHTML=this._buildListHTML());let t=this.element?.querySelector(".panel-stats");t&&(t.textContent=this.searchTerm?`${this.filteredBlocks.length} of ${this.blocks.length} blocks`:`${this.blocks.length} blocks`)}}class C{constructor(e={}){this.options={onClose:null,onOpenEditor:null,...e},this.element=null,this.currentBlock=null,this.contextData={},this.blockInfo=null,this.activeTab="context",this.isLoading=!1}create(){this.element||(this.contextData=function(){let e=document.getElementById("devtools-context-data");if(!e)return{};try{return JSON.parse(e.textContent)||{}}catch(e){return console.warn("DevTools: Failed to parse context data",e),{}}}(),this.element=document.createElement("div"),this.element.id="__mnkys-devtools-detail__",this.element.style.display="none",document.body.appendChild(this.element))}async show(e,t){this.element||this.create(),this.currentBlock=e,this.blockInfo=null,this.activeTab="context";let o=t.tagName.toLowerCase(),n=t.id?`#${t.id}`:"",i=t.className&&"string"==typeof t.className?"."+t.className.trim().split(/\s+/).slice(0,2).join("."):"";this.elementInfo=`<${o}${n}${i}>`,this.render(),this.element.style.display="flex",this.fetchBlockInfo()}hide(){this.element&&(this.element.style.display="none"),this.currentBlock=null,this.blockInfo=null}destroy(){this.element?.remove(),this.element=null}async fetchBlockInfo(){if(this.currentBlock){this.isLoading=!0,this.updateTabContent();try{var e,t,o;let n=await (e=this.currentBlock.template,t=this.currentBlock.block,o=this.currentBlock.line,new Promise((n,i)=>{let s=new URLSearchParams({template:e,block:t,line:String(o)}),r=`${$.blockInfo}?${s}`;k.get(r,e=>{try{let t=JSON.parse(e);n(t)}catch(e){i(Error("Failed to parse response"))}},"application/json",!0)}));n.success&&n.data&&(this.blockInfo=n.data)}catch(e){console.warn("DevTools: Failed to fetch block info",e)}finally{this.isLoading=!1,this.updateTabContent()}}}render(){if(!this.element||!this.currentBlock)return;let{block:e,template:t,line:o,blockId:n}=this.currentBlock;this.element.innerHTML=`
+        `).join("")}_highlightMatch(e){if(!this.searchTerm)return m(e);let t=m(e),o=RegExp(`(${this.searchTerm.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")})`,"gi");return t.replace(o,'<span class="highlight">$1</span>')}_attachEvents(){let e=this.element.querySelector(".panel-search");e?.addEventListener("input",e=>{this.searchTerm=e.target.value.toLowerCase(),this._filterBlocks(),this._updateList()}),this.element.addEventListener("click",e=>{let t=e.target.closest(".block-item");if(t){let e={block:t.dataset.block,template:t.dataset.template,line:parseInt(t.dataset.line,10),blockId:t.dataset.blockId};this.options.onBlockSelect?.(e)}})}_filterBlocks(){if(!this.searchTerm){this.filteredBlocks=[...this.blocks];return}this.filteredBlocks=this.blocks.filter(e=>e.block.toLowerCase().includes(this.searchTerm)||e.template.toLowerCase().includes(this.searchTerm))}_updateList(){let e=this.element?.querySelector(".panel-list");e&&(e.innerHTML=this._buildListHTML());let t=this.element?.querySelector(".panel-stats");t&&(t.textContent=this.searchTerm?`${this.filteredBlocks.length} of ${this.blocks.length} blocks`:`${this.blocks.length} blocks`)}}class M{constructor(e={}){this.options={onClose:null,onOpenEditor:null,...e},this.element=null,this.currentBlock=null,this.contextData={},this.blockInfo=null,this.activeTab="context",this.isLoading=!1,this.panelInteractions=null}create(){this.element||(this.contextData=function(){let e=document.getElementById("devtools-context-data");if(!e)return{};try{return JSON.parse(e.textContent)||{}}catch(e){return console.warn("DevTools: Failed to parse context data",e),{}}}(),this.element=document.createElement("div"),this.element.id="__mnkys-devtools-detail__",this.element.style.display="none",this.contentContainer=document.createElement("div"),this.contentContainer.className="detail-panel-content",this.element.appendChild(this.contentContainer),document.body.appendChild(this.element))}_initInteractions(){this.panelInteractions||(this.panelInteractions=L(this.element,{panelId:"detail-panel",dragHandle:".detail-header",minWidth:380,minHeight:300,maxWidth:window.innerWidth-40,maxHeight:window.innerHeight-40}))}async show(e,t){this.element||this.create(),this.currentBlock=e,this.blockInfo=null,this.activeTab="context";let o=t.tagName.toLowerCase(),n=t.id?`#${t.id}`:"",i=t.className&&"string"==typeof t.className?"."+t.className.trim().split(/\s+/).slice(0,2).join("."):"";this.elementInfo=`<${o}${n}${i}>`,this.render(),this.element.style.display="flex",this._initInteractions(),this.fetchBlockInfo()}hide(){this.element&&(this.element.style.display="none"),this.currentBlock=null,this.blockInfo=null}destroy(){this.panelInteractions?.destroy(),this.panelInteractions=null,this.element?.remove(),this.element=null}async fetchBlockInfo(){if(this.currentBlock){this.isLoading=!0,this.updateTabContent();try{var e,t,o;let n=await (e=this.currentBlock.template,t=this.currentBlock.block,o=this.currentBlock.line,new Promise((n,i)=>{let r=new URLSearchParams({template:e,block:t,line:String(o)}),s=`${$.blockInfo}?${r}`;k.get(s,e=>{try{let t=JSON.parse(e);n(t)}catch(e){i(Error("Failed to parse response"))}},"application/json",!0)}));n.success&&n.data&&(this.blockInfo=n.data)}catch(e){console.warn("DevTools: Failed to fetch block info",e)}finally{this.isLoading=!1,this.updateTabContent()}}}render(){if(!this.contentContainer||!this.currentBlock)return;let{block:e,template:t,line:o,blockId:n}=this.currentBlock;this.contentContainer.innerHTML=`
             <div class="detail-header">
-                <div class="element-info">${u(this.elementInfo)}</div>
-                <div class="block-title">{% block ${u(e)} %}</div>
+                <div class="element-info">${m(this.elementInfo)}</div>
+                <div class="block-title">{% block ${m(e)} %}</div>
                 <div class="template-info">
-                    ${u(m(t))}
+                    ${m(b(t))}
                     <span class="line-num">:${o}</span>
                 </div>
             </div>
@@ -162,13 +171,13 @@
             <ul class="var-tree">
                 ${n.map(e=>this.renderVariable(e,o[e])).join("")}
             </ul>
-        `}renderVariable(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0,n=this.hasExpandableContent(t),i=this.getTypeClass(t.type),s=this.getDisplayValue(t);return`
+        `}renderVariable(e,t){let o=arguments.length>2&&void 0!==arguments[2]?arguments[2]:0,n=this.hasExpandableContent(t),i=this.getTypeClass(t.type),r=this.getDisplayValue(t);return`
             <li class="var-item" data-depth="${o}">
                 <div class="var-row">
                     <span class="var-toggle ${n?"expandable":""}"></span>
-                    <span class="var-name">${u(e)}</span>
-                    <span class="var-type">${u(this.getTypeLabel(t))}</span>
-                    ${s?`<span class="var-value ${i}">${u(s)}</span>`:""}
+                    <span class="var-name">${m(e)}</span>
+                    <span class="var-type">${m(this.getTypeLabel(t))}</span>
+                    ${r?`<span class="var-value ${i}">${m(r)}</span>`:""}
                 </div>
                 ${n?`<ul class="var-children">${this.renderVariableChildren(t)}</ul>`:""}
             </li>
@@ -176,7 +185,7 @@
                     <li class="var-item">
                         <div class="var-row">
                             <span class="var-toggle"></span>
-                            <span class="var-name">${u(o)}</span>
+                            <span class="var-name">${m(o)}</span>
                             <span class="var-type">key</span>
                         </div>
                     </li>
@@ -184,16 +193,16 @@
             <div class="hierarchy-section">
                 <div class="hierarchy-label">Template Inheritance Chain</div>
                 <div class="hierarchy-tree">
-                    ${e.map((e,n)=>{let i=e.template===t,s=e.isRoot||0===n,r=e.blocks?e.blocks.length:0,a="";if(n>0){for(let e=0;e<n-1;e++)a+='<span class="tree-line">│</span>';a+=n===o-1?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>'}return`
+                    ${e.map((e,n)=>{let i=e.template===t,r=e.isRoot||0===n,s=e.blocks?e.blocks.length:0,l="";if(n>0){for(let e=0;e<n-1;e++)l+='<span class="tree-line">│</span>';l+=n===o-1?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>'}return`
                             <div class="hierarchy-item ${i?"current":""} ${i?"":"clickable"}"
-                                 data-template="${u(e.template)}"
+                                 data-template="${m(e.template)}"
                                  data-line="1"
                                  data-depth="${n}">
-                                <div class="hierarchy-tree-line">${a}</div>
+                                <div class="hierarchy-tree-line">${l}</div>
                                 <div class="hierarchy-content">
-                                    ${s?'<span class="hierarchy-icon root" title="Base template">◆</span>':'<span class="hierarchy-icon child" title="Extends parent">◇</span>'}
-                                    <span class="hierarchy-template" title="${u(e.template)}">${u(m(e.template))}</span>
-                                    <span class="hierarchy-blocks">${r}</span>
+                                    ${r?'<span class="hierarchy-icon root" title="Base template">◆</span>':'<span class="hierarchy-icon child" title="Extends parent">◇</span>'}
+                                    <span class="hierarchy-template" title="${m(e.template)}">${m(b(e.template))}</span>
+                                    <span class="hierarchy-blocks">${s}</span>
                                 </div>
                                 ${i?'<span class="hierarchy-current-badge">current</span>':""}
                             </div>
@@ -202,22 +211,22 @@
             </div>
             
             ${this.blockInfo.blocks?this.renderBlockList():""}
-        `}renderBlockList(){let e=this.blockInfo.blocks,t=e.flat||e,o=e.tree||Object.keys(t);if(!t||0===Object.keys(t).length)return"";let n=this.currentBlock.block,i=(e,o,s,r)=>{let a=t[e];if(!a)return"";let l=e===n,c=a.children||[],d=c.length>0,p="";for(let e=0;e<r.length;e++)p+=r[e]?'<span class="tree-line">│</span>':'<span class="tree-line"> </span>';o>0&&(p+=s?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>');let h=`
-                <div class="block-entry ${l?"current":""}" 
-                     data-block="${u(e)}" 
-                     data-line="${a.line}"
+        `}renderBlockList(){let e=this.blockInfo.blocks,t=e.flat||e,o=e.tree||Object.keys(t);if(!t||0===Object.keys(t).length)return"";let n=this.currentBlock.block,i=(e,o,r,s)=>{let l=t[e];if(!l)return"";let a=e===n,c=l.children||[],d=c.length>0,p="";for(let e=0;e<s.length;e++)p+=s[e]?'<span class="tree-line">│</span>':'<span class="tree-line"> </span>';o>0&&(p+=r?'<span class="tree-line">└</span><span class="tree-branch">─</span>':'<span class="tree-line">├</span><span class="tree-branch">─</span>');let h=`
+                <div class="block-entry ${a?"current":""}" 
+                     data-block="${m(e)}" 
+                     data-line="${l.line}"
                      data-depth="${o}">
                     <div class="block-tree-line">${p}</div>
                     <span class="block-icon">{%</span>
-                    <span class="block-entry-name">${u(e)}</span>
-                    <span class="block-line">:${a.line}</span>
-                    ${l?'<span class="block-current-badge">●</span>':""}
+                    <span class="block-entry-name">${m(e)}</span>
+                    <span class="block-line">:${l.line}</span>
+                    ${a?'<span class="block-current-badge">●</span>':""}
                 </div>
-            `;if(d){let e=[...r,!s];c.forEach((t,n)=>{let s=n===c.length-1;h+=i(t,o+1,s,e)})}return h},s="";return o.forEach((e,t)=>{let n=t===o.length-1;s+=i(e,0,n,[])}),`
+            `;if(d){let e=[...s,!r];c.forEach((t,n)=>{let r=n===c.length-1;h+=i(t,o+1,r,e)})}return h},r="";return o.forEach((e,t)=>{let n=t===o.length-1;r+=i(e,0,n,[])}),`
             <div class="hierarchy-section blocks-section">
                 <div class="hierarchy-label">Blocks in Current Template</div>
                 <div class="blocks-tree">
-                    ${s}
+                    ${r}
                 </div>
             </div>
         `}renderSourceTab(){if(this.isLoading)return'<div class="source-loading"><span class="devtools-loading"></span> Loading source...</div>';if(!this.blockInfo||!this.blockInfo.source)return'<div class="source-loading">Source code not available</div>';let{lines:e,blockStart:t,blockEnd:o}=this.blockInfo.source;return e&&0!==e.length?`
@@ -226,12 +235,12 @@
                     ${e.map(e=>{let t=e.isBlockLine,o=e.isStartLine;return`
                             <div class="source-line ${t?"highlight":""} ${o?"block-start":""}">
                                 <span class="line-number">${e.number}</span>
-                                <span class="line-content">${u(e.content).replace(/(\{#.*?#\})/g,'<span class="twig-comment">$1</span>').replace(/(\{%\s*)(\w+)(.*?)(%\})/g,'<span class="twig-tag">$1</span><span class="twig-name">$2</span>$3<span class="twig-tag">$4</span>').replace(/(\{\{)(.*?)(\}\})/g,'<span class="twig-tag">$1</span>$2<span class="twig-tag">$3</span>').replace(/(&quot;[^&]*&quot;|&#039;[^&]*&#039;)/g,'<span class="twig-string">$1</span>').replace(/(&lt;\/?)(\w+)((?:\s+[^&]*?)?)(&gt;)/g,'$1<span class="html-tag">$2</span>$3$4')}</span>
+                                <span class="line-content">${m(e.content).replace(/(\{#.*?#\})/g,'<span class="twig-comment">$1</span>').replace(/(\{%\s*)(\w+)(.*?)(%\})/g,'<span class="twig-tag">$1</span><span class="twig-name">$2</span>$3<span class="twig-tag">$4</span>').replace(/(\{\{)(.*?)(\}\})/g,'<span class="twig-tag">$1</span>$2<span class="twig-tag">$3</span>').replace(/(&quot;[^&]*&quot;|&#039;[^&]*&#039;)/g,'<span class="twig-string">$1</span>').replace(/(&lt;\/?)(\w+)((?:\s+[^&]*?)?)(&gt;)/g,'$1<span class="html-tag">$2</span>$3$4')}</span>
                             </div>
                         `}).join("")}
                 </div>
             </div>
-        `:'<div class="source-loading">No source lines available</div>'}attachEvents(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.addEventListener("click",e=>{this.activeTab=e.target.dataset.tab,this.updateTabs()})}),this.element.querySelector('[data-action="close"]')?.addEventListener("click",()=>{this.hide(),this.options.onClose?.()}),this.element.querySelector('[data-action="open-editor"]')?.addEventListener("click",()=>{this.handleOpenEditor()}),this.element.querySelectorAll(".hierarchy-item.clickable").forEach(e=>{e.addEventListener("click",()=>{w(e.dataset.template,parseInt(e.dataset.line,10)||1)})}),this.attachTreeEvents())}attachTreeEvents(){this.element&&this.element.querySelectorAll(".var-row").forEach(e=>{e.addEventListener("click",t=>{let o=e.closest(".var-item");o&&e.querySelector(".var-toggle.expandable")&&o.classList.toggle("expanded")})})}updateTabs(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.classList.toggle("active",e.dataset.tab===this.activeTab)}),this.element.querySelectorAll(".tab-pane").forEach(e=>{e.classList.toggle("active",e.dataset.pane===this.activeTab)}))}async handleOpenEditor(){if(this.currentBlock)try{let e=await w(this.currentBlock.template,this.currentBlock.line);e.success?this.options.onOpenEditor?.(e):e.editorUrl?window.location.href=e.editorUrl:e.error&&console.warn("DevTools: Failed to open editor:",e.error)}catch(e){console.warn("DevTools: Failed to open editor",e)}}}class L extends a{static #e=this.options={overlayColor:"rgba(66, 184, 131, 0.15)",overlayBorderColor:"#1699F7",overlayBorderWidth:"2px",keyboardShortcut:!0,transitionDuration:"0.12s"};init(){this._enabled=!1,this._currentTarget=null,this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null,this._toggle=null,this._onMouseMove=this._onMouseMove.bind(this),this._onClick=this._onClick.bind(this),this._onKeyDown=this._onKeyDown.bind(this),this._initToggle(),this.options.keyboardShortcut&&document.addEventListener("keydown",this._onKeyDown)}_initToggle(){this._isDevToolsEnabled()?this._createToggle():setTimeout(()=>{!this._toggle?.exists()&&this._isDevToolsEnabled()&&this._createToggle()},100)}_createToggle(){this._toggle=new x({onToggle:()=>this.toggle()}),this._toggle.create()}_isDevToolsEnabled(){return!!("true"===document.body.dataset.devtoolsEnabled||document.getElementById("devtools-block-data"))}toggle(){this._enabled?this.disable():this.enable()}enable(){this._enabled||(this._enabled=!0,function(){if(document.getElementById("__mnkys-devtools-styles__"))return;let e=document.createElement("style");e.id="__mnkys-devtools-styles__",e.textContent=`
+        `:'<div class="source-loading">No source lines available</div>'}attachEvents(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.addEventListener("click",e=>{this.activeTab=e.target.dataset.tab,this.updateTabs()})}),this.element.querySelector('[data-action="close"]')?.addEventListener("click",()=>{this.hide(),this.options.onClose?.()}),this.element.querySelector('[data-action="open-editor"]')?.addEventListener("click",()=>{this.handleOpenEditor()}),this.element.querySelectorAll(".hierarchy-item.clickable").forEach(e=>{e.addEventListener("click",()=>{w(e.dataset.template,parseInt(e.dataset.line,10)||1)})}),this.attachTreeEvents())}attachTreeEvents(){this.element&&this.element.querySelectorAll(".var-row").forEach(e=>{e.addEventListener("click",t=>{let o=e.closest(".var-item");o&&e.querySelector(".var-toggle.expandable")&&o.classList.toggle("expanded")})})}updateTabs(){this.element&&(this.element.querySelectorAll(".detail-tab").forEach(e=>{e.classList.toggle("active",e.dataset.tab===this.activeTab)}),this.element.querySelectorAll(".tab-pane").forEach(e=>{e.classList.toggle("active",e.dataset.pane===this.activeTab)}))}async handleOpenEditor(){if(this.currentBlock)try{let e=await w(this.currentBlock.template,this.currentBlock.line);e.success?this.options.onOpenEditor?.(e):e.editorUrl?window.location.href=e.editorUrl:e.error&&console.warn("DevTools: Failed to open editor:",e.error)}catch(e){console.warn("DevTools: Failed to open editor",e)}}}class I extends l{static #e=this.options={overlayColor:"rgba(66, 184, 131, 0.15)",overlayBorderColor:"#1699F7",overlayBorderWidth:"2px",keyboardShortcut:!0,transitionDuration:"0.12s"};init(){this._enabled=!1,this._currentTarget=null,this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null,this._toggle=null,this._onMouseMove=this._onMouseMove.bind(this),this._onClick=this._onClick.bind(this),this._onKeyDown=this._onKeyDown.bind(this),this._initToggle(),this.options.keyboardShortcut&&document.addEventListener("keydown",this._onKeyDown)}_initToggle(){this._isDevToolsEnabled()?this._createToggle():setTimeout(()=>{!this._toggle?.exists()&&this._isDevToolsEnabled()&&this._createToggle()},100)}_createToggle(){this._toggle=new _({onToggle:()=>this.toggle()}),this._toggle.create()}_isDevToolsEnabled(){return!!("true"===document.body.dataset.devtoolsEnabled||document.getElementById("devtools-block-data"))}toggle(){this._enabled?this.disable():this.enable()}enable(){this._enabled||(this._enabled=!0,function(){if(document.getElementById("__mnkys-devtools-styles__"))return;let e=document.createElement("style");e.id="__mnkys-devtools-styles__",e.textContent=`
 /* ========================================
    DevTools Inspector - Modern UI
    ======================================== */
@@ -263,12 +272,12 @@
     pointer-events: none;
     z-index: ${d.overlay};
     
-    background: ${l.overlay};
-    border: 2px solid ${l.overlayBorder};
+    background: ${a.overlay};
+    border: 2px solid ${a.overlayBorder};
     border-radius: ${h.sm};
     
-    box-shadow: 0 0 0 4px ${l.accentMuted},
-                inset 0 0 20px ${l.accentMuted};
+    box-shadow: 0 0 0 4px ${a.accentMuted},
+                inset 0 0 20px ${a.accentMuted};
     
     transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     display: none;
@@ -284,11 +293,11 @@
     pointer-events: none;
     z-index: ${d.tooltip};
     
-    background: ${l.bgGlass};
+    background: ${a.bgGlass};
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
     
-    color: ${l.text};
+    color: ${a.text};
     padding: ${p.md} ${p.lg};
     border-radius: ${h.md};
     
@@ -296,8 +305,8 @@
     font-family: ${c.mono};
     line-height: 1.5;
     
-    border: 1px solid ${l.borderAccent};
-    box-shadow: ${b.lg}, ${b.glow};
+    border: 1px solid ${a.borderAccent};
+    box-shadow: ${u.lg}, ${u.glow};
     
     max-width: 420px;
     display: none;
@@ -317,7 +326,7 @@
 }
 
 #__mnkys-devtools-tooltip__ .element-tag {
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     font-size: 10px;
     margin-bottom: ${p.sm};
     font-family: ${c.mono};
@@ -325,7 +334,7 @@
 }
 
 #__mnkys-devtools-tooltip__ .block-name {
-    color: ${l.accent};
+    color: ${a.accent};
     font-weight: 700;
     font-size: 14px;
     margin-bottom: ${p.xs};
@@ -336,24 +345,24 @@
 
 #__mnkys-devtools-tooltip__ .block-name::before {
     content: '{% block';
-    color: ${l.syntax.keyword};
+    color: ${a.syntax.keyword};
     font-weight: 400;
     font-size: 12px;
 }
 
 #__mnkys-devtools-tooltip__ .block-name::after {
     content: '%}';
-    color: ${l.syntax.keyword};
+    color: ${a.syntax.keyword};
     font-weight: 400;
     font-size: 12px;
 }
 
 #__mnkys-devtools-tooltip__ .template-path {
-    color: ${l.syntax.variable};
+    color: ${a.syntax.variable};
     font-size: 11px;
     word-break: break-all;
     padding: ${p.sm} ${p.md};
-    background: ${l.bgDeep};
+    background: ${a.bgDeep};
     border-radius: ${h.sm};
     margin-top: ${p.sm};
 }
@@ -369,17 +378,17 @@
     width: 340px;
     max-height: 50vh;
     
-    background: ${l.bgGlass};
+    background: ${a.bgGlass};
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     
-    color: ${l.text};
+    color: ${a.text};
     border-radius: ${h.lg};
     font-size: 12px;
     font-family: ${c.mono};
     
-    border: 1px solid ${l.border};
-    box-shadow: ${b.lg};
+    border: 1px solid ${a.border};
+    box-shadow: ${u.lg};
     
     z-index: ${d.panel};
     display: flex;
@@ -402,13 +411,13 @@
 
 #__mnkys-devtools-panel__ .panel-header {
     padding: ${p.lg};
-    border-bottom: 1px solid ${l.border};
+    border-bottom: 1px solid ${a.border};
     flex-shrink: 0;
-    background: ${l.bgElevated};
+    background: ${a.bgElevated};
 }
 
 #__mnkys-devtools-panel__ .panel-title {
-    color: ${l.text};
+    color: ${a.text};
     font-size: 14px;
     font-weight: 700;
     margin: 0 0 ${p.md};
@@ -422,18 +431,18 @@
     display: inline-block;
     width: 8px;
     height: 8px;
-    background: ${l.accent};
+    background: ${a.accent};
     border-radius: 50%;
-    box-shadow: 0 0 8px ${l.accent};
+    box-shadow: 0 0 8px ${a.accent};
 }
 
 #__mnkys-devtools-panel__ .panel-search {
     width: 100%;
     padding: ${p.md} ${p.md};
-    background: ${l.bgDeep};
-    border: 1px solid ${l.border};
+    background: ${a.bgDeep};
+    border: 1px solid ${a.border};
     border-radius: ${h.sm};
-    color: ${l.text};
+    color: ${a.text};
     font-size: 12px;
     font-family: inherit;
     outline: none;
@@ -442,17 +451,17 @@
 }
 
 #__mnkys-devtools-panel__ .panel-search::placeholder {
-    color: ${l.textMuted};
+    color: ${a.textMuted};
 }
 
 #__mnkys-devtools-panel__ .panel-search:focus {
-    border-color: ${l.accent};
-    box-shadow: 0 0 0 3px ${l.accentMuted};
+    border-color: ${a.accent};
+    box-shadow: 0 0 0 3px ${a.accentMuted};
 }
 
 #__mnkys-devtools-panel__ .panel-stats {
     font-size: 11px;
-    color: ${l.textSecondary};
+    color: ${a.textSecondary};
     margin-top: ${p.sm};
 }
 
@@ -471,12 +480,12 @@
 }
 
 #__mnkys-devtools-panel__ .panel-list::-webkit-scrollbar-thumb {
-    background: ${l.border};
+    background: ${a.border};
     border-radius: ${h.full};
 }
 
 #__mnkys-devtools-panel__ .panel-list::-webkit-scrollbar-thumb:hover {
-    background: ${l.borderHover};
+    background: ${a.borderHover};
 }
 
 #__mnkys-devtools-panel__ .block-item {
@@ -488,18 +497,18 @@
 }
 
 #__mnkys-devtools-panel__ .block-item:hover {
-    background: ${l.bgHover};
-    border-left-color: ${l.accent};
+    background: ${a.bgHover};
+    border-left-color: ${a.accent};
 }
 
 #__mnkys-devtools-panel__ .block-item-name {
-    color: ${l.accent};
+    color: ${a.accent};
     font-weight: 600;
     font-size: 12px;
 }
 
 #__mnkys-devtools-panel__ .block-item-path {
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     font-size: 10px;
     margin-top: ${p.xs};
     white-space: nowrap;
@@ -509,32 +518,32 @@
 
 #__mnkys-devtools-panel__ .panel-footer {
     padding: ${p.md} ${p.lg};
-    border-top: 1px solid ${l.border};
+    border-top: 1px solid ${a.border};
     font-size: 10px;
-    color: ${l.textMuted};
-    background: ${l.bgElevated};
+    color: ${a.textMuted};
+    background: ${a.bgElevated};
 }
 
 #__mnkys-devtools-panel__ kbd {
     display: inline-block;
-    background: ${l.bgDeep};
-    color: ${l.textSecondary};
+    background: ${a.bgDeep};
+    color: ${a.textSecondary};
     padding: 2px 6px;
     border-radius: ${h.sm};
     font-size: 10px;
     font-family: ${c.mono};
-    border: 1px solid ${l.border};
+    border: 1px solid ${a.border};
 }
 
 #__mnkys-devtools-panel__ .panel-empty {
     padding: ${p.xxl};
     text-align: center;
-    color: ${l.textMuted};
+    color: ${a.textMuted};
 }
 
 #__mnkys-devtools-panel__ .highlight {
-    background: ${l.accentMuted};
-    color: ${l.accent};
+    background: ${a.accentMuted};
+    color: ${a.accent};
     border-radius: 2px;
     padding: 0 2px;
 }
@@ -550,14 +559,14 @@
     width: 480px;
     max-height: 85vh;
     
-    background: ${l.bg};
-    color: ${l.text};
+    background: ${a.bg};
+    color: ${a.text};
     border-radius: ${h.lg};
     font-size: 12px;
     font-family: ${c.mono};
     
-    border: 1px solid ${l.border};
-    box-shadow: ${b.lg};
+    border: 1px solid ${a.border};
+    box-shadow: ${u.lg};
     
     z-index: ${d.detailPanel};
     display: flex;
@@ -565,6 +574,15 @@
     overflow: hidden;
     
     animation: detailSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Content container - fills the panel */
+#__mnkys-devtools-detail__ .detail-panel-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }
 
 @keyframes detailSlideIn {
@@ -581,20 +599,20 @@
 /* Detail Panel Header */
 .detail-header {
     padding: ${p.lg} ${p.xl};
-    border-bottom: 1px solid ${l.border};
+    border-bottom: 1px solid ${a.border};
     flex-shrink: 0;
-    background: linear-gradient(180deg, ${l.bgElevated} 0%, ${l.bg} 100%);
+    background: linear-gradient(180deg, ${a.bgElevated} 0%, ${a.bg} 100%);
 }
 
 .detail-header .element-info {
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     font-size: 11px;
     margin-bottom: ${p.sm};
     font-family: ${c.mono};
 }
 
 .detail-header .block-title {
-    color: ${l.accent};
+    color: ${a.accent};
     font-size: 16px;
     font-weight: 700;
     margin-bottom: ${p.sm};
@@ -604,26 +622,26 @@
 }
 
 .detail-header .template-info {
-    color: ${l.syntax.variable};
+    color: ${a.syntax.variable};
     font-size: 11px;
     word-break: break-all;
     padding: ${p.sm} ${p.md};
-    background: ${l.bgDeep};
+    background: ${a.bgDeep};
     border-radius: ${h.sm};
     display: inline-block;
 }
 
 .detail-header .template-info .line-num {
-    color: ${l.syntax.number};
+    color: ${a.syntax.number};
     font-weight: 600;
 }
 
 /* Detail Panel Tabs */
 .detail-tabs {
     display: flex;
-    border-bottom: 1px solid ${l.border};
+    border-bottom: 1px solid ${a.border};
     flex-shrink: 0;
-    background: ${l.bgElevated};
+    background: ${a.bgElevated};
     padding: 0 ${p.sm};
 }
 
@@ -634,7 +652,7 @@
     cursor: pointer;
     background: transparent;
     border: none;
-    color: ${l.textSecondary};
+    color: ${a.textSecondary};
     font-size: 12px;
     font-weight: 500;
     font-family: ${c.system};
@@ -644,18 +662,18 @@
 }
 
 .detail-tab:hover {
-    color: ${l.text};
-    background: ${l.bgHover};
+    color: ${a.text};
+    background: ${a.bgHover};
 }
 
 .detail-tab:focus {
     outline: none;
-    box-shadow: inset 0 0 0 2px ${l.accentMuted};
+    box-shadow: inset 0 0 0 2px ${a.accentMuted};
 }
 
 .detail-tab.active {
-    color: ${l.accent};
-    border-bottom-color: ${l.accent};
+    color: ${a.accent};
+    border-bottom-color: ${a.accent};
     background: transparent;
 }
 
@@ -671,17 +689,17 @@
 }
 
 .detail-content::-webkit-scrollbar-track {
-    background: ${l.bgDeep};
+    background: ${a.bgDeep};
 }
 
 .detail-content::-webkit-scrollbar-thumb {
-    background: ${l.border};
+    background: ${a.border};
     border-radius: ${h.full};
-    border: 2px solid ${l.bgDeep};
+    border: 2px solid ${a.bgDeep};
 }
 
 .detail-content::-webkit-scrollbar-thumb:hover {
-    background: ${l.borderHover};
+    background: ${a.borderHover};
 }
 
 .tab-pane {
@@ -720,12 +738,12 @@
 }
 
 .var-row:hover {
-    background: ${l.bgHover};
+    background: ${a.bgHover};
 }
 
 .var-toggle {
     width: 18px;
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     flex-shrink: 0;
     font-size: 10px;
     transition: transform 0.15s ease;
@@ -744,22 +762,22 @@
 }
 
 .var-name {
-    color: ${l.syntax.variable};
+    color: ${a.syntax.variable};
     margin-right: ${p.sm};
     font-weight: 500;
 }
 
 .var-type {
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     font-size: 10px;
     margin-right: ${p.sm};
     padding: 1px 6px;
-    background: ${l.bgDeep};
+    background: ${a.bgDeep};
     border-radius: ${h.sm};
 }
 
 .var-value {
-    color: ${l.syntax.string};
+    color: ${a.syntax.string};
     font-size: 11px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -767,16 +785,16 @@
     max-width: 220px;
 }
 
-.var-value.string { color: ${l.syntax.string}; }
-.var-value.number { color: ${l.syntax.number}; }
-.var-value.bool { color: ${l.syntax.keyword}; }
-.var-value.null { color: ${l.syntax.keyword}; font-style: italic; }
-.var-value.object { color: ${l.syntax.tag}; }
+.var-value.string { color: ${a.syntax.string}; }
+.var-value.number { color: ${a.syntax.number}; }
+.var-value.bool { color: ${a.syntax.keyword}; }
+.var-value.null { color: ${a.syntax.keyword}; font-style: italic; }
+.var-value.object { color: ${a.syntax.tag}; }
 
 .var-children {
     display: none;
     margin-left: ${p.lg};
-    border-left: 2px solid ${l.border};
+    border-left: 2px solid ${a.border};
     padding-left: ${p.md};
     margin-top: ${p.xs};
 }
@@ -805,11 +823,11 @@
 .hierarchy-section.blocks-section {
     margin-top: ${p.lg};
     padding-top: ${p.lg};
-    border-top: 1px solid ${l.border};
+    border-top: 1px solid ${a.border};
 }
 
 .hierarchy-label {
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     font-size: 10px;
     font-weight: 600;
     text-transform: uppercase;
@@ -834,15 +852,15 @@
 }
 
 .hierarchy-item.current {
-    background: ${l.accentMuted};
-    border-left: 3px solid ${l.accent};
+    background: ${a.accentMuted};
+    border-left: 3px solid ${a.accent};
     margin-left: -3px;
 }
 
 .hierarchy-tree-line {
     display: flex;
     align-items: center;
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     font-family: ${c.mono};
     font-size: 12px;
     opacity: 0.4;
@@ -874,15 +892,15 @@
 }
 
 .hierarchy-icon.root {
-    color: ${l.accent};
+    color: ${a.accent};
 }
 
 .hierarchy-icon.child {
-    color: ${l.textMuted};
+    color: ${a.textMuted};
 }
 
 .hierarchy-template {
-    color: ${l.syntax.variable};
+    color: ${a.syntax.variable};
     font-size: 12px;
     flex: 1;
     overflow: hidden;
@@ -892,15 +910,15 @@
 }
 
 .hierarchy-item.current .hierarchy-template {
-    color: ${l.accent};
+    color: ${a.accent};
     font-weight: 500;
 }
 
 .hierarchy-blocks {
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     font-size: 10px;
     padding: 2px 6px;
-    background: ${l.bgDeep};
+    background: ${a.bgDeep};
     border-radius: ${h.full};
     flex-shrink: 0;
 }
@@ -911,8 +929,8 @@
 
 .hierarchy-current-badge {
     font-size: 9px;
-    color: ${l.accent};
-    background: ${l.bgDeep};
+    color: ${a.accent};
+    background: ${a.bgDeep};
     padding: 2px 6px;
     border-radius: ${h.full};
     font-weight: 600;
@@ -926,11 +944,11 @@
 }
 
 .hierarchy-item.clickable:hover {
-    background: ${l.bgHover};
+    background: ${a.bgHover};
 }
 
 .hierarchy-item.clickable:hover .hierarchy-template {
-    color: ${l.text};
+    color: ${a.text};
 }
 
 /* Blocks List */
@@ -953,17 +971,17 @@
 }
 
 .block-entry:hover {
-    background: ${l.bgHover};
+    background: ${a.bgHover};
 }
 
 .block-entry.current {
-    background: ${l.accentMuted};
+    background: ${a.accentMuted};
 }
 
 .block-tree-line {
     display: flex;
     align-items: center;
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     font-family: ${c.mono};
     font-size: 12px;
     opacity: 0.4;
@@ -983,7 +1001,7 @@
 }
 
 .block-icon {
-    color: ${l.syntax.keyword};
+    color: ${a.syntax.keyword};
     font-size: 10px;
     font-family: ${c.mono};
     opacity: 0.7;
@@ -991,7 +1009,7 @@
 }
 
 .block-entry-name {
-    color: ${l.syntax.variable};
+    color: ${a.syntax.variable};
     font-size: 12px;
     flex: 1;
     min-width: 0;
@@ -1001,27 +1019,27 @@
 }
 
 .block-entry.current .block-entry-name {
-    color: ${l.accent};
+    color: ${a.accent};
     font-weight: 500;
 }
 
 .block-line {
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     font-size: 10px;
 }
 
 .block-current-badge {
-    color: ${l.accent};
+    color: ${a.accent};
     font-size: 8px;
 }
 
 /* Source Tab */
 .source-container {
-    background: ${l.bgDeep};
+    background: ${a.bgDeep};
     border-radius: ${h.md};
     overflow-x: auto;
     overflow-y: visible;
-    border: 1px solid ${l.border};
+    border: 1px solid ${a.border};
 }
 
 /* Custom scrollbar for source container */
@@ -1030,16 +1048,16 @@
 }
 
 .source-container::-webkit-scrollbar-track {
-    background: ${l.bgDeep};
+    background: ${a.bgDeep};
 }
 
 .source-container::-webkit-scrollbar-thumb {
-    background: ${l.border};
+    background: ${a.border};
     border-radius: ${h.full};
 }
 
 .source-container::-webkit-scrollbar-thumb:hover {
-    background: ${l.borderHover};
+    background: ${a.borderHover};
 }
 
 .source-code {
@@ -1055,7 +1073,7 @@
 }
 
 .source-line:hover {
-    background: ${l.bgHover};
+    background: ${a.bgHover};
 }
 
 .source-line.highlight {
@@ -1067,7 +1085,7 @@
 }
 
 .source-line.block-start .line-number {
-    box-shadow: inset 3px 0 0 ${l.accent};
+    box-shadow: inset 3px 0 0 ${a.accent};
 }
 
 .line-number {
@@ -1076,7 +1094,7 @@
     min-width: 48px;
     padding: 0 ${p.md};
     text-align: right;
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     background: rgba(0, 0, 0, 0.2);
     user-select: none;
     font-size: 11px;
@@ -1091,7 +1109,7 @@
 .source-loading {
     padding: ${p.xxl};
     text-align: center;
-    color: ${l.textMuted};
+    color: ${a.textMuted};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1099,23 +1117,23 @@
 }
 
 /* Twig Syntax Highlighting */
-.twig-tag { color: ${l.syntax.keyword}; }
-.twig-name { color: ${l.syntax.variable}; }
-.twig-string { color: ${l.syntax.string}; }
-.twig-comment { color: ${l.syntax.comment}; font-style: italic; }
-.html-tag { color: ${l.syntax.tag}; }
-.html-attr { color: ${l.syntax.attribute}; }
-.html-value { color: ${l.syntax.string}; }
+.twig-tag { color: ${a.syntax.keyword}; }
+.twig-name { color: ${a.syntax.variable}; }
+.twig-string { color: ${a.syntax.string}; }
+.twig-comment { color: ${a.syntax.comment}; font-style: italic; }
+.html-tag { color: ${a.syntax.tag}; }
+.html-attr { color: ${a.syntax.attribute}; }
+.html-value { color: ${a.syntax.string}; }
 
 /* Detail Panel Footer */
 .detail-footer {
     padding: ${p.lg} ${p.xl};
-    border-top: 1px solid ${l.border};
+    border-top: 1px solid ${a.border};
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
-    background: ${l.bgElevated};
+    background: ${a.bgElevated};
 }
 
 .detail-btn {
@@ -1134,18 +1152,18 @@
 
 .detail-btn:focus {
     outline: none;
-    box-shadow: 0 0 0 3px ${l.accentMuted};
+    box-shadow: 0 0 0 3px ${a.accentMuted};
 }
 
 .detail-btn-primary {
-    background: ${l.accent};
-    color: ${l.bgDeep};
+    background: ${a.accent};
+    color: ${a.bgDeep};
 }
 
 .detail-btn-primary:hover {
-    background: ${l.accentHover};
+    background: ${a.accentHover};
     transform: translateY(-1px);
-    box-shadow: ${b.sm}, 0 0 12px ${l.accentMuted};
+    box-shadow: ${u.sm}, 0 0 12px ${a.accentMuted};
 }
 
 .detail-btn-primary:active {
@@ -1153,14 +1171,14 @@
 }
 
 .detail-btn-secondary {
-    background: ${l.bgHover};
-    color: ${l.text};
-    border: 1px solid ${l.border};
+    background: ${a.bgHover};
+    color: ${a.text};
+    border: 1px solid ${a.border};
 }
 
 .detail-btn-secondary:hover {
-    background: ${l.border};
-    border-color: ${l.borderHover};
+    background: ${a.border};
+    border-color: ${a.borderHover};
 }
 
 /* ========================================
@@ -1182,7 +1200,7 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     
-    box-shadow: ${b.lg};
+    box-shadow: ${u.lg};
     z-index: ${d.notification};
     
     opacity: 0;
@@ -1190,15 +1208,15 @@
 }
 
 .devtools-notification.success {
-    background: ${l.bgGlass};
-    color: ${l.accent};
-    border: 1px solid ${l.borderAccent};
+    background: ${a.bgGlass};
+    color: ${a.accent};
+    border: 1px solid ${a.borderAccent};
 }
 
 .devtools-notification.error {
     background: rgba(255, 82, 82, 0.9);
     color: #fff;
-    border: 1px solid ${l.error};
+    border: 1px solid ${a.error};
 }
 
 /* ========================================
@@ -1209,8 +1227,8 @@
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 2px solid ${l.border};
-    border-top-color: ${l.accent};
+    border: 2px solid ${a.border};
+    border-top-color: ${a.accent};
     border-radius: 50%;
     animation: devtools-spin 0.8s linear infinite;
 }
@@ -1224,7 +1242,7 @@
    ======================================== */
 
 :focus-visible {
-    outline: 2px solid ${l.accent};
+    outline: 2px solid ${a.accent};
     outline-offset: 2px;
 }
 
@@ -1235,7 +1253,226 @@
 #__mnkys-devtools-panel__ ::selection,
 #__mnkys-devtools-detail__ ::selection,
 #__mnkys-devtools-tooltip__ ::selection {
-    background: ${l.accentMuted};
-    color: ${l.text};
+    background: ${a.accentMuted};
+    color: ${a.text};
 }
-`,document.head.appendChild(e)}(),this._createUIComponents(),document.addEventListener("mousemove",this._onMouseMove,!0),document.addEventListener("click",this._onClick,!0),document.body.classList.add("mnkys-devtools-active"),this._toggle?.setActive(!0),g("Inspector enabled - Hover to inspect, Click for details"))}disable(){this._enabled&&(this._enabled=!1,document.removeEventListener("mousemove",this._onMouseMove,!0),document.removeEventListener("click",this._onClick,!0),this._destroyUIComponents(),document.body.classList.remove("mnkys-devtools-active"),this._toggle?.setActive(!1),this._currentTarget=null)}_createUIComponents(){this._overlay=new f({overlayColor:this.options.overlayColor,overlayBorderColor:this.options.overlayBorderColor,overlayBorderWidth:this.options.overlayBorderWidth,transitionDuration:this.options.transitionDuration}),this._overlay.create(),this._tooltip=new _,this._tooltip.create(),this._blockPanel=new E({onBlockSelect:e=>this._handleBlockSelect(e)}),this._blockPanel.create(),this._detailPanel=new C({onClose:()=>{},onOpenEditor:()=>{g("Opening in editor...")}}),this._detailPanel.create()}_destroyUIComponents(){this._overlay?.destroy(),this._tooltip?.destroy(),this._blockPanel?.destroy(),this._detailPanel?.destroy(),this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null}_handleBlockSelect(e){let t=document.querySelector(`[data-twig-block*="${e.block}"]`);this._detailPanel?.show(e,t||document.body)}_onMouseMove(e){if(!this._enabled)return;if(e.target.closest("#__mnkys-devtools-detail__")){this._hideHoverUI();return}let t=v(e.target);t&&t!==this._currentTarget?(this._currentTarget=t,this._overlay?.highlight(t),this._tooltip?.update(t,e)):!t&&this._currentTarget?(this._hideHoverUI(),this._currentTarget=null):t===this._currentTarget&&this._tooltip?.position(e)}_onClick(e){if(!this._enabled||e.target.closest("#__mnkys-devtools-panel__, #__mnkys-devtools-toggle__, #__mnkys-devtools-detail__"))return;let t=v(e.target);if(t){e.preventDefault(),e.stopPropagation();let o=y(t);o&&this._detailPanel?.show(o,t)}}_onKeyDown(e){e.ctrlKey&&e.shiftKey&&"C"===e.key&&(e.preventDefault(),this._isDevToolsEnabled()&&this.toggle()),"Escape"===e.key&&this._enabled&&(this._detailPanel?.element?.style.display!=="none"?this._detailPanel.hide():this.disable())}_hideHoverUI(){this._overlay?.hide(),this._tooltip?.hide()}}window.PluginManager.register("MnkysDevToolsComponentPicker",L,"body")})();
+
+/* ========================================
+   Panel Resize & Drag
+   ======================================== */
+
+/* Resize frame - contains all resize handles */
+.panel-resize-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 100;
+}
+
+/* Resize handles */
+.panel-resize-handle {
+    position: absolute;
+    pointer-events: auto;
+    transition: background 0.15s ease;
+}
+
+/* Edge handles - visible borders */
+.panel-resize-top {
+    top: 0;
+    left: 12px;
+    right: 12px;
+    height: 6px;
+    cursor: ns-resize;
+    border-top: 2px solid transparent;
+}
+
+.panel-resize-top:hover {
+    border-top-color: ${a.accent};
+}
+
+.panel-resize-bottom {
+    bottom: 0;
+    left: 12px;
+    right: 12px;
+    height: 6px;
+    cursor: ns-resize;
+    border-bottom: 2px solid transparent;
+}
+
+.panel-resize-bottom:hover {
+    border-bottom-color: ${a.accent};
+}
+
+.panel-resize-left {
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 6px;
+    cursor: ew-resize;
+    border-left: 2px solid transparent;
+}
+
+.panel-resize-left:hover {
+    border-left-color: ${a.accent};
+}
+
+.panel-resize-right {
+    right: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 6px;
+    cursor: ew-resize;
+    border-right: 2px solid transparent;
+}
+
+.panel-resize-right:hover {
+    border-right-color: ${a.accent};
+}
+
+/* Corner handles - larger grab areas */
+.panel-resize-top-left {
+    top: 0;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+}
+
+.panel-resize-top-right {
+    top: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    cursor: nesw-resize;
+}
+
+.panel-resize-bottom-left {
+    bottom: 0;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    cursor: nesw-resize;
+}
+
+.panel-resize-bottom-right {
+    bottom: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+}
+
+/* Visual indicator on corner handles */
+.panel-resize-bottom-right::before,
+.panel-resize-bottom-left::before,
+.panel-resize-top-right::before,
+.panel-resize-top-left::before {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 2px solid ${a.border};
+    opacity: 0.4;
+    transition: all 0.15s ease;
+}
+
+.panel-resize-bottom-right::before {
+    bottom: 2px;
+    right: 2px;
+    border-top: none;
+    border-left: none;
+    border-radius: 0 0 4px 0;
+}
+
+.panel-resize-bottom-left::before {
+    bottom: 2px;
+    left: 2px;
+    border-top: none;
+    border-right: none;
+    border-radius: 0 0 0 4px;
+}
+
+.panel-resize-top-right::before {
+    top: 2px;
+    right: 2px;
+    border-bottom: none;
+    border-left: none;
+    border-radius: 0 4px 0 0;
+}
+
+.panel-resize-top-left::before {
+    top: 2px;
+    left: 2px;
+    border-bottom: none;
+    border-right: none;
+    border-radius: 4px 0 0 0;
+}
+
+/* Hover states for corner handles */
+.panel-resize-bottom-right:hover::before,
+.panel-resize-bottom-left:hover::before,
+.panel-resize-top-right:hover::before,
+.panel-resize-top-left:hover::before {
+    opacity: 1;
+    border-color: ${a.accent};
+}
+
+/* Dragging state */
+#__mnkys-devtools-panel__.is-dragging,
+#__mnkys-devtools-detail__.is-dragging {
+    opacity: 0.9;
+    box-shadow: ${u.lg}, ${u.glowStrong};
+    cursor: move !important;
+    user-select: none !important;
+}
+
+#__mnkys-devtools-panel__.is-dragging *,
+#__mnkys-devtools-detail__.is-dragging * {
+    cursor: move !important;
+    user-select: none !important;
+}
+
+/* Resizing state */
+#__mnkys-devtools-panel__.is-resizing,
+#__mnkys-devtools-detail__.is-resizing {
+    opacity: 0.95;
+    box-shadow: ${u.lg}, 0 0 0 2px ${a.accent};
+    user-select: none !important;
+}
+
+#__mnkys-devtools-panel__.is-resizing *,
+#__mnkys-devtools-detail__.is-resizing * {
+    user-select: none !important;
+}
+
+/* Drag handle cursor and user-select on headers */
+#__mnkys-devtools-panel__ .panel-header,
+#__mnkys-devtools-detail__ .detail-header {
+    cursor: move;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Don't apply move cursor to interactive elements in headers */
+#__mnkys-devtools-panel__ .panel-header input,
+#__mnkys-devtools-panel__ .panel-header button,
+#__mnkys-devtools-detail__ .detail-header button {
+    cursor: pointer;
+}
+
+#__mnkys-devtools-panel__ .panel-search {
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+/* Ensure content areas allow text selection */
+#__mnkys-devtools-panel__ .panel-list,
+#__mnkys-devtools-detail__ .detail-content {
+    user-select: text;
+    -webkit-user-select: text;
+}
+`,document.head.appendChild(e)}(),this._createUIComponents(),document.addEventListener("mousemove",this._onMouseMove,!0),document.addEventListener("click",this._onClick,!0),document.body.classList.add("mnkys-devtools-active"),this._toggle?.setActive(!0),g("Inspector enabled - Hover to inspect, Click for details"))}disable(){this._enabled&&(this._enabled=!1,document.removeEventListener("mousemove",this._onMouseMove,!0),document.removeEventListener("click",this._onClick,!0),this._destroyUIComponents(),document.body.classList.remove("mnkys-devtools-active"),this._toggle?.setActive(!1),this._currentTarget=null)}_createUIComponents(){this._overlay=new f({overlayColor:this.options.overlayColor,overlayBorderColor:this.options.overlayBorderColor,overlayBorderWidth:this.options.overlayBorderWidth,transitionDuration:this.options.transitionDuration}),this._overlay.create(),this._tooltip=new x,this._tooltip.create(),this._blockPanel=new S({onBlockSelect:e=>this._handleBlockSelect(e)}),this._blockPanel.create(),this._detailPanel=new M({onClose:()=>{},onOpenEditor:()=>{g("Opening in editor...")}}),this._detailPanel.create()}_destroyUIComponents(){this._overlay?.destroy(),this._tooltip?.destroy(),this._blockPanel?.destroy(),this._detailPanel?.destroy(),this._overlay=null,this._tooltip=null,this._blockPanel=null,this._detailPanel=null}_handleBlockSelect(e){let t=document.querySelector(`[data-twig-block*="${e.block}"]`);this._detailPanel?.show(e,t||document.body)}_onMouseMove(e){if(!this._enabled)return;if(e.target.closest("#__mnkys-devtools-detail__")){this._hideHoverUI();return}let t=v(e.target);t&&t!==this._currentTarget?(this._currentTarget=t,this._overlay?.highlight(t),this._tooltip?.update(t,e)):!t&&this._currentTarget?(this._hideHoverUI(),this._currentTarget=null):t===this._currentTarget&&this._tooltip?.position(e)}_onClick(e){if(!this._enabled||e.target.closest("#__mnkys-devtools-panel__, #__mnkys-devtools-toggle__, #__mnkys-devtools-detail__"))return;let t=v(e.target);if(t){e.preventDefault(),e.stopPropagation();let o=y(t);o&&this._detailPanel?.show(o,t)}}_onKeyDown(e){e.ctrlKey&&e.shiftKey&&"C"===e.key&&(e.preventDefault(),this._isDevToolsEnabled()&&this.toggle()),"Escape"===e.key&&this._enabled&&(this._detailPanel?.element?.style.display!=="none"?this._detailPanel.hide():this.disable())}_hideHoverUI(){this._overlay?.hide(),this._tooltip?.hide()}}window.PluginManager.register("MnkysDevToolsComponentPicker",I,"body")})();

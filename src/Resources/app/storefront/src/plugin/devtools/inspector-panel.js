@@ -5,6 +5,7 @@
 
 import { getBlockInfo, openInEditor, loadContextData } from './inspector-api.js';
 import { escapeHtml, shortenPath, highlightTwigSyntax } from './inspector-utils.js';
+import { makePanelInteractive } from './inspector-panel-interactions.js';
 
 /**
  * DetailPanel class - manages the block detail panel UI
@@ -23,6 +24,7 @@ export class DetailPanel {
         this.blockInfo = null;
         this.activeTab = 'context';
         this.isLoading = false;
+        this.panelInteractions = null;
     }
 
     /**
@@ -39,7 +41,28 @@ export class DetailPanel {
         this.element.id = '__mnkys-devtools-detail__';
         this.element.style.display = 'none';
         
+        // Create a content container that will be updated without affecting siblings
+        this.contentContainer = document.createElement('div');
+        this.contentContainer.className = 'detail-panel-content';
+        this.element.appendChild(this.contentContainer);
+        
         document.body.appendChild(this.element);
+    }
+    
+    /**
+     * Initialize panel interactions (must be called after panel has content)
+     */
+    _initInteractions() {
+        if (this.panelInteractions) return;
+        
+        this.panelInteractions = makePanelInteractive(this.element, {
+            panelId: 'detail-panel',
+            dragHandle: '.detail-header',
+            minWidth: 380,
+            minHeight: 300,
+            maxWidth: window.innerWidth - 40,
+            maxHeight: window.innerHeight - 40,
+        });
     }
 
     /**
@@ -69,6 +92,9 @@ export class DetailPanel {
         this.render();
         this.element.style.display = 'flex';
         
+        // Initialize interactions after panel is visible and has content
+        this._initInteractions();
+        
         // Fetch additional info from server (hierarchy, source)
         this.fetchBlockInfo();
     }
@@ -88,6 +114,8 @@ export class DetailPanel {
      * Destroy the panel
      */
     destroy() {
+        this.panelInteractions?.destroy();
+        this.panelInteractions = null;
         this.element?.remove();
         this.element = null;
     }
@@ -123,11 +151,11 @@ export class DetailPanel {
      * Render the panel content
      */
     render() {
-        if (!this.element || !this.currentBlock) return;
+        if (!this.contentContainer || !this.currentBlock) return;
         
         const { block, template, line, blockId } = this.currentBlock;
         
-        this.element.innerHTML = `
+        this.contentContainer.innerHTML = `
             <div class="detail-header">
                 <div class="element-info">${escapeHtml(this.elementInfo)}</div>
                 <div class="block-title">{% block ${escapeHtml(block)} %}</div>
