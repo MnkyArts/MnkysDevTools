@@ -5,6 +5,9 @@
 
 import { escapeHtml, getTwigData } from './inspector-utils.js';
 
+// Padding from cursor and viewport edges
+const TOOLTIP_PADDING = 15;
+
 /**
  * InspectorTooltip class - manages the tooltip that follows the cursor
  */
@@ -88,27 +91,26 @@ export class InspectorTooltip {
             return;
         }
 
-        const padding = 15;
         const rect = this.element.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        let x = event.clientX + padding;
-        let y = event.clientY + padding;
+        let x = event.clientX + TOOLTIP_PADDING;
+        let y = event.clientY + TOOLTIP_PADDING;
 
         // Prevent overflow on right
-        if (x + rect.width > viewportWidth - padding) {
-            x = event.clientX - rect.width - padding;
+        if (x + rect.width > viewportWidth - TOOLTIP_PADDING) {
+            x = event.clientX - rect.width - TOOLTIP_PADDING;
         }
 
         // Prevent overflow on bottom
-        if (y + rect.height > viewportHeight - padding) {
-            y = event.clientY - rect.height - padding;
+        if (y + rect.height > viewportHeight - TOOLTIP_PADDING) {
+            y = event.clientY - rect.height - TOOLTIP_PADDING;
         }
 
         // Ensure minimum padding from edges
-        x = Math.max(padding, x);
-        y = Math.max(padding, y);
+        x = Math.max(TOOLTIP_PADDING, x);
+        y = Math.max(TOOLTIP_PADDING, y);
 
         this.element.style.left = `${x}px`;
         this.element.style.top = `${y}px`;

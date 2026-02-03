@@ -77,7 +77,7 @@ Configure the plugin in the Shopware Administration under:
 
 ### Activating the Inspector
 
-1. Look for the **MNKYS** toggle button in the bottom-left corner of your storefront
+1. Look for the **Inspect** toggle button in the bottom-left corner of your storefront
 2. Click to activate the component picker
 3. Press `Escape` to deactivate
 
@@ -124,7 +124,7 @@ This plugin includes multiple security measures:
 
 - **Production Disabled** - Automatically disabled when `APP_ENV=prod`
 - **Path Validation** - Only allows access to files within the project directory
-- **Allowed Directories** - Restricted to `custom/plugins`, `vendor/shopware`, `src`, and `templates`
+- **Allowed Directories** - Restricted to `custom/apps`, `custom/plugins`, `custom/static-plugins`, `vendor/shopware`, `src`, and `templates`
 - **No Sensitive Data** - Never exposes environment variables or credentials
 
 ## Development
@@ -225,7 +225,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Credits
 
-Developed by [MNKYS](https://mnkys.com)
+Developed by [Liam Robinson](https://liamrbsn.com)
 
 Inspired by [Vue DevTools](https://devtools.vuejs.org/) and the need for better Twig debugging in Shopware 6.
 

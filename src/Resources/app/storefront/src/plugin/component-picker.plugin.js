@@ -21,16 +21,8 @@ import { DetailPanel } from './devtools/inspector-panel.js';
 
 export default class ComponentPickerPlugin extends Plugin {
     static options = {
-        // Overlay styling
-        overlayColor: 'rgba(66, 184, 131, 0.15)',
-        overlayBorderColor: '#1699F7',
-        overlayBorderWidth: '2px',
-
         // Behavior
         keyboardShortcut: true,
-
-        // Animation
-        transitionDuration: '0.12s',
     };
 
     init() {
@@ -163,12 +155,7 @@ export default class ComponentPickerPlugin extends Plugin {
      */
     _createUIComponents() {
         // Overlay for highlighting
-        this._overlay = new InspectorOverlay({
-            overlayColor: this.options.overlayColor,
-            overlayBorderColor: this.options.overlayBorderColor,
-            overlayBorderWidth: this.options.overlayBorderWidth,
-            transitionDuration: this.options.transitionDuration,
-        });
+        this._overlay = new InspectorOverlay();
         this._overlay.create();
 
         // Tooltip for hover info

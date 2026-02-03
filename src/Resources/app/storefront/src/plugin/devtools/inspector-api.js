@@ -13,17 +13,26 @@ const ENDPOINTS = {
     status: '/devtools/status',
 };
 
+// Request timeout in milliseconds
+const REQUEST_TIMEOUT = 10000;
+
 /**
- * Open a file in the configured editor
- * @param {string} file - Template path (e.g., @Storefront/...)
- * @param {number} line - Line number
- * @returns {Promise<{success: boolean, editorUrl?: string, error?: string}>}
+ * Make a GET request with error handling
+ * @param {string} url - The URL to fetch
+ * @returns {Promise<object>}
+ * @private
  */
-export function openInEditor(file, line) {
+function makeRequest(url) {
     return new Promise((resolve, reject) => {
-        const url = `${ENDPOINTS.openEditor}?file=${encodeURIComponent(file)}&line=${line}`;
+        let timeoutId = null;
+        
+        // Set up timeout
+        timeoutId = setTimeout(() => {
+            reject(new Error('Request timeout'));
+        }, REQUEST_TIMEOUT);
         
         client.get(url, (response) => {
+            clearTimeout(timeoutId);
             try {
                 const data = JSON.parse(response);
                 resolve(data);
@@ -32,6 +41,23 @@ export function openInEditor(file, line) {
             }
         }, 'application/json', true);
     });
+}
+
+/**
+ * Open a file in the configured editor
+ * @param {string} file - Template path (e.g., @Storefront/...)
+ * @param {number} line - Line number
+ * @returns {Promise<{success: boolean, editorUrl?: string, error?: string}>}
+ */
+export async function openInEditor(file, line) {
+    const url = `${ENDPOINTS.openEditor}?file=${encodeURIComponent(file)}&line=${line}`;
+    
+    try {
+        return await makeRequest(url);
+    } catch (error) {
+        console.warn('DevTools: Failed to open editor', error);
+        return { success: false, error: error.message };
+    }
 }
 
 /**
@@ -41,41 +67,34 @@ export function openInEditor(file, line) {
  * @param {number} line - Line number
  * @returns {Promise<{success: boolean, data?: object, error?: string}>}
  */
-export function getBlockInfo(template, block, line) {
-    return new Promise((resolve, reject) => {
-        const params = new URLSearchParams({
-            template,
-            block,
-            line: String(line),
-        });
-        
-        const url = `${ENDPOINTS.blockInfo}?${params}`;
-        
-        client.get(url, (response) => {
-            try {
-                const data = JSON.parse(response);
-                resolve(data);
-            } catch (e) {
-                reject(new Error('Failed to parse response'));
-            }
-        }, 'application/json', true);
+export async function getBlockInfo(template, block, line) {
+    const params = new URLSearchParams({
+        template,
+        block,
+        line: String(line),
     });
+    
+    const url = `${ENDPOINTS.blockInfo}?${params}`;
+    
+    try {
+        return await makeRequest(url);
+    } catch (error) {
+        console.warn('DevTools: Failed to fetch block info', error);
+        return { success: false, error: error.message };
+    }
 }
 
 /**
  * Get DevTools status
- * @returns {Promise<{enabled: boolean, devMode: boolean, editor: string}>}
+ * @returns {Promise<{enabled: boolean, devMode: boolean, editor: string} | {error: string}>}
  */
-export function getStatus() {
-    return new Promise((resolve, reject) => {
-        client.get(ENDPOINTS.status, (response) => {
-            try {
-                resolve(JSON.parse(response));
-            } catch (e) {
-                reject(new Error('Failed to parse response'));
-            }
-        }, 'application/json', true);
-    });
+export async function getStatus() {
+    try {
+        return await makeRequest(ENDPOINTS.status);
+    } catch (error) {
+        console.warn('DevTools: Failed to fetch status', error);
+        return { error: error.message };
+    }
 }
 
 /**

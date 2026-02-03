@@ -161,7 +161,9 @@ class EditorService
 
         // Additional security: only allow certain directories
         $allowedPaths = [
+            $projectDir . '/custom/apps',
             $projectDir . '/custom/plugins',
+            $projectDir . '/custom/static-plugins',
             $projectDir . '/vendor/shopware',
             $projectDir . '/src',
             $projectDir . '/templates',

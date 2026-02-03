@@ -3,6 +3,20 @@
  * Helper functions for the inspector components
  */
 
+// Constants
+const TOOLTIP_PADDING = 15;
+const NOTIFICATION_DISPLAY_TIME = 2500;
+const NOTIFICATION_FADE_DURATION = 200;
+
+// DevTools UI element IDs that should be skipped during inspection
+const DEVTOOLS_ELEMENT_IDS = [
+    '__mnkys-devtools-overlay__',
+    '__mnkys-devtools-tooltip__',
+    '__mnkys-devtools-panel__',
+    '__mnkys-devtools-detail__',
+    '__mnkys-devtools-toggle__'
+];
+
 /**
  * Escape HTML special characters
  * @param {string} str 
@@ -41,10 +55,21 @@ export function escapeRegex(str) {
 
 /**
  * Basic Twig syntax highlighting
- * @param {string} code - Already HTML-escaped code
- * @returns {string}
+ * 
+ * IMPORTANT: This function expects the input to be already HTML-escaped via escapeHtml().
+ * Calling this function with unescaped user input may result in XSS vulnerabilities.
+ * 
+ * @param {string} escapedCode - HTML-escaped Twig/HTML code
+ * @returns {string} Code with syntax highlighting spans
+ * @example
+ * // Correct usage:
+ * const highlighted = highlightTwigSyntax(escapeHtml(rawCode));
+ * 
+ * // WRONG - XSS vulnerable:
+ * const vulnerable = highlightTwigSyntax(rawCode);
  */
-export function highlightTwigSyntax(code) {
+export function highlightTwigSyntax(escapedCode) {
+    let code = escapedCode;
     // Twig comments {# ... #}
     code = code.replace(
         /(\{#.*?#\})/g,
@@ -95,8 +120,8 @@ export function showNotification(message, type = 'success') {
     // Remove after delay
     setTimeout(() => {
         el.style.opacity = '0';
-        setTimeout(() => el.remove(), 200);
-    }, 2500);
+        setTimeout(() => el.remove(), NOTIFICATION_FADE_DURATION);
+    }, NOTIFICATION_DISPLAY_TIME);
 }
 
 /**
@@ -105,16 +130,8 @@ export function showNotification(message, type = 'success') {
  * @returns {HTMLElement|null}
  */
 export function findTwigElement(el) {
-    // Skip our UI elements
-    const skipIds = [
-        '__mnkys-devtools-overlay__',
-        '__mnkys-devtools-tooltip__',
-        '__mnkys-devtools-panel__',
-        '__mnkys-devtools-detail__',
-        '__mnkys-devtools-toggle__'
-    ];
-    
-    if (el.closest(skipIds.map(id => `#${id}`).join(', '))) {
+    // Skip our UI elements using the constant array
+    if (el.closest(DEVTOOLS_ELEMENT_IDS.map(id => `#${id}`).join(', '))) {
         return null;
     }
 
