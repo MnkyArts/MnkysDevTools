@@ -1,6 +1,6 @@
 /**
  * DevTools Inspector Toggle Button
- * The activation button that appears in the corner of the page
+ * Modern floating action button with smooth animations
  */
 
 /**
@@ -25,18 +25,18 @@ export class InspectorToggle {
             return;
         }
 
-        this._injectStyles();
-
         this.element = document.createElement('button');
         this.element.id = '__mnkys-devtools-toggle__';
         this.element.innerHTML = `
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="11" r="8"/>
                 <path d="M21 21l-4.35-4.35"/>
             </svg>
             <span>Inspect</span>
         `;
         this.element.title = 'Toggle Component Inspector (Ctrl+Shift+C)';
+        this.element.setAttribute('aria-label', 'Toggle DevTools Inspector');
+        this.element.setAttribute('aria-pressed', 'false');
 
         this.element.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -65,10 +65,27 @@ export class InspectorToggle {
 
         this.isActive = active;
         this.element.classList.toggle('active', active);
+        this.element.setAttribute('aria-pressed', String(active));
 
         const span = this.element.querySelector('span');
         if (span) {
             span.textContent = active ? 'Exit' : 'Inspect';
+        }
+
+        // Update icon for active state (X icon when active)
+        const svg = this.element.querySelector('svg');
+        if (svg) {
+            if (active) {
+                svg.innerHTML = `
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                `;
+            } else {
+                svg.innerHTML = `
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35"/>
+                `;
+            }
         }
     }
 
@@ -78,47 +95,5 @@ export class InspectorToggle {
      */
     exists() {
         return !!this.element;
-    }
-
-    /**
-     * Inject styles for the toggle button
-     * @private
-     */
-    _injectStyles() {
-        if (document.getElementById('__mnkys-devtools-button-styles__')) {
-            return;
-        }
-
-        const style = document.createElement('style');
-        style.id = '__mnkys-devtools-button-styles__';
-        style.textContent = `
-            #__mnkys-devtools-toggle__ {
-                position: fixed;
-                bottom: 20px;
-                left: 20px;
-                z-index: 2147483630;
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                padding: 8px 12px;
-                background-color: #1e1e1e;
-                color: #1699f7;
-                border: 2px solid #1699f7;
-                border-radius: 6px;
-                cursor: pointer;
-                font-family: system-ui, -apple-system, sans-serif;
-                font-size: 12px;
-                font-weight: 600;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-                transition: all 0.15s ease;
-            }
-            #__mnkys-devtools-toggle__:hover,
-            #__mnkys-devtools-toggle__.active {
-                background-color: #42b883;
-                color: #1e1e1e;
-            }
-        `;
-
-        document.head.appendChild(style);
     }
 }
