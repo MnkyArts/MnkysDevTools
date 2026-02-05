@@ -56,6 +56,15 @@
             </options>
         </input-field>
 
+        <input-field type="text">
+            <name>localProjectPath</name>
+            <label>Local Project Path</label>
+            <label lang="de-DE">Lokaler Projektpfad</label>
+            <helpText>Path to your project on the host machine. Required when running in Docker. Example for WSL: \\wsl.localhost\Ubuntu\home\user\project or C:\projects\shopware</helpText>
+            <helpText lang="de-DE">Pfad zu Ihrem Projekt auf dem Host-Rechner. Erforderlich bei Verwendung von Docker. Beispiel für WSL: \\wsl.localhost\Ubuntu\home\user\project oder C:\projects\shopware</helpText>
+            <placeholder>\\wsl.localhost\Ubuntu\path\to\project</placeholder>
+        </input-field>
+
         <input-field type="bool">
             <name>execOpen</name>
             <label>Open files via shell command</label>

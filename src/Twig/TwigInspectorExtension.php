@@ -140,6 +140,7 @@ class TwigInspectorExtension extends AbstractExtension
     private function analyzeContext(array $context): array
     {
         $analyzed = [];
+        $maxDepth = $this->config->getMaxVariableDepth();
         
         // Skip internal Twig variables
         $skipKeys = ['_parent', '_seq', '_key', '_iterated', 'loop', '_self', '__internal', 'app'];
@@ -150,7 +151,7 @@ class TwigInspectorExtension extends AbstractExtension
                 continue;
             }
             
-            $analyzed[$key] = $this->getVariableInfo($value);
+            $analyzed[$key] = $this->getVariableInfo($value, 0, $maxDepth);
         }
         
         // Sort by key name for consistency
@@ -162,9 +163,8 @@ class TwigInspectorExtension extends AbstractExtension
     /**
      * Get basic type information for a variable
      */
-    private function getVariableInfo(mixed $value, int $depth = 0): array
+    private function getVariableInfo(mixed $value, int $depth, int $maxDepth): array
     {
-        $maxDepth = 2;
         
         if ($value === null) {
             return ['type' => 'null'];
@@ -201,9 +201,18 @@ class TwigInspectorExtension extends AbstractExtension
                 $isAssoc = array_keys($value) !== range(0, $count - 1);
                 $info['isAssoc'] = $isAssoc;
                 
-                if ($isAssoc) {
-                    $info['keys'] = array_slice(array_keys($value), 0, 10);
+                // Recursively analyze array items
+                $items = [];
+                $itemCount = 0;
+                foreach ($value as $k => $v) {
+                    if ($itemCount >= 5) { // Limit items shown
+                        $items['...'] = ['type' => 'truncated', 'remaining' => $count - $itemCount];
+                        break;
+                    }
+                    $items[$k] = $this->getVariableInfo($v, $depth + 1, $maxDepth);
+                    $itemCount++;
                 }
+                $info['items'] = $items;
             }
             
             return $info;
@@ -224,24 +233,55 @@ class TwigInspectorExtension extends AbstractExtension
                 $info['count'] = count($value);
             }
             
-            // Try to get ID for entities
-            if ($depth < $maxDepth && method_exists($value, 'getId')) {
-                try {
-                    $id = $value->getId();
-                    if ($id !== null) {
-                        $info['id'] = (string) $id;
-                    }
-                } catch (\Throwable) {}
+            // Don't recurse into objects if at max depth
+            if ($depth >= $maxDepth) {
+                return $info;
             }
             
-            // Try to get name for entities
-            if ($depth < $maxDepth && method_exists($value, 'getName')) {
-                try {
-                    $name = $value->getName();
-                    if ($name !== null && is_string($name)) {
-                        $info['name'] = strlen($name) > 50 ? substr($name, 0, 50) . '...' : $name;
+            $properties = [];
+            
+            // Try common getter methods for Shopware objects
+            $getters = [
+                'getId' => 'id',
+                'getName' => 'name',
+                'getValue' => 'value',
+                'getType' => 'type',
+                'isRequired' => 'required',
+                'getStringValue' => 'stringValue',
+                'getIntValue' => 'intValue',
+                'getBoolValue' => 'boolValue',
+                'getArrayValue' => 'arrayValue',
+            ];
+            
+            foreach ($getters as $method => $propName) {
+                if (method_exists($value, $method)) {
+                    try {
+                        $propValue = $value->$method();
+                        if ($propValue !== null) {
+                            $properties[$propName] = $this->getVariableInfo($propValue, $depth + 1, $maxDepth);
+                        }
+                    } catch (\Throwable) {}
+                }
+            }
+            
+            // For iterables (like collections), show first few items
+            if ($value instanceof \Traversable) {
+                $items = [];
+                $itemCount = 0;
+                foreach ($value as $k => $v) {
+                    if ($itemCount >= 3) {
+                        break;
                     }
-                } catch (\Throwable) {}
+                    $items[$k] = $this->getVariableInfo($v, $depth + 1, $maxDepth);
+                    $itemCount++;
+                }
+                if (!empty($items)) {
+                    $properties['_items'] = ['type' => 'items', 'items' => $items];
+                }
+            }
+            
+            if (!empty($properties)) {
+                $info['properties'] = $properties;
             }
             
             return $info;

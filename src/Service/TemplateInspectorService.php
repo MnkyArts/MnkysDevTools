@@ -233,6 +233,7 @@ class TemplateInspectorService
     public function analyzeContextVariables(array $context): array
     {
         $analyzed = [];
+        $maxDepth = $this->config->getMaxVariableDepth();
         
         // Skip internal Twig variables
         $skipKeys = ['_parent', '_seq', '_key', '_iterated', 'loop', '_self', '__internal'];
@@ -243,7 +244,7 @@ class TemplateInspectorService
                 continue;
             }
             
-            $analyzed[$key] = $this->analyzeVariable($value, 0);
+            $analyzed[$key] = $this->analyzeVariable($value, 0, $maxDepth);
         }
         
         // Sort by key name
@@ -255,9 +256,8 @@ class TemplateInspectorService
     /**
      * Analyze a single variable and return its type/structure
      */
-    private function analyzeVariable(mixed $value, int $depth): array
+    private function analyzeVariable(mixed $value, int $depth, int $maxDepth): array
     {
-        $maxDepth = 3;
         
         if ($value === null) {
             return ['type' => 'null', 'value' => null];
@@ -295,7 +295,7 @@ class TemplateInspectorService
                     $items['...'] = ['type' => 'truncated', 'remaining' => count($value) - $count];
                     break;
                 }
-                $items[$k] = $this->analyzeVariable($v, $depth + 1);
+                $items[$k] = $this->analyzeVariable($v, $depth + 1, $maxDepth);
                 $count++;
             }
             
@@ -328,7 +328,7 @@ class TemplateInspectorService
                 try {
                     $id = $value->getId();
                     if ($id !== null) {
-                        $properties['id'] = $this->analyzeVariable($id, $depth + 1);
+                        $properties['id'] = $this->analyzeVariable($id, $depth + 1, $maxDepth);
                     }
                 } catch (\Throwable) {}
             }
@@ -337,7 +337,7 @@ class TemplateInspectorService
                 try {
                     $name = $value->getName();
                     if ($name !== null) {
-                        $properties['name'] = $this->analyzeVariable($name, $depth + 1);
+                        $properties['name'] = $this->analyzeVariable($name, $depth + 1, $maxDepth);
                     }
                 } catch (\Throwable) {}
             }
@@ -346,7 +346,7 @@ class TemplateInspectorService
                 try {
                     $translated = $value->getTranslated();
                     if (!empty($translated)) {
-                        $properties['translated'] = $this->analyzeVariable($translated, $depth + 1);
+                        $properties['translated'] = $this->analyzeVariable($translated, $depth + 1, $maxDepth);
                     }
                 } catch (\Throwable) {}
             }
@@ -364,7 +364,7 @@ class TemplateInspectorService
                     if ($count >= 3) {
                         break;
                     }
-                    $items[$k] = $this->analyzeVariable($v, $depth + 1);
+                    $items[$k] = $this->analyzeVariable($v, $depth + 1, $maxDepth);
                     $count++;
                 }
                 if (!empty($items)) {

@@ -44,6 +44,27 @@ class DevToolsConfigService
         );
     }
 
+    /**
+     * Get the local project path for path mapping (Docker to host)
+     * 
+     * This is used when running in Docker to translate container paths
+     * (like /var/www/html) to host paths (like \\wsl.localhost\Ubuntu\home\user\project)
+     */
+    public function getLocalProjectPath(?string $salesChannelId = null): ?string
+    {
+        $path = $this->systemConfigService->get(
+            self::CONFIG_PREFIX . 'localProjectPath',
+            $salesChannelId
+        );
+
+        if (!is_string($path) || $path === '') {
+            return null;
+        }
+
+        // Normalize path - remove trailing slashes
+        return rtrim($path, '/\\');
+    }
+
     public function isDevEnvironment(): bool
     {
         return $this->appEnv !== 'prod';

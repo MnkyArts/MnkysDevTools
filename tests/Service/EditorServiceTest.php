@@ -144,6 +144,9 @@ class EditorServiceTest extends TestCase
         $this->config
             ->method('getEditor')
             ->willReturn($editor);
+        $this->config
+            ->method('getLocalProjectPath')
+            ->willReturn(null);
 
         $service = $this->createService();
         $result = $service->getEditorUrl($file, $line);
@@ -195,6 +198,9 @@ class EditorServiceTest extends TestCase
         $this->config
             ->method('getEditor')
             ->willReturn('unknown-editor');
+        $this->config
+            ->method('getLocalProjectPath')
+            ->willReturn(null);
 
         $service = $this->createService();
         $result = $service->getEditorUrl('/test/file.twig', 10);
@@ -357,5 +363,90 @@ class EditorServiceTest extends TestCase
         $result = $service->isPathAllowed($filePath);
 
         $this->assertTrue($result);
+    }
+
+    // ==================== translateToLocalPath() ====================
+
+    public function testTranslateToLocalPathReturnsOriginalPathWhenNoMapping(): void
+    {
+        $this->config
+            ->method('getLocalProjectPath')
+            ->willReturn(null);
+
+        $service = $this->createService();
+        $result = $service->translateToLocalPath('/var/www/html/vendor/test.php');
+
+        $this->assertSame('/var/www/html/vendor/test.php', $result);
+    }
+
+    public function testTranslateToLocalPathTranslatesContainerPathToLocalPath(): void
+    {
+        $this->config
+            ->method('getLocalProjectPath')
+            ->willReturn('/home/user/project');
+
+        $this->kernel = $this->createMock(KernelInterface::class);
+        $this->kernel
+            ->method('getProjectDir')
+            ->willReturn('/var/www/html');
+
+        $service = new EditorService($this->kernel, $this->config);
+        $result = $service->translateToLocalPath('/var/www/html/vendor/shopware/test.php');
+
+        $this->assertSame('/home/user/project/vendor/shopware/test.php', $result);
+    }
+
+    public function testTranslateToLocalPathConvertsSlashesForWindowsPath(): void
+    {
+        $this->config
+            ->method('getLocalProjectPath')
+            ->willReturn('\\\\wsl.localhost\\Ubuntu\\home\\user\\project');
+
+        $this->kernel = $this->createMock(KernelInterface::class);
+        $this->kernel
+            ->method('getProjectDir')
+            ->willReturn('/var/www/html');
+
+        $service = new EditorService($this->kernel, $this->config);
+        $result = $service->translateToLocalPath('/var/www/html/vendor/shopware/test.php');
+
+        $this->assertSame('\\\\wsl.localhost\\Ubuntu\\home\\user\\project\\vendor\\shopware\\test.php', $result);
+    }
+
+    public function testTranslateToLocalPathReturnsOriginalIfNotInProjectDir(): void
+    {
+        $this->config
+            ->method('getLocalProjectPath')
+            ->willReturn('/home/user/project');
+
+        $this->kernel = $this->createMock(KernelInterface::class);
+        $this->kernel
+            ->method('getProjectDir')
+            ->willReturn('/var/www/html');
+
+        $service = new EditorService($this->kernel, $this->config);
+        $result = $service->translateToLocalPath('/etc/passwd');
+
+        $this->assertSame('/etc/passwd', $result);
+    }
+
+    public function testGetEditorUrlUsesTranslatedPath(): void
+    {
+        $this->config
+            ->method('getEditor')
+            ->willReturn('vscode');
+        $this->config
+            ->method('getLocalProjectPath')
+            ->willReturn('/home/user/project');
+
+        $this->kernel = $this->createMock(KernelInterface::class);
+        $this->kernel
+            ->method('getProjectDir')
+            ->willReturn('/var/www/html');
+
+        $service = new EditorService($this->kernel, $this->config);
+        $result = $service->getEditorUrl('/var/www/html/vendor/test.php', 42);
+
+        $this->assertStringContainsString(urlencode('/home/user/project/vendor/test.php'), $result);
     }
 }

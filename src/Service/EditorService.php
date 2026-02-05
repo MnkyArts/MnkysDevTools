@@ -94,6 +94,38 @@ class EditorService
     }
 
     /**
+     * Translate a container path to a local host path
+     * 
+     * When running in Docker, paths like /var/www/html/vendor/... need to be
+     * translated to the host path like \\wsl.localhost\Ubuntu\home\user\project\vendor\...
+     */
+    public function translateToLocalPath(string $containerPath): string
+    {
+        $localProjectPath = $this->config->getLocalProjectPath();
+        
+        if ($localProjectPath === null) {
+            // No mapping configured, return as-is
+            return $containerPath;
+        }
+
+        $projectDir = $this->kernel->getProjectDir();
+        
+        // Replace the container project dir with the local project path
+        if (str_starts_with($containerPath, $projectDir)) {
+            $relativePath = substr($containerPath, strlen($projectDir));
+            
+            // Convert forward slashes to backslashes for Windows/WSL paths
+            if (str_contains($localProjectPath, '\\')) {
+                $relativePath = str_replace('/', '\\', $relativePath);
+            }
+            
+            return $localProjectPath . $relativePath;
+        }
+
+        return $containerPath;
+    }
+
+    /**
      * Get the protocol URL for opening a file in the configured editor
      */
     public function getEditorUrl(string $file, int $line): string
@@ -101,12 +133,15 @@ class EditorService
         $editor = $this->config->getEditor();
         $protocol = self::EDITOR_PROTOCOLS[$editor] ?? self::EDITOR_PROTOCOLS['vscode'];
 
+        // Translate container path to local path
+        $localFile = $this->translateToLocalPath($file);
+
         // Some editors have different argument orders
         if ($editor === 'phpstorm' || $editor === 'idea') {
-            return sprintf($protocol, urlencode($file), $line);
+            return sprintf($protocol, urlencode($localFile), $line);
         }
 
-        return sprintf($protocol, urlencode($file), $line);
+        return sprintf($protocol, urlencode($localFile), $line);
     }
 
     /**
@@ -125,11 +160,14 @@ class EditorService
             return false;
         }
 
+        // Translate container path to local path
+        $localFile = $this->translateToLocalPath($file);
+
         // Build command based on editor
         if ($editor === 'phpstorm' || $editor === 'idea') {
-            $command = sprintf($commandTemplate, $line, $file);
+            $command = sprintf($commandTemplate, $line, $localFile);
         } else {
-            $command = sprintf($commandTemplate, $file, $line);
+            $command = sprintf($commandTemplate, $localFile, $line);
         }
 
         // Execute in background
