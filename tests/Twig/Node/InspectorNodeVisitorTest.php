@@ -3,6 +3,7 @@
 namespace MnkysDevTools\Tests\Twig\Node;
 
 use MnkysDevTools\Service\DevToolsConfigService;
+use MnkysDevTools\Service\VariableAnalyzer;
 use MnkysDevTools\Twig\Node\InspectorBlockNode;
 use MnkysDevTools\Twig\Node\InspectorNodeVisitor;
 use MnkysDevTools\Twig\TwigInspectorExtension;
@@ -24,8 +25,9 @@ class InspectorNodeVisitorTest extends TestCase
     protected function setUp(): void
     {
         $config = $this->createMock(DevToolsConfigService::class);
+        $variableAnalyzer = new VariableAnalyzer();
         $this->extension = $this->getMockBuilder(TwigInspectorExtension::class)
-            ->setConstructorArgs([$config])
+            ->setConstructorArgs([$config, $variableAnalyzer])
             ->getMock();
         
         $this->twig = new Environment(new ArrayLoader([]));

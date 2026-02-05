@@ -26,7 +26,7 @@ class OpenEditorController extends StorefrontController
     #[Route(
         path: '/devtools/open-editor',
         name: 'frontend.devtools.open-editor',
-        methods: ['GET'],
+        methods: ['POST'],
         defaults: ['XmlHttpRequest' => true]
     )]
     public function openEditor(Request $request): JsonResponse
@@ -47,8 +47,8 @@ class OpenEditorController extends StorefrontController
             ], Response::HTTP_FORBIDDEN);
         }
 
-        $file = $request->query->get('file');
-        $line = (int) $request->query->get('line', 1);
+        $file = $request->request->get('file') ?? $request->query->get('file');
+        $line = (int) ($request->request->get('line') ?? $request->query->get('line', 1));
 
         if (!$file) {
             return new JsonResponse([
@@ -184,6 +184,15 @@ class OpenEditorController extends StorefrontController
     )]
     public function status(): JsonResponse
     {
+        // Security: Only allow in dev mode
+        if (!$this->config->isDevEnvironment()) {
+            return new JsonResponse([
+                'enabled' => false,
+                'devMode' => false,
+                'editor' => null,
+            ], Response::HTTP_FORBIDDEN);
+        }
+
         return new JsonResponse([
             'enabled' => $this->config->isEnabled(),
             'devMode' => $this->config->isDevEnvironment(),

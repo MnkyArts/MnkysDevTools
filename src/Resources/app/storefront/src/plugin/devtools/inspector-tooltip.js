@@ -67,9 +67,9 @@ export class InspectorTooltip {
         }
 
         const tagName = el.tagName.toLowerCase();
-        const id = el.id ? `#${el.id}` : '';
+        const id = el.id ? `#${escapeHtml(el.id)}` : '';
         const classes = el.className && typeof el.className === 'string'
-            ? '.' + el.className.trim().split(/\s+/).slice(0, 2).join('.')
+            ? '.' + escapeHtml(el.className.trim().split(/\s+/).slice(0, 2).join('.'))
             : '';
 
         this.element.innerHTML = `

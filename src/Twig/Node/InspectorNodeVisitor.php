@@ -48,7 +48,7 @@ class InspectorNodeVisitor implements NodeVisitorInterface
     {
         if ($node instanceof ModuleNode) {
             array_pop($this->templateStack);
-            $this->currentTemplate = end($this->templateStack) ?: null;
+            $this->currentTemplate = !empty(end($this->templateStack)) ? end($this->templateStack) : null;
         }
 
         return $node;

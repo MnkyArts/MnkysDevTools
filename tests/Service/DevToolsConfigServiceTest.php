@@ -247,4 +247,81 @@ class DevToolsConfigServiceTest extends TestCase
 
         $this->assertSame(7, $service->getMaxVariableDepth());
     }
+
+    // ==================== getLocalProjectPath() ====================
+
+    public function testGetLocalProjectPathReturnsNullWhenConfigIsNull(): void
+    {
+        $this->systemConfigService
+            ->method('get')
+            ->with('MnkysDevTools.config.localProjectPath', null)
+            ->willReturn(null);
+
+        $service = $this->createService();
+
+        $this->assertNull($service->getLocalProjectPath());
+    }
+
+    public function testGetLocalProjectPathReturnsNullWhenConfigIsEmptyString(): void
+    {
+        $this->systemConfigService
+            ->method('get')
+            ->with('MnkysDevTools.config.localProjectPath', null)
+            ->willReturn('');
+
+        $service = $this->createService();
+
+        $this->assertNull($service->getLocalProjectPath());
+    }
+
+    public function testGetLocalProjectPathReturnsPathWithTrailingSlashRemoved(): void
+    {
+        $this->systemConfigService
+            ->method('get')
+            ->with('MnkysDevTools.config.localProjectPath', null)
+            ->willReturn('/home/user/project/');
+
+        $service = $this->createService();
+
+        $this->assertSame('/home/user/project', $service->getLocalProjectPath());
+    }
+
+    public function testGetLocalProjectPathHandlesWindowsBackslashPaths(): void
+    {
+        $this->systemConfigService
+            ->method('get')
+            ->with('MnkysDevTools.config.localProjectPath', null)
+            ->willReturn('\\\\wsl.localhost\\Ubuntu\\home\\user\\project\\');
+
+        $service = $this->createService();
+
+        $this->assertSame('\\\\wsl.localhost\\Ubuntu\\home\\user\\project', $service->getLocalProjectPath());
+    }
+
+    public function testGetLocalProjectPathReturnsPathWithoutTrailingSlash(): void
+    {
+        $this->systemConfigService
+            ->method('get')
+            ->with('MnkysDevTools.config.localProjectPath', null)
+            ->willReturn('/home/user/project');
+
+        $service = $this->createService();
+
+        $this->assertSame('/home/user/project', $service->getLocalProjectPath());
+    }
+
+    public function testGetLocalProjectPathUsesSalesChannelId(): void
+    {
+        $salesChannelId = 'test-sales-channel-id';
+
+        $this->systemConfigService
+            ->expects($this->once())
+            ->method('get')
+            ->with('MnkysDevTools.config.localProjectPath', $salesChannelId)
+            ->willReturn('/home/user/project');
+
+        $service = $this->createService();
+
+        $this->assertSame('/home/user/project', $service->getLocalProjectPath($salesChannelId));
+    }
 }

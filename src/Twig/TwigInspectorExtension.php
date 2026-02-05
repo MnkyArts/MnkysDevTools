@@ -3,6 +3,7 @@
 namespace MnkysDevTools\Twig;
 
 use MnkysDevTools\Service\DevToolsConfigService;
+use MnkysDevTools\Service\VariableAnalyzer;
 use MnkysDevTools\Twig\Node\InspectorNodeVisitor;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -17,6 +18,11 @@ class TwigInspectorExtension extends AbstractExtension
         '!doctype', '!--'
     ];
 
+    /**
+     * Maximum number of blocks to track per request to prevent unbounded memory growth
+     */
+    private const MAX_TRACKED_BLOCKS = 500;
+
     private array $registeredBlocks = [];
     
     /**
@@ -29,8 +35,10 @@ class TwigInspectorExtension extends AbstractExtension
      */
     private int $blockIdCounter = 0;
 
-    public function __construct(private readonly DevToolsConfigService $config)
-    {
+    public function __construct(
+        private readonly DevToolsConfigService $config,
+        private readonly VariableAnalyzer $variableAnalyzer
+    ) {
     }
 
     public function getNodeVisitors(): array
@@ -71,17 +79,20 @@ class TwigInspectorExtension extends AbstractExtension
         $blockId = $this->generateBlockId($blockData);
         $blockData['blockId'] = $blockId;
         
-        // Analyze and store context data for this block
-        $contextInfo = $this->analyzeContext($context);
-        $blockData['contextKeys'] = array_keys($contextInfo);
-        
-        // Store full context analysis for later retrieval via API
-        $this->blockContextData[$blockId] = [
-            'block' => $blockData['block'],
-            'template' => $blockData['template'],
-            'line' => $blockData['line'],
-            'context' => $contextInfo,
-        ];
+        // Analyze and store context data (respecting memory limit)
+        if (count($this->blockContextData) < self::MAX_TRACKED_BLOCKS) {
+            $contextInfo = $this->variableAnalyzer->analyzeContext($context, $this->config->getMaxVariableDepth());
+            $blockData['contextKeys'] = array_keys($contextInfo);
+            
+            $this->blockContextData[$blockId] = [
+                'block' => $blockData['block'],
+                'template' => $blockData['template'],
+                'line' => $blockData['line'],
+                'context' => $contextInfo,
+            ];
+        } else {
+            $blockData['contextKeys'] = [];
+        }
         
         // Register for block list
         $this->registeredBlocks[] = $blockData;
@@ -131,163 +142,6 @@ class TwigInspectorExtension extends AbstractExtension
             $blockData['line'],
             $this->blockIdCounter
         );
-    }
-
-    /**
-     * Analyze context variables and return type information
-     * Only captures keys and basic type info to keep data size manageable
-     */
-    private function analyzeContext(array $context): array
-    {
-        $analyzed = [];
-        $maxDepth = $this->config->getMaxVariableDepth();
-        
-        // Skip internal Twig variables
-        $skipKeys = ['_parent', '_seq', '_key', '_iterated', 'loop', '_self', '__internal', 'app'];
-        
-        foreach ($context as $key => $value) {
-            // Skip internal variables
-            if (in_array($key, $skipKeys) || str_starts_with($key, '__')) {
-                continue;
-            }
-            
-            $analyzed[$key] = $this->getVariableInfo($value, 0, $maxDepth);
-        }
-        
-        // Sort by key name for consistency
-        ksort($analyzed);
-        
-        return $analyzed;
-    }
-
-    /**
-     * Get basic type information for a variable
-     */
-    private function getVariableInfo(mixed $value, int $depth, int $maxDepth): array
-    {
-        
-        if ($value === null) {
-            return ['type' => 'null'];
-        }
-        
-        if (is_bool($value)) {
-            return ['type' => 'bool', 'value' => $value];
-        }
-        
-        if (is_int($value)) {
-            return ['type' => 'int', 'value' => $value];
-        }
-        
-        if (is_float($value)) {
-            return ['type' => 'float', 'value' => round($value, 4)];
-        }
-        
-        if (is_string($value)) {
-            $len = strlen($value);
-            $info = ['type' => 'string', 'length' => $len];
-            if ($len <= 50) {
-                $info['value'] = $value;
-            } else {
-                $info['preview'] = substr($value, 0, 50) . '...';
-            }
-            return $info;
-        }
-        
-        if (is_array($value)) {
-            $count = count($value);
-            $info = ['type' => 'array', 'count' => $count];
-            
-            if ($depth < $maxDepth && $count > 0 && $count <= 10) {
-                $isAssoc = array_keys($value) !== range(0, $count - 1);
-                $info['isAssoc'] = $isAssoc;
-                
-                // Recursively analyze array items
-                $items = [];
-                $itemCount = 0;
-                foreach ($value as $k => $v) {
-                    if ($itemCount >= 5) { // Limit items shown
-                        $items['...'] = ['type' => 'truncated', 'remaining' => $count - $itemCount];
-                        break;
-                    }
-                    $items[$k] = $this->getVariableInfo($v, $depth + 1, $maxDepth);
-                    $itemCount++;
-                }
-                $info['items'] = $items;
-            }
-            
-            return $info;
-        }
-        
-        if (is_object($value)) {
-            $className = get_class($value);
-            $shortName = (new \ReflectionClass($value))->getShortName();
-            
-            $info = [
-                'type' => 'object',
-                'class' => $shortName,
-                'fullClass' => $className,
-            ];
-            
-            // Add count for countable objects
-            if ($value instanceof \Countable) {
-                $info['count'] = count($value);
-            }
-            
-            // Don't recurse into objects if at max depth
-            if ($depth >= $maxDepth) {
-                return $info;
-            }
-            
-            $properties = [];
-            
-            // Try common getter methods for Shopware objects
-            $getters = [
-                'getId' => 'id',
-                'getName' => 'name',
-                'getValue' => 'value',
-                'getType' => 'type',
-                'isRequired' => 'required',
-                'getStringValue' => 'stringValue',
-                'getIntValue' => 'intValue',
-                'getBoolValue' => 'boolValue',
-                'getArrayValue' => 'arrayValue',
-            ];
-            
-            foreach ($getters as $method => $propName) {
-                if (method_exists($value, $method)) {
-                    try {
-                        $propValue = $value->$method();
-                        if ($propValue !== null) {
-                            $properties[$propName] = $this->getVariableInfo($propValue, $depth + 1, $maxDepth);
-                        }
-                    } catch (\Throwable) {}
-                }
-            }
-            
-            // For iterables (like collections), show first few items
-            if ($value instanceof \Traversable) {
-                $items = [];
-                $itemCount = 0;
-                foreach ($value as $k => $v) {
-                    if ($itemCount >= 3) {
-                        break;
-                    }
-                    $items[$k] = $this->getVariableInfo($v, $depth + 1, $maxDepth);
-                    $itemCount++;
-                }
-                if (!empty($items)) {
-                    $properties['_items'] = ['type' => 'items', 'items' => $items];
-                }
-            }
-            
-            if (!empty($properties)) {
-                $info['properties'] = $properties;
-            }
-            
-            return $info;
-        }
-        
-        return ['type' => gettype($value)];
     }
 
     public function getRegisteredBlocks(): array

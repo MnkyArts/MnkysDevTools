@@ -7,7 +7,6 @@ use Shopware\Core\Framework\Plugin\Context\ActivateContext;
 use Shopware\Core\Framework\Plugin\Context\DeactivateContext;
 use Shopware\Core\Framework\Plugin\Context\InstallContext;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
-use Shopware\Core\Framework\Plugin\Context\UpdateContext;
 
 /**
  * MnkysDevTools - Storefront Component Picker
@@ -53,18 +52,5 @@ class MnkysDevTools extends Plugin
     public function deactivate(DeactivateContext $deactivateContext): void
     {
         parent::deactivate($deactivateContext);
-    }
-
-    public function update(UpdateContext $updateContext): void
-    {
-        parent::update($updateContext);
-    }
-
-    public function postInstall(InstallContext $installContext): void
-    {
-    }
-
-    public function postUpdate(UpdateContext $updateContext): void
-    {
     }
 }

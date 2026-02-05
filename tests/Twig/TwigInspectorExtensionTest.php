@@ -3,6 +3,7 @@
 namespace MnkysDevTools\Tests\Twig;
 
 use MnkysDevTools\Service\DevToolsConfigService;
+use MnkysDevTools\Service\VariableAnalyzer;
 use MnkysDevTools\Twig\Node\InspectorNodeVisitor;
 use MnkysDevTools\Twig\TwigInspectorExtension;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -16,11 +17,14 @@ class TwigInspectorExtensionTest extends TestCase
     protected function setUp(): void
     {
         $this->config = $this->createMock(DevToolsConfigService::class);
+        $this->config
+            ->method('getMaxVariableDepth')
+            ->willReturn(3);
     }
 
     private function createExtension(): TwigInspectorExtension
     {
-        return new TwigInspectorExtension($this->config);
+        return new TwigInspectorExtension($this->config, new VariableAnalyzer());
     }
 
     // ==================== getNodeVisitors() ====================
@@ -502,7 +506,7 @@ class TwigInspectorExtensionTest extends TestCase
         $extension = $this->createExtension();
         $blockData = json_encode(['block' => 'test', 'template' => 'test.twig', 'line' => 1]);
         $context = [
-            'longString' => str_repeat('a', 100),
+            'longString' => str_repeat('a', 150),
         ];
         
         $extension->injectBlockAttribute('<div>Content</div>', $blockData, $context);
@@ -511,8 +515,8 @@ class TwigInspectorExtensionTest extends TestCase
         $blockId = $blocks[0]['blockId'];
         $contextData = $extension->getBlockContextData($blockId);
         
-        $this->assertSame(100, $contextData['context']['longString']['length']);
-        // String over 50 chars should have preview instead of value
+        $this->assertSame(150, $contextData['context']['longString']['length']);
+        // String over 100 chars should have preview instead of value
         $this->assertArrayHasKey('preview', $contextData['context']['longString']);
     }
 }

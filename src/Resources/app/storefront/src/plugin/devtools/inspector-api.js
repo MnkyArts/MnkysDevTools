@@ -22,7 +22,7 @@ const REQUEST_TIMEOUT = 10000;
  * @returns {Promise<object>}
  * @private
  */
-function makeRequest(url) {
+function makeGetRequest(url) {
     return new Promise((resolve, reject) => {
         let timeoutId = null;
         
@@ -44,16 +44,41 @@ function makeRequest(url) {
 }
 
 /**
+ * Make a POST request with error handling
+ * @param {string} url - The URL to post to
+ * @param {object} body - The request body
+ * @returns {Promise<object>}
+ * @private
+ */
+function makePostRequest(url, body) {
+    return new Promise((resolve, reject) => {
+        let timeoutId = null;
+
+        timeoutId = setTimeout(() => {
+            reject(new Error('Request timeout'));
+        }, REQUEST_TIMEOUT);
+
+        client.post(url, JSON.stringify(body), (response) => {
+            clearTimeout(timeoutId);
+            try {
+                const data = JSON.parse(response);
+                resolve(data);
+            } catch (e) {
+                reject(new Error('Failed to parse response'));
+            }
+        }, 'application/json', true);
+    });
+}
+
+/**
  * Open a file in the configured editor
  * @param {string} file - Template path (e.g., @Storefront/...)
  * @param {number} line - Line number
  * @returns {Promise<{success: boolean, editorUrl?: string, error?: string}>}
  */
 export async function openInEditor(file, line) {
-    const url = `${ENDPOINTS.openEditor}?file=${encodeURIComponent(file)}&line=${line}`;
-    
     try {
-        return await makeRequest(url);
+        return await makePostRequest(ENDPOINTS.openEditor, { file, line });
     } catch (error) {
         console.warn('DevTools: Failed to open editor', error);
         return { success: false, error: error.message };
@@ -77,7 +102,7 @@ export async function getBlockInfo(template, block, line) {
     const url = `${ENDPOINTS.blockInfo}?${params}`;
     
     try {
-        return await makeRequest(url);
+        return await makeGetRequest(url);
     } catch (error) {
         console.warn('DevTools: Failed to fetch block info', error);
         return { success: false, error: error.message };
@@ -90,7 +115,7 @@ export async function getBlockInfo(template, block, line) {
  */
 export async function getStatus() {
     try {
-        return await makeRequest(ENDPOINTS.status);
+        return await makeGetRequest(ENDPOINTS.status);
     } catch (error) {
         console.warn('DevTools: Failed to fetch status', error);
         return { error: error.message };

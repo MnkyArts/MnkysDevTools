@@ -5,6 +5,8 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <defaults autowire="true" autoconfigure="true" public="false"/>
+
         <!-- ================================== -->
         <!-- DevTools Core Services             -->
         <!-- ================================== -->
@@ -21,11 +23,15 @@
             <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
         </service>
 
+        <!-- Variable Analyzer Service -->
+        <service id="MnkysDevTools\Service\VariableAnalyzer"/>
+
         <!-- Template Inspector Service -->
         <service id="MnkysDevTools\Service\TemplateInspectorService">
             <argument type="service" id="kernel"/>
             <argument type="service" id="MnkysDevTools\Service\EditorService"/>
             <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
+            <argument type="service" id="MnkysDevTools\Service\VariableAnalyzer"/>
         </service>
 
         <!-- ================================== -->
@@ -34,6 +40,7 @@
         
         <service id="MnkysDevTools\Twig\TwigInspectorExtension">
             <argument type="service" id="MnkysDevTools\Service\DevToolsConfigService"/>
+            <argument type="service" id="MnkysDevTools\Service\VariableAnalyzer"/>
             <tag name="twig.extension"/>
         </service>
 

@@ -12,7 +12,8 @@ class TemplateInspectorService
     public function __construct(
         private readonly KernelInterface $kernel,
         private readonly EditorService $editorService,
-        private readonly DevToolsConfigService $config
+        private readonly DevToolsConfigService $config,
+        private readonly VariableAnalyzer $variableAnalyzer
     ) {}
 
     /**
@@ -232,154 +233,7 @@ class TemplateInspectorService
      */
     public function analyzeContextVariables(array $context): array
     {
-        $analyzed = [];
-        $maxDepth = $this->config->getMaxVariableDepth();
-        
-        // Skip internal Twig variables
-        $skipKeys = ['_parent', '_seq', '_key', '_iterated', 'loop', '_self', '__internal'];
-        
-        foreach ($context as $key => $value) {
-            // Skip internal variables
-            if (in_array($key, $skipKeys) || str_starts_with($key, '__')) {
-                continue;
-            }
-            
-            $analyzed[$key] = $this->analyzeVariable($value, 0, $maxDepth);
-        }
-        
-        // Sort by key name
-        ksort($analyzed);
-        
-        return $analyzed;
-    }
-
-    /**
-     * Analyze a single variable and return its type/structure
-     */
-    private function analyzeVariable(mixed $value, int $depth, int $maxDepth): array
-    {
-        
-        if ($value === null) {
-            return ['type' => 'null', 'value' => null];
-        }
-        
-        if (is_bool($value)) {
-            return ['type' => 'bool', 'value' => $value];
-        }
-        
-        if (is_int($value)) {
-            return ['type' => 'int', 'value' => $value];
-        }
-        
-        if (is_float($value)) {
-            return ['type' => 'float', 'value' => $value];
-        }
-        
-        if (is_string($value)) {
-            // Truncate long strings
-            $displayValue = strlen($value) > 100 ? substr($value, 0, 100) . '...' : $value;
-            return ['type' => 'string', 'value' => $displayValue, 'length' => strlen($value)];
-        }
-        
-        if (is_array($value)) {
-            if ($depth >= $maxDepth) {
-                return ['type' => 'array', 'count' => count($value)];
-            }
-            
-            $isAssoc = array_keys($value) !== range(0, count($value) - 1);
-            $items = [];
-            $count = 0;
-            
-            foreach ($value as $k => $v) {
-                if ($count >= 5) { // Limit items shown
-                    $items['...'] = ['type' => 'truncated', 'remaining' => count($value) - $count];
-                    break;
-                }
-                $items[$k] = $this->analyzeVariable($v, $depth + 1, $maxDepth);
-                $count++;
-            }
-            
-            return [
-                'type' => $isAssoc ? 'array' : 'list',
-                'count' => count($value),
-                'items' => $items,
-            ];
-        }
-        
-        if (is_object($value)) {
-            $className = get_class($value);
-            $shortName = (new \ReflectionClass($value))->getShortName();
-            
-            $result = [
-                'type' => 'object',
-                'class' => $shortName,
-                'fullClass' => $className,
-            ];
-            
-            if ($depth >= $maxDepth) {
-                return $result;
-            }
-            
-            // Get public properties for common Shopware entities
-            $properties = [];
-            
-            // For entities, try to get commonly useful properties
-            if (method_exists($value, 'getId')) {
-                try {
-                    $id = $value->getId();
-                    if ($id !== null) {
-                        $properties['id'] = $this->analyzeVariable($id, $depth + 1, $maxDepth);
-                    }
-                } catch (\Throwable) {}
-            }
-            
-            if (method_exists($value, 'getName')) {
-                try {
-                    $name = $value->getName();
-                    if ($name !== null) {
-                        $properties['name'] = $this->analyzeVariable($name, $depth + 1, $maxDepth);
-                    }
-                } catch (\Throwable) {}
-            }
-            
-            if (method_exists($value, 'getTranslated')) {
-                try {
-                    $translated = $value->getTranslated();
-                    if (!empty($translated)) {
-                        $properties['translated'] = $this->analyzeVariable($translated, $depth + 1, $maxDepth);
-                    }
-                } catch (\Throwable) {}
-            }
-            
-            // For collections, show count
-            if ($value instanceof \Countable) {
-                $properties['_count'] = ['type' => 'int', 'value' => count($value)];
-            }
-            
-            // For iterables, show first few items
-            if ($value instanceof \Traversable && $depth < $maxDepth - 1) {
-                $items = [];
-                $count = 0;
-                foreach ($value as $k => $v) {
-                    if ($count >= 3) {
-                        break;
-                    }
-                    $items[$k] = $this->analyzeVariable($v, $depth + 1, $maxDepth);
-                    $count++;
-                }
-                if (!empty($items)) {
-                    $properties['_items'] = ['type' => 'items', 'items' => $items];
-                }
-            }
-            
-            if (!empty($properties)) {
-                $result['properties'] = $properties;
-            }
-            
-            return $result;
-        }
-        
-        return ['type' => gettype($value)];
+        return $this->variableAnalyzer->analyzeContext($context, $this->config->getMaxVariableDepth());
     }
 
     /**

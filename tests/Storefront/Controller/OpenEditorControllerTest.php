@@ -434,24 +434,20 @@ class OpenEditorControllerTest extends TestCase
         $this->assertSame('phpstorm', $data['editor']);
     }
 
-    public function testStatusReturnsDisabledConfiguration(): void
+    public function testStatusReturnsForbiddenInProduction(): void
     {
-        $this->config
-            ->method('isEnabled')
-            ->willReturn(false);
         $this->config
             ->method('isDevEnvironment')
             ->willReturn(false);
-        $this->config
-            ->method('getEditor')
-            ->willReturn('vscode');
 
         $controller = $this->createController();
         
         $response = $controller->status();
 
+        $this->assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
         $data = json_decode($response->getContent(), true);
         $this->assertFalse($data['enabled']);
         $this->assertFalse($data['devMode']);
+        $this->assertNull($data['editor']);
     }
 }

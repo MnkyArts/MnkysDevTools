@@ -15,10 +15,10 @@ class EditorService
     ];
 
     private const EDITOR_COMMANDS = [
-        'vscode' => 'code --goto "%s:%d"',
-        'phpstorm' => 'phpstorm --line %d "%s"',
-        'sublime' => 'subl "%s:%d"',
-        'idea' => 'idea --line %d "%s"',
+        'vscode' => 'code --goto %s:%d',
+        'phpstorm' => 'phpstorm --line %d %s',
+        'sublime' => 'subl %s:%d',
+        'idea' => 'idea --line %d %s',
     ];
 
     public function __construct(
@@ -45,6 +45,8 @@ class EditorService
                     return $path;
                 }
             }
+
+            return null;
         }
 
         // Handle @Plugins namespace
@@ -136,11 +138,6 @@ class EditorService
         // Translate container path to local path
         $localFile = $this->translateToLocalPath($file);
 
-        // Some editors have different argument orders
-        if ($editor === 'phpstorm' || $editor === 'idea') {
-            return sprintf($protocol, urlencode($localFile), $line);
-        }
-
         return sprintf($protocol, urlencode($localFile), $line);
     }
 
@@ -163,11 +160,12 @@ class EditorService
         // Translate container path to local path
         $localFile = $this->translateToLocalPath($file);
 
-        // Build command based on editor
+        // Build command based on editor (escapeshellarg prevents command injection)
+        $escapedFile = escapeshellarg($localFile);
         if ($editor === 'phpstorm' || $editor === 'idea') {
-            $command = sprintf($commandTemplate, $line, $localFile);
+            $command = sprintf($commandTemplate, $line, $escapedFile);
         } else {
-            $command = sprintf($commandTemplate, $localFile, $line);
+            $command = sprintf($commandTemplate, $escapedFile, $line);
         }
 
         // Execute in background

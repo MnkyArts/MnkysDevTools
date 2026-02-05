@@ -5,6 +5,7 @@ namespace MnkysDevTools\Tests\Service;
 use MnkysDevTools\Service\DevToolsConfigService;
 use MnkysDevTools\Service\EditorService;
 use MnkysDevTools\Service\TemplateInspectorService;
+use MnkysDevTools\Service\VariableAnalyzer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -21,6 +22,9 @@ class TemplateInspectorServiceTest extends TestCase
         $this->kernel = $this->createMock(KernelInterface::class);
         $this->editorService = $this->createMock(EditorService::class);
         $this->config = $this->createMock(DevToolsConfigService::class);
+        $this->config
+            ->method('getMaxVariableDepth')
+            ->willReturn(3);
         
         // Create a temporary directory structure for testing
         $this->tempDir = sys_get_temp_dir() . '/mnkys_devtools_test_' . uniqid();
@@ -52,7 +56,7 @@ class TemplateInspectorServiceTest extends TestCase
 
     private function createService(): TemplateInspectorService
     {
-        return new TemplateInspectorService($this->kernel, $this->editorService, $this->config);
+        return new TemplateInspectorService($this->kernel, $this->editorService, $this->config, new VariableAnalyzer());
     }
 
     private function createTemplateFile(string $relativePath, string $content): string
@@ -507,7 +511,7 @@ TWIG;
         
         $this->assertSame('string', $result['longString']['type']);
         $this->assertSame(150, $result['longString']['length']);
-        $this->assertStringEndsWith('...', $result['longString']['value']); // Truncated
+        $this->assertStringEndsWith('...', $result['longString']['preview']); // Truncated
     }
 
     public function testAnalyzeContextVariablesAnalyzesArrayValue(): void
@@ -520,11 +524,13 @@ TWIG;
         $service = $this->createService();
         $result = $service->analyzeContextVariables($context);
 
-        $this->assertSame('list', $result['indexedArray']['type']);
+        $this->assertSame('array', $result['indexedArray']['type']);
         $this->assertSame(3, $result['indexedArray']['count']);
+        $this->assertFalse($result['indexedArray']['isAssoc']);
         
         $this->assertSame('array', $result['assocArray']['type']);
         $this->assertSame(2, $result['assocArray']['count']);
+        $this->assertTrue($result['assocArray']['isAssoc']);
     }
 
     public function testAnalyzeContextVariablesAnalyzesObjectValue(): void
@@ -582,9 +588,8 @@ TWIG;
         $service = $this->createService();
         $result = $service->analyzeContextVariables($context);
 
-        $this->assertArrayHasKey('properties', $result['collection']);
-        $this->assertArrayHasKey('_count', $result['collection']['properties']);
-        $this->assertSame(5, $result['collection']['properties']['_count']['value']);
+        $this->assertSame('object', $result['collection']['type']);
+        $this->assertSame(5, $result['collection']['count']);
     }
 
     public function testAnalyzeContextVariablesSortsResults(): void
